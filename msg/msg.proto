@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package msg;
+
+// 消息ID
+enum MessageID {
+    MSG_Ping = 0;
+    MSG_Pong = 1;
+    MSG_Login_C2S = 2;
+    MSG_Login_S2C = 3;
+    MSG_Logout_C2S = 4;
+    MSG_Logout_S2C = 5;
+    MSG_JoinRoom_C2S = 6;
+    MSG_JoinRoom_S2C = 7;
+    MSG_EnterRoom_S2C = 8;
+    MSG_PlayerAction_C2S = 9;
+    MSG_PlayerAction_SC2 = 10;
+    MSG_SendWinMoney_C2S = 11;
+    MSG_SendWinMoney_S2C = 12;
+    MSG_GetRewards_C2S = 13;
+    MSG_GetRewards_S2C = 14;
+    MSG_ChangeRoomCfg_C2S = 15;
+    MSG_ChangeRoomCfg_S2C = 16;
+    MSG_ErrorMsg_S2C = 17;
+}
+
+message Ping {
+}
+
+message Pong {
+    int64 serverTime = 1; // 服务器时间戳
+}
+
+message PlayerInfo {
+    string Id = 1;
+    string nickName = 2;
+    string headImg = 3;
+    double account = 4;
+}
+
+message Login_C2S {
+    string Id = 1;
+    string PassWord = 2;
+    string Token = 3;
+}
+
+message Login_S2C {
+    PlayerInfo playerInfo = 1;
+}
+
+message Logout_C2S {
+}
+
+message Logout_S2C {
+}
+
+
+message PlayerData {
+    PlayerInfo playerInfo = 1;
+
+}
+
+message RoomData {
+    string roomId = 1;
+    repeated PlayerData playerData = 2;
+
+}
+
+message JoinRoom_C2S {
+}
+
+message JoinRoom_S2C {
+    RoomData roomData = 1;
+}
+
+message EnterRoom_S2C {
+    RoomData roomData = 1;
+}
+
+message PlayerAction_C2S {
+    double downBet = 1; // 下注金额
+}
+
+message PlayerAction_S2C {
+    double downBet = 1; // 下注金额
+    double account = 2; // 玩家的最新金额
+}
+
+message SendWinMoney_C2S {
+    double money = 1;
+}
+
+message SendWinMoney_S2S {
+    double account = 1;
+}
+
+// 发送获奖
+message GetRewards_C2S {
+}
+
+// 回传奖励
+message GetRewards_S2C {
+    int32 rewardsNum = 1;
+    int32 rewardsMoney = 2;
+}
+
+// 修改房间区分配置
+message ChangeRoomCfg_C2S {
+    string config = 1;
+}
+
+// 返回配置信息
+message ChangeRoomCfg_S2C {
+
+}
+
+message ErrorMsg_S2C {
+    string msgData = 1; // 错误消息
+}

@@ -1,0 +1,22 @@
+{
+  "LogLevel": "debug",
+  "LogPath": "",
+  "WSAddr": "0.0.0.0:1362",
+  "HTTPPort": "3362",
+  "MaxConnNum": 20000,
+
+  "MongoDBAddr": "172.16.100.5:27017",
+  "MongoDBAuth": "",
+  "MongoDBUser": "fctbj",
+  "MongoDBPwd": "123456",
+
+  "TokenServer": "http://172.16.100.2:9502/Token/getToken",
+  "CenterServer": "172.16.100.2",
+  "CenterServerPort": 9502,
+  "DevName": "新游戏开发",
+  "GameID": "5b1f3a3cb76a451e7f0622",
+  "DevKey": "fctbj_fcdev",
+  "CenterUrl": "ws://172.16.100.2:9502/",
+
+  "LogAddr": "http://172.16.100.7:4151/pub?topic=game-server"
+}
