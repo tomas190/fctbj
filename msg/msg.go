@@ -21,6 +21,8 @@ func init() {
 	Processor.Register(&EnterRoom_S2C{})
 	Processor.Register(&PlayerAction_C2S{})
 	Processor.Register(&PlayerAction_S2C{})
+	Processor.Register(&SendWinMoney_C2S{})
+	Processor.Register(&SendWinMoney_S2S{})
 	Processor.Register(&GetRewards_C2S{})
 	Processor.Register(&GetRewards_S2C{})
 	Processor.Register(&ChangeRoomCfg_C2S{})

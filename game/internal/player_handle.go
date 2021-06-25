@@ -18,7 +18,7 @@ func (p *Player) PlayerJoinRoom() {
 		hall.UserRoom.Store(p.Id, r.RoomId)
 
 		// 插入玩家信息 todo
-		//p.FindPlayerInfo()
+		p.FindPlayerInfo()
 
 		//返回前端房间信息
 		data := &msg.JoinRoom_S2C{}
