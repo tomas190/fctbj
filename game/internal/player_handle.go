@@ -10,7 +10,13 @@ import (
 func (p *Player) PlayerJoinRoom() {
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
-	if v == nil {
+	if v != nil { // 当前玩家已经存在房间
+		room := v.(*Room)
+		roomData := room.RespRoomData()
+		enter := &msg.EnterRoom_S2C{}
+		enter.RoomData = roomData
+		p.SendMsg(enter)
+	} else {
 		// 创建房间
 		r := &Room{}
 		r.Init()
@@ -19,6 +25,8 @@ func (p *Player) PlayerJoinRoom() {
 
 		// 插入玩家信息 todo
 		p.FindPlayerInfo()
+
+		log.Debug("发送进入房间!")
 
 		//返回前端房间信息
 		data := &msg.JoinRoom_S2C{}
@@ -34,27 +42,36 @@ func (p *Player) PlayerAction(downBet float64) {
 		return
 	}
 	// 判断下注金币是房间下注对应金额
-
 	p.Account -= downBet
 
 	p.LoseResultMoney = downBet
-	nowTime := time.Now().Unix()
+
+	nowTime := time.Now().Unix()  // todo
 	p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
-	loseReason := "发财推币机输钱"
+	loseReason := ""
 	c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, downBet)
 
-	// 返回玩家行动数据
-	action := &msg.PlayerAction_S2C{}
-	action.DownBet = downBet
-	action.Account = p.Account
-	p.SendMsg(action)
+	var money float64 = 10
+
+	var isWin bool
+	if p.Account >= money {
+		isWin = true
+	}
+
+	data := &msg.PlayerAction_S2C{}
+	data.IsWin = isWin
+	p.SendMsg(data)
 }
 
 func (p *Player) GetPlayerWinMoney(money float64) {
-	p.Account += money
+	pac := packageTax[p.PackageId]
+	taxR := pac / 100
+	tax := money * taxR
+	p.Account += money - tax
 
 	p.WinResultMoney = money
-	nowTime := time.Now().Unix()
+
+	nowTime := time.Now().Unix() // todo
 	p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
 	winReason := "发财推币机赢钱"
 	c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, money)

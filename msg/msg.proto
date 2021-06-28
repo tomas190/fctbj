@@ -82,8 +82,7 @@ message PlayerAction_C2S {
 }
 
 message PlayerAction_S2C {
-    double downBet = 1; // 下注金额
-    double account = 2; // 玩家的最新金额
+    bool IsWin = 1;
 }
 
 message SendWinMoney_C2S {

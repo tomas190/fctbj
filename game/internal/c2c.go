@@ -252,10 +252,10 @@ func (c4c *Conn4Center) onServerLogin(msgBody interface{}) {
 		c4c.LoginStat = true
 
 		msginfo := data["msg"].(map[string]interface{})
-		fmt.Println("globals:", msginfo["globals"], reflect.TypeOf(msginfo["globals"]))
+		//fmt.Println("globals:", msginfo["globals"], reflect.TypeOf(msginfo["globals"]))
 
 		globals := msginfo["globals"].([]interface{})
-		fmt.Println("allList", globals)
+		//fmt.Println("allList", globals)
 		for k, v := range globals {
 			fmt.Println(k, v)
 			info := v.(map[string]interface{})

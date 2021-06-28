@@ -73,15 +73,40 @@ func handleLogin(args []interface{}) {
 
 			rid, _ := hall.UserRoom.Load(p.Id)
 			v, _ := hall.RoomRecord.Load(rid)
-			if v == nil {
+			if v != nil {
 				room := v.(*Room)
 				roomData := room.RespRoomData()
 				enter := &msg.EnterRoom_S2C{}
 				enter.RoomData = roomData
 				p.SendMsg(enter)
+				log.Debug("返回当前房间~")
 			}
 		}
 	} else if !hall.agentExist(a) { // 玩家首次登入
+		//u := &Player{}
+		//u.Id = m.Id
+		//u.Account = 10000
+		//u.NickName = m.Id
+		//u.Token = m.Token
+		//
+		//login := &msg.Login_S2C{}
+		//login.PlayerInfo = new(msg.PlayerInfo)
+		//login.PlayerInfo.Id = u.Id
+		//login.PlayerInfo.NickName = u.NickName
+		//login.PlayerInfo.HeadImg = u.HeadImg
+		//login.PlayerInfo.Account = u.Account
+		//a.WriteMsg(login)
+		//
+		//u.Init()
+		//// 重新绑定信息
+		//u.ConnAgent = a
+		//a.SetUserData(u)
+		//
+		//u.Password = m.GetPassWord()
+		//u.Token = m.GetToken()
+		//
+		//hall.UserRecord.Store(u.Id, u)
+
 		c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { //todo
 
 			log.Debug("玩家首次登陆:%v", u.Id)
@@ -114,9 +139,10 @@ func handleLogout(args []interface{}) {
 	if ok {
 		rid, _ := hall.UserRoom.Load(p.Id)
 		v, _ := hall.RoomRecord.Load(rid)
-		if v == nil {
+		if v != nil {
 			room := v.(*Room)
 			hall.UserRecord.Delete(p.Id)
+			log.Debug("删除房间资源~")
 			hall.RoomRecord.Delete(room.RoomId)
 			hall.UserRoom.Delete(p.Id)
 			c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo

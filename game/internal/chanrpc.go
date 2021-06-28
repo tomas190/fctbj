@@ -28,9 +28,10 @@ func rpcCloseAgent(args []interface{}) {
 		log.Debug("<-------------%v 主动断开链接--------------->", p.Id)
 		rid, _ := hall.UserRoom.Load(p.Id)
 		v, _ := hall.RoomRecord.Load(rid)
-		if v == nil {
+		if v != nil {
 			room := v.(*Room)
 			hall.UserRecord.Delete(p.Id)
+			log.Debug("删除房间资源~")
 			hall.RoomRecord.Delete(room.RoomId)
 			hall.UserRoom.Delete(p.Id)
 			c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
