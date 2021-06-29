@@ -202,11 +202,22 @@ func handleGetRewards(args []interface{}) {
 }
 
 func handleChangeRoomCfg(args []interface{}) {
+	m := args[0].(*msg.ChangeRoomCfg_C2S)
 	a := args[1].(gate.Agent)
 
 	p, ok := a.UserData().(*Player)
 	log.Debug("handleChangeRoomCfg 修改区分配置~ : %v", p.Id)
 
 	if ok {
+		rid, _ := hall.UserRoom.Load(p.Id)
+		v, _ := hall.RoomRecord.Load(rid)
+		if v != nil {
+			room := v.(*Room)
+			room.Config = m.Config
+
+			// 发送配置数据
+			data := &msg.ChangeRoomCfg_S2C{}
+			p.SendMsg(data)
+		}
 	}
 }

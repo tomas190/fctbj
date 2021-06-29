@@ -41,20 +41,42 @@ func (p *Player) PlayerAction(downBet float64) {
 		log.Debug("玩家金额不足,不能进行下注~")
 		return
 	}
-	// 判断下注金币是房间下注对应金额
-	p.Account -= downBet
+	// 判断下注金币是否对应房间配置金额(防止刷钱)
+	rid, _ := hall.UserRoom.Load(p.Id)
+	v, _ := hall.RoomRecord.Load(rid)
+	if v != nil {
+		room := v.(*Room)
+		if CfgMoney[room.Config] != downBet {
+			return
+		}
+	}
 
+	p.Account -= downBet
 	p.LoseResultMoney = downBet
 
-	nowTime := time.Now().Unix()  // todo
+	nowTime := time.Now().Unix() // todo
 	p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
-	loseReason := ""
+	loseReason := "发财推币机输钱"
 	c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, downBet)
 
-	var money float64 = 10
+	// 插入盈余数据 todo
+	sur := &SurplusPoolDB{}
+	sur.UpdateTime = time.Now()
+	sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
+	sur.Rid = rid.(string)
+	sur.PlayerNum = LoadPlayerCount()
+	surPool := FindSurplusPool()
+	if surPool != nil {
+		sur.HistoryWin = surPool.HistoryWin
+		sur.HistoryLose = surPool.HistoryLose
+	}
+	sur.HistoryLose += Decimal(p.LoseResultMoney)
+	sur.TotalLoseMoney += Decimal(p.LoseResultMoney)
+	InsertSurplusPool(sur)
 
 	var isWin bool
-	if p.Account >= money {
+	surMoney := GetSurPlusMoney()
+	if surMoney > downBet {
 		isWin = true
 	}
 
@@ -67,7 +89,8 @@ func (p *Player) GetPlayerWinMoney(money float64) {
 	pac := packageTax[p.PackageId]
 	taxR := pac / 100
 	tax := money * taxR
-	p.Account += money - tax
+	resultMoney := money - tax
+	p.Account += resultMoney
 
 	p.WinResultMoney = money
 
@@ -75,6 +98,27 @@ func (p *Player) GetPlayerWinMoney(money float64) {
 	p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
 	winReason := "发财推币机赢钱"
 	c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, money)
+
+	// 插入盈余数据 todo
+	sur := &SurplusPoolDB{}
+	sur.UpdateTime = time.Now()
+	sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
+	rid, _ := hall.UserRoom.Load(p.Id)
+	sur.Rid = rid.(string)
+	sur.PlayerNum = LoadPlayerCount()
+	surPool := FindSurplusPool()
+	if surPool != nil {
+		sur.HistoryWin = surPool.HistoryWin
+		sur.HistoryLose = surPool.HistoryLose
+	}
+	sur.HistoryLose += Decimal(p.WinResultMoney)
+	sur.TotalLoseMoney += Decimal(p.WinResultMoney)
+	InsertSurplusPool(sur)
+
+	// 跑马灯 todo
+	if resultMoney > PaoMaDeng {
+		c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
+	}
 
 	data := &msg.SendWinMoney_S2S{}
 	data.Account = p.Account
@@ -109,5 +153,4 @@ func (p *Player) GetRewardsInfo() {
 	data.RewardsMoney = rewardsMoney
 	p.SendMsg(data)
 
-	// 判断是否大于跑马灯
 }

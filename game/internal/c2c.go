@@ -423,7 +423,7 @@ func (c4c *Conn4Center) onUserWinScore(msgBody interface{}) {
 		log.Debug("<-------- UserWinScore SUCCESS~ -------->")
 
 		//将Win数据插入数据
-		//InsertWinMoney(msgBody) //todo
+		InsertWinMoney(msgBody) //todo
 
 		userInfo, ok := data["msg"].(map[string]interface{})
 		if ok {
@@ -459,7 +459,7 @@ func (c4c *Conn4Center) onUserLoseScore(msgBody interface{}) {
 		log.Debug("<-------- UserLoseScore SUCCESS~ -------->")
 
 		//将Lose数据插入数据
-		//InsertLoseMoney(msgBody) //todo
+		InsertLoseMoney(msgBody) //todo
 
 		userInfo, ok := data["msg"].(map[string]interface{})
 		if ok {
@@ -797,7 +797,7 @@ func (c4c *Conn4Center) UnlockSettlement(p *Player) {
 
 func (c4c *Conn4Center) NoticeWinMoreThan(playerId, playerName string, winGold float64) {
 	log.Debug("<-------- NoticeWinMoreThan  -------->")
-	msg := fmt.Sprintf("<size=20><color=yellow>恭喜!</color><color=orange>%v</color><color=yellow>在</color></><color=orange><size=25>德州扑克</color></><color=yellow><size=20>中一把赢了</color></><color=yellow><size=30>%.2f</color></><color=yellow><size=25>金币！</color></>", playerName, winGold)
+	msg := fmt.Sprintf("<size=20><color=yellow>恭喜!</color><color=orange>%v</color><color=yellow>在</color></><color=orange><size=25>发财推币机</color></><color=yellow><size=20>中一把赢了</color></><color=yellow><size=30>%.2f</color></><color=yellow><size=25>金币！</color></>", playerName, winGold)
 
 	base := &BaseMessage{}
 	base.Event = msgWinMoreThanNotice

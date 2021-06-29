@@ -26,7 +26,7 @@ type Room struct {
 
 func (r *Room) Init() {
 	r.RoomId = fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
-	r.Config = ""
+	r.Config = "1"
 }
 
 //RespRoomData 返回房间数据
