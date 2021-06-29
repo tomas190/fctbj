@@ -4,7 +4,6 @@ import (
 	"fctbj/msg"
 	"fmt"
 	"github.com/name5566/leaf/log"
-	"strconv"
 	"time"
 )
 
@@ -36,8 +35,7 @@ func (p *Player) PlayerJoinRoom() {
 	}
 }
 
-func (p *Player) PlayerAction(bet string) {
-	downBet, _ := strconv.ParseFloat(bet, 64)
+func (p *Player) PlayerAction(downBet float64) {
 	// 判断玩家金额是否足够
 	if p.Account < downBet {
 		p.SendErrMsg(RECODE_UserMoneyNotEnough)
@@ -94,8 +92,7 @@ func (p *Player) PlayerAction(bet string) {
 	p.SendMsg(data)
 }
 
-func (p *Player) GetPlayerWinMoney(bet string) {
-	money, _ := strconv.ParseFloat(bet, 64)
+func (p *Player) GetPlayerWinMoney(money float64) {
 	if money <= 0 {
 		p.SendErrMsg(RECODE_SendWinMoneyERROR)
 		log.Debug("玩家赢钱金额小于0 错误!")

@@ -67,6 +67,7 @@ message RoomData {
 }
 
 message JoinRoom_C2S {
+    string cfg = 1;
 }
 
 message JoinRoom_S2C {
@@ -78,7 +79,7 @@ message EnterRoom_S2C {
 }
 
 message PlayerAction_C2S {
-    string downBet = 1; // 下注金额
+    double downBet = 1; // 下注金额
 }
 
 message PlayerAction_S2C {
@@ -86,7 +87,7 @@ message PlayerAction_S2C {
 }
 
 message SendWinMoney_C2S {
-    string money = 1;
+    double money = 1;
 }
 
 message SendWinMoney_S2S {

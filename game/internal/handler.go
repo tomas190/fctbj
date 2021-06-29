@@ -156,12 +156,14 @@ func handleLogout(args []interface{}) {
 }
 
 func handleJoinRoom(args []interface{}) {
+	m := args[0].(*msg.JoinRoom_C2S)
 	a := args[1].(gate.Agent)
 
 	p, ok := a.UserData().(*Player)
 	log.Debug("handleJoinRoom 玩家加入房间~ : %v", p.Id)
 
 	if ok {
+		log.Debug("加入房间:%v", m)
 		p.PlayerJoinRoom()
 	}
 }
