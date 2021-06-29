@@ -78,7 +78,7 @@ message EnterRoom_S2C {
 }
 
 message PlayerAction_C2S {
-    double downBet = 1; // 下注金额
+    string downBet = 1; // 下注金额
 }
 
 message PlayerAction_S2C {
@@ -86,7 +86,7 @@ message PlayerAction_S2C {
 }
 
 message SendWinMoney_C2S {
-    double money = 1;
+    string money = 1;
 }
 
 message SendWinMoney_S2S {

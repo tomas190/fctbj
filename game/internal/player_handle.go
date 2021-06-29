@@ -4,6 +4,7 @@ import (
 	"fctbj/msg"
 	"fmt"
 	"github.com/name5566/leaf/log"
+	"strconv"
 	"time"
 )
 
@@ -35,19 +36,24 @@ func (p *Player) PlayerJoinRoom() {
 	}
 }
 
-func (p *Player) PlayerAction(downBet float64) {
+func (p *Player) PlayerAction(bet string) {
+	downBet, _ := strconv.ParseFloat(bet, 64)
 	// 判断玩家金额是否足够
 	if p.Account < downBet {
 		p.SendErrMsg(RECODE_UserMoneyNotEnough)
 		log.Debug("玩家金额不足,不能进行下注~")
 		return
 	}
+
 	// 判断下注金币是否对应房间配置金额(防止刷钱)
+	var roomId string
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
+		roomId = room.RoomId
 		if CfgMoney[room.Config] != downBet {
+			log.Debug("房间配置金额:%v,%v", CfgMoney[room.Config], downBet)
 			p.SendErrMsg(RECODE_RoomCfgMoneyERROR)
 			log.Debug("房间配置金额不对!")
 			return
@@ -66,7 +72,7 @@ func (p *Player) PlayerAction(downBet float64) {
 	sur := &SurplusPoolDB{}
 	sur.UpdateTime = time.Now()
 	sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-	sur.Rid = rid.(string)
+	sur.Rid = roomId
 	sur.PlayerNum = LoadPlayerCount()
 	surPool := FindSurplusPool()
 	if surPool != nil {
@@ -88,7 +94,8 @@ func (p *Player) PlayerAction(downBet float64) {
 	p.SendMsg(data)
 }
 
-func (p *Player) GetPlayerWinMoney(money float64) {
+func (p *Player) GetPlayerWinMoney(bet string) {
+	money, _ := strconv.ParseFloat(bet, 64)
 	if money <= 0 {
 		p.SendErrMsg(RECODE_SendWinMoneyERROR)
 		log.Debug("玩家赢钱金额小于0 错误!")
