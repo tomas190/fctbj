@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fctbj/msg"
 	"github.com/name5566/leaf/gate"
 )
 
@@ -33,3 +34,9 @@ func (p *Player) SendMsg(msg interface{}) {
 	}
 }
 
+//SendErrMsg 发送错误消息值
+func (p *Player) SendErrMsg(errData string) {
+	data := &msg.ErrorMsg_S2C{}
+	data.MsgData = errData
+	p.SendMsg(data)
+}

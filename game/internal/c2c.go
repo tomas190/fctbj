@@ -236,7 +236,7 @@ func (c4c *Conn4Center) onReceive(messType int, messBody []byte) {
 
 //onServerLogin 服务器登录
 func (c4c *Conn4Center) onServerLogin(msgBody interface{}) {
-	log.Debug("<-------- onServerLogin -------->: %v", msgBody)
+	log.Debug("<-------- onServerLogin -------->")
 	data, ok := msgBody.(map[string]interface{})
 	if !ok {
 		log.Debug("onServerLogin Error")
@@ -256,8 +256,8 @@ func (c4c *Conn4Center) onServerLogin(msgBody interface{}) {
 
 		globals := msginfo["globals"].([]interface{})
 		//fmt.Println("allList", globals)
-		for k, v := range globals {
-			fmt.Println(k, v)
+		for _, v := range globals {
+			//fmt.Println(k, v)
 			info := v.(map[string]interface{})
 			//fmt.Println("package_id", info["package_id"])
 

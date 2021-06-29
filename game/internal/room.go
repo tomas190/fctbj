@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	GOLD  = 1
-	RICH  = 2
-	PUSH  = 3
-	LUCKY = 4
+	GOLD  = 1   // 接金币
+	RICH  = 2   // 吐钱
+	PUSH  = 3   // 财神推金币
+	LUCKY = 4   // 三只小猪
 )
 
 var (

@@ -38,6 +38,7 @@ func (p *Player) PlayerJoinRoom() {
 func (p *Player) PlayerAction(downBet float64) {
 	// 判断玩家金额是否足够
 	if p.Account < downBet {
+		p.SendErrMsg(RECODE_UserMoneyNotEnough)
 		log.Debug("玩家金额不足,不能进行下注~")
 		return
 	}
@@ -47,6 +48,8 @@ func (p *Player) PlayerAction(downBet float64) {
 	if v != nil {
 		room := v.(*Room)
 		if CfgMoney[room.Config] != downBet {
+			p.SendErrMsg(RECODE_RoomCfgMoneyERROR)
+			log.Debug("房间配置金额不对!")
 			return
 		}
 	}
@@ -86,12 +89,19 @@ func (p *Player) PlayerAction(downBet float64) {
 }
 
 func (p *Player) GetPlayerWinMoney(money float64) {
+	if money <= 0 {
+		p.SendErrMsg(RECODE_SendWinMoneyERROR)
+		log.Debug("玩家赢钱金额小于0 错误!")
+		return
+	}
+
 	pac := packageTax[p.PackageId]
 	taxR := pac / 100
 	tax := money * taxR
 	resultMoney := money - tax
 	p.Account += resultMoney
 
+	log.Debug("获取赢钱的金额:%v", money)
 	p.WinResultMoney = money
 
 	nowTime := time.Now().Unix() // todo
