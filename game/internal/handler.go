@@ -177,7 +177,13 @@ func handlePlayerAction(args []interface{}) {
 
 	if ok {
 		log.Debug("玩家行動:%v", m)
-		p.PlayerAction(m.DownBet)
+		// 临时使用 todo
+		rid, _ := hall.UserRoom.Load(p.Id)
+		v, _ := hall.RoomRecord.Load(rid)
+		if v != nil {
+			room := v.(*Room)
+			p.PlayerAction(CfgMoney[room.Config])
+		}
 	}
 }
 
@@ -189,7 +195,14 @@ func handleSendWinMoney(args []interface{}) {
 	log.Debug("handleSendWinMoney 玩家发送赢钱~ : %v", p.Id)
 
 	if ok {
-		p.GetPlayerWinMoney(m.Money)
+		log.Debug("玩家赢钱:%v", m)
+		// 临时使用 todo
+		rid, _ := hall.UserRoom.Load(p.Id)
+		v, _ := hall.RoomRecord.Load(rid)
+		if v != nil {
+			room := v.(*Room)
+			p.GetPlayerWinMoney(CfgMoney[room.Config])
+		}
 	}
 }
 
