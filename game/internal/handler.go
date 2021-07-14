@@ -20,7 +20,7 @@ func init() {
 	handlerReg(&msg.ProgressBar_C2S{}, handleProgressBar)
 	handlerReg(&msg.PickUpGold_C2S{}, handlePickUpGold)
 
-	handlerReg(&msg.ChangeRoomCfg_S2C{}, handleChangeRoomCfg)
+	handlerReg(&msg.ChangeRoomCfg_C2S{}, handleChangeRoomCfg)
 }
 
 // 注册消息处理函数

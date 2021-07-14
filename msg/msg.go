@@ -23,7 +23,6 @@ func init() {
 	Processor.Register(&PlayerAction_S2C{})
 	Processor.Register(&ProgressBar_C2S{})
 	Processor.Register(&ProgressBar_S2C{})
-	Processor.Register(&PlayerAction_S2C{})
 	Processor.Register(&GetRewards_S2C{})
 	Processor.Register(&PickUpGold_C2S{})
 	Processor.Register(&PickUpGold_S2C{})
