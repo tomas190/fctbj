@@ -8,10 +8,14 @@ import (
 )
 
 const (
-	GOLD  = 1   // 接金币
-	RICH  = 2   // 吐钱
-	PUSH  = 3   // 财神推金币
-	LUCKY = 4   // 三只小猪
+	GOLD  = 1 // 接金币
+	RICH  = 2 // 吐钱
+	PUSH  = 3 // 财神推金币
+	LUCKY = 4 // 三只小猪
+)
+
+const (
+	Rate  = 500 // 最高500倍率
 )
 
 var (
@@ -19,9 +23,9 @@ var (
 )
 
 type Room struct {
-	RoomId string  // 房间号
-	Config string  // 房间配置
-	Player *Player // 玩家信息
+	RoomId    string  // 房间号
+	Config    string  // 房间配置
+	Player    *Player // 玩家信息
 }
 
 func (r *Room) Init() {

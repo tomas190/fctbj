@@ -15,13 +15,14 @@ enum MessageID {
     MSG_EnterRoom_S2C = 8;
     MSG_PlayerAction_C2S = 9;
     MSG_PlayerAction_SC2 = 10;
-    MSG_SendWinMoney_C2S = 11;
-    MSG_SendWinMoney_S2C = 12;
-    MSG_GetRewards_C2S = 13;
-    MSG_GetRewards_S2C = 14;
-    MSG_ChangeRoomCfg_C2S = 15;
-    MSG_ChangeRoomCfg_S2C = 16;
-    MSG_ErrorMsg_S2C = 17;
+    MSG_ProgressBar_C2S = 11;
+    MSG_ProgressBar_S2C = 12;
+    MSG_GetRewards_S2C = 13;
+    MSG_PickUpGold_C2S = 14;
+    MSG_PickUpGold_S2C = 15;
+    MSG_ChangeRoomCfg_C2S = 16;
+    MSG_ChangeRoomCfg_S2C = 17;
+    MSG_ErrorMsg_S2C = 18;
 }
 
 message Ping {
@@ -63,7 +64,6 @@ message PlayerData {
 message RoomData {
     string roomId = 1;
     repeated PlayerData playerData = 2;
-
 }
 
 message JoinRoom_C2S {
@@ -83,35 +83,59 @@ message PlayerAction_C2S {
 }
 
 message PlayerAction_S2C {
-    bool IsWin = 1;
+    int32 winNum = 1;
 }
 
-message SendWinMoney_C2S {
-    double money = 1;
+message ProgressBar_C2S {
+    int32 betNum = 1;
 }
 
-message SendWinMoney_S2S {
-    double account = 1;
+message ProgressBar_S2C {
+    int32 proBar = 1;
 }
 
-// 发送获奖
-message GetRewards_C2S {
+message ThreePig {
+    double PigSuccess = 1; // 中奖小猪
+    double PigLoser_1 = 2; // 未中奖小猪
+    double PigLoser_2 = 3; // 未中奖小猪
 }
 
-// 回传奖励
+// 获奖小游戏
 message GetRewards_S2C {
     int32 rewardsNum = 1;
-    int32 rewardsMoney = 2;
+    double getMoney = 2;
+    ThreePig luckyPig = 3;
+}
+
+// 财神接金币
+message PickUpGold_C2S {
+    int32 betNum = 1;
+}
+
+// 返回金额和倍数
+message PickUpGold_S2C {
+    double money = 1;
+    int32 rate = 2;
+}
+
+message coordinate {
+    repeated string location = 1;
 }
 
 // 修改房间区分配置
 message ChangeRoomCfg_C2S {
+    // 保存的config
     string config = 1;
+    // 二维数组
+    repeated coordinate coordinates = 2;
+    // 切换的config
+    string changeCfg = 3;
 }
 
 // 返回配置信息
 message ChangeRoomCfg_S2C {
-
+    bool isChange = 1;
+    repeated coordinate coordinates = 2;
 }
 
 message ErrorMsg_S2C {

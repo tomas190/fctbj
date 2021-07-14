@@ -18,13 +18,20 @@ type Player struct {
 	RoundId   string
 	PackageId uint16
 
+	ProgressBet     int32 // 掉落金币累计
 	WinResultMoney  float64
 	LoseResultMoney float64
+
+	ConfigPlace map[string][]*msg.Coordinate
 }
 
 func (p *Player) Init() {
 	p.RoundId = ""
+	p.ProgressBet = 0
+	p.WinResultMoney = 0
+	p.LoseResultMoney = 0
 
+	p.ConfigPlace = make(map[string][]*msg.Coordinate)
 }
 
 //SendMsg 玩家向客户端发送消息

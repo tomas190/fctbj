@@ -35,13 +35,14 @@ const (
 	MessageID_MSG_EnterRoom_S2C     MessageID = 8
 	MessageID_MSG_PlayerAction_C2S  MessageID = 9
 	MessageID_MSG_PlayerAction_SC2  MessageID = 10
-	MessageID_MSG_SendWinMoney_C2S  MessageID = 11
-	MessageID_MSG_SendWinMoney_S2C  MessageID = 12
-	MessageID_MSG_GetRewards_C2S    MessageID = 13
-	MessageID_MSG_GetRewards_S2C    MessageID = 14
-	MessageID_MSG_ChangeRoomCfg_C2S MessageID = 15
-	MessageID_MSG_ChangeRoomCfg_S2C MessageID = 16
-	MessageID_MSG_ErrorMsg_S2C      MessageID = 17
+	MessageID_MSG_ProgressBar_C2S   MessageID = 11
+	MessageID_MSG_ProgressBar_S2C   MessageID = 12
+	MessageID_MSG_GetRewards_S2C    MessageID = 13
+	MessageID_MSG_PickUpGold_C2S    MessageID = 14
+	MessageID_MSG_PickUpGold_S2C    MessageID = 15
+	MessageID_MSG_ChangeRoomCfg_C2S MessageID = 16
+	MessageID_MSG_ChangeRoomCfg_S2C MessageID = 17
+	MessageID_MSG_ErrorMsg_S2C      MessageID = 18
 )
 
 var MessageID_name = map[int32]string{
@@ -56,13 +57,14 @@ var MessageID_name = map[int32]string{
 	8:  "MSG_EnterRoom_S2C",
 	9:  "MSG_PlayerAction_C2S",
 	10: "MSG_PlayerAction_SC2",
-	11: "MSG_SendWinMoney_C2S",
-	12: "MSG_SendWinMoney_S2C",
-	13: "MSG_GetRewards_C2S",
-	14: "MSG_GetRewards_S2C",
-	15: "MSG_ChangeRoomCfg_C2S",
-	16: "MSG_ChangeRoomCfg_S2C",
-	17: "MSG_ErrorMsg_S2C",
+	11: "MSG_ProgressBar_C2S",
+	12: "MSG_ProgressBar_S2C",
+	13: "MSG_GetRewards_S2C",
+	14: "MSG_PickUpGold_C2S",
+	15: "MSG_PickUpGold_S2C",
+	16: "MSG_ChangeRoomCfg_C2S",
+	17: "MSG_ChangeRoomCfg_S2C",
+	18: "MSG_ErrorMsg_S2C",
 }
 
 var MessageID_value = map[string]int32{
@@ -77,13 +79,14 @@ var MessageID_value = map[string]int32{
 	"MSG_EnterRoom_S2C":     8,
 	"MSG_PlayerAction_C2S":  9,
 	"MSG_PlayerAction_SC2":  10,
-	"MSG_SendWinMoney_C2S":  11,
-	"MSG_SendWinMoney_S2C":  12,
-	"MSG_GetRewards_C2S":    13,
-	"MSG_GetRewards_S2C":    14,
-	"MSG_ChangeRoomCfg_C2S": 15,
-	"MSG_ChangeRoomCfg_S2C": 16,
-	"MSG_ErrorMsg_S2C":      17,
+	"MSG_ProgressBar_C2S":   11,
+	"MSG_ProgressBar_S2C":   12,
+	"MSG_GetRewards_S2C":    13,
+	"MSG_PickUpGold_C2S":    14,
+	"MSG_PickUpGold_S2C":    15,
+	"MSG_ChangeRoomCfg_C2S": 16,
+	"MSG_ChangeRoomCfg_S2C": 17,
+	"MSG_ErrorMsg_S2C":      18,
 }
 
 func (x MessageID) String() string {
@@ -626,7 +629,7 @@ func (m *PlayerAction_C2S) GetDownBet() float64 {
 }
 
 type PlayerAction_S2C struct {
-	IsWin                bool     `protobuf:"varint,1,opt,name=IsWin,proto3" json:"IsWin,omitempty"`
+	WinNum               int32    `protobuf:"varint,1,opt,name=winNum,proto3" json:"winNum,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -657,130 +660,154 @@ func (m *PlayerAction_S2C) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_PlayerAction_S2C proto.InternalMessageInfo
 
-func (m *PlayerAction_S2C) GetIsWin() bool {
+func (m *PlayerAction_S2C) GetWinNum() int32 {
 	if m != nil {
-		return m.IsWin
+		return m.WinNum
 	}
-	return false
+	return 0
 }
 
-type SendWinMoney_C2S struct {
-	Money                float64  `protobuf:"fixed64,1,opt,name=money,proto3" json:"money,omitempty"`
+type ProgressBar_C2S struct {
+	BetNum               int32    `protobuf:"varint,1,opt,name=betNum,proto3" json:"betNum,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *SendWinMoney_C2S) Reset()         { *m = SendWinMoney_C2S{} }
-func (m *SendWinMoney_C2S) String() string { return proto.CompactTextString(m) }
-func (*SendWinMoney_C2S) ProtoMessage()    {}
-func (*SendWinMoney_C2S) Descriptor() ([]byte, []int) {
+func (m *ProgressBar_C2S) Reset()         { *m = ProgressBar_C2S{} }
+func (m *ProgressBar_C2S) String() string { return proto.CompactTextString(m) }
+func (*ProgressBar_C2S) ProtoMessage()    {}
+func (*ProgressBar_C2S) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c06e4cca6c2cc899, []int{14}
 }
 
-func (m *SendWinMoney_C2S) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SendWinMoney_C2S.Unmarshal(m, b)
+func (m *ProgressBar_C2S) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ProgressBar_C2S.Unmarshal(m, b)
 }
-func (m *SendWinMoney_C2S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SendWinMoney_C2S.Marshal(b, m, deterministic)
+func (m *ProgressBar_C2S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ProgressBar_C2S.Marshal(b, m, deterministic)
 }
-func (m *SendWinMoney_C2S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SendWinMoney_C2S.Merge(m, src)
+func (m *ProgressBar_C2S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ProgressBar_C2S.Merge(m, src)
 }
-func (m *SendWinMoney_C2S) XXX_Size() int {
-	return xxx_messageInfo_SendWinMoney_C2S.Size(m)
+func (m *ProgressBar_C2S) XXX_Size() int {
+	return xxx_messageInfo_ProgressBar_C2S.Size(m)
 }
-func (m *SendWinMoney_C2S) XXX_DiscardUnknown() {
-	xxx_messageInfo_SendWinMoney_C2S.DiscardUnknown(m)
+func (m *ProgressBar_C2S) XXX_DiscardUnknown() {
+	xxx_messageInfo_ProgressBar_C2S.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_SendWinMoney_C2S proto.InternalMessageInfo
+var xxx_messageInfo_ProgressBar_C2S proto.InternalMessageInfo
 
-func (m *SendWinMoney_C2S) GetMoney() float64 {
+func (m *ProgressBar_C2S) GetBetNum() int32 {
 	if m != nil {
-		return m.Money
+		return m.BetNum
 	}
 	return 0
 }
 
-type SendWinMoney_S2S struct {
-	Account              float64  `protobuf:"fixed64,1,opt,name=account,proto3" json:"account,omitempty"`
+type ProgressBar_S2C struct {
+	ProBar               int32    `protobuf:"varint,1,opt,name=proBar,proto3" json:"proBar,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *SendWinMoney_S2S) Reset()         { *m = SendWinMoney_S2S{} }
-func (m *SendWinMoney_S2S) String() string { return proto.CompactTextString(m) }
-func (*SendWinMoney_S2S) ProtoMessage()    {}
-func (*SendWinMoney_S2S) Descriptor() ([]byte, []int) {
+func (m *ProgressBar_S2C) Reset()         { *m = ProgressBar_S2C{} }
+func (m *ProgressBar_S2C) String() string { return proto.CompactTextString(m) }
+func (*ProgressBar_S2C) ProtoMessage()    {}
+func (*ProgressBar_S2C) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c06e4cca6c2cc899, []int{15}
 }
 
-func (m *SendWinMoney_S2S) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SendWinMoney_S2S.Unmarshal(m, b)
+func (m *ProgressBar_S2C) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ProgressBar_S2C.Unmarshal(m, b)
 }
-func (m *SendWinMoney_S2S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SendWinMoney_S2S.Marshal(b, m, deterministic)
+func (m *ProgressBar_S2C) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ProgressBar_S2C.Marshal(b, m, deterministic)
 }
-func (m *SendWinMoney_S2S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SendWinMoney_S2S.Merge(m, src)
+func (m *ProgressBar_S2C) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ProgressBar_S2C.Merge(m, src)
 }
-func (m *SendWinMoney_S2S) XXX_Size() int {
-	return xxx_messageInfo_SendWinMoney_S2S.Size(m)
+func (m *ProgressBar_S2C) XXX_Size() int {
+	return xxx_messageInfo_ProgressBar_S2C.Size(m)
 }
-func (m *SendWinMoney_S2S) XXX_DiscardUnknown() {
-	xxx_messageInfo_SendWinMoney_S2S.DiscardUnknown(m)
+func (m *ProgressBar_S2C) XXX_DiscardUnknown() {
+	xxx_messageInfo_ProgressBar_S2C.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_SendWinMoney_S2S proto.InternalMessageInfo
+var xxx_messageInfo_ProgressBar_S2C proto.InternalMessageInfo
 
-func (m *SendWinMoney_S2S) GetAccount() float64 {
+func (m *ProgressBar_S2C) GetProBar() int32 {
 	if m != nil {
-		return m.Account
+		return m.ProBar
 	}
 	return 0
 }
 
-// 发送获奖
-type GetRewards_C2S struct {
+type ThreePig struct {
+	PigSuccess           float64  `protobuf:"fixed64,1,opt,name=PigSuccess,proto3" json:"PigSuccess,omitempty"`
+	PigLoser_1           float64  `protobuf:"fixed64,2,opt,name=PigLoser_1,json=PigLoser1,proto3" json:"PigLoser_1,omitempty"`
+	PigLoser_2           float64  `protobuf:"fixed64,3,opt,name=PigLoser_2,json=PigLoser2,proto3" json:"PigLoser_2,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetRewards_C2S) Reset()         { *m = GetRewards_C2S{} }
-func (m *GetRewards_C2S) String() string { return proto.CompactTextString(m) }
-func (*GetRewards_C2S) ProtoMessage()    {}
-func (*GetRewards_C2S) Descriptor() ([]byte, []int) {
+func (m *ThreePig) Reset()         { *m = ThreePig{} }
+func (m *ThreePig) String() string { return proto.CompactTextString(m) }
+func (*ThreePig) ProtoMessage()    {}
+func (*ThreePig) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c06e4cca6c2cc899, []int{16}
 }
 
-func (m *GetRewards_C2S) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetRewards_C2S.Unmarshal(m, b)
+func (m *ThreePig) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ThreePig.Unmarshal(m, b)
 }
-func (m *GetRewards_C2S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetRewards_C2S.Marshal(b, m, deterministic)
+func (m *ThreePig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ThreePig.Marshal(b, m, deterministic)
 }
-func (m *GetRewards_C2S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetRewards_C2S.Merge(m, src)
+func (m *ThreePig) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ThreePig.Merge(m, src)
 }
-func (m *GetRewards_C2S) XXX_Size() int {
-	return xxx_messageInfo_GetRewards_C2S.Size(m)
+func (m *ThreePig) XXX_Size() int {
+	return xxx_messageInfo_ThreePig.Size(m)
 }
-func (m *GetRewards_C2S) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetRewards_C2S.DiscardUnknown(m)
+func (m *ThreePig) XXX_DiscardUnknown() {
+	xxx_messageInfo_ThreePig.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetRewards_C2S proto.InternalMessageInfo
+var xxx_messageInfo_ThreePig proto.InternalMessageInfo
 
-// 回传奖励
+func (m *ThreePig) GetPigSuccess() float64 {
+	if m != nil {
+		return m.PigSuccess
+	}
+	return 0
+}
+
+func (m *ThreePig) GetPigLoser_1() float64 {
+	if m != nil {
+		return m.PigLoser_1
+	}
+	return 0
+}
+
+func (m *ThreePig) GetPigLoser_2() float64 {
+	if m != nil {
+		return m.PigLoser_2
+	}
+	return 0
+}
+
+// 获奖小游戏
 type GetRewards_S2C struct {
-	RewardsNum           int32    `protobuf:"varint,1,opt,name=rewardsNum,proto3" json:"rewardsNum,omitempty"`
-	RewardsMoney         int32    `protobuf:"varint,2,opt,name=rewardsMoney,proto3" json:"rewardsMoney,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	RewardsNum           int32     `protobuf:"varint,1,opt,name=rewardsNum,proto3" json:"rewardsNum,omitempty"`
+	GetMoney             float64   `protobuf:"fixed64,2,opt,name=getMoney,proto3" json:"getMoney,omitempty"`
+	LuckyPig             *ThreePig `protobuf:"bytes,3,opt,name=luckyPig,proto3" json:"luckyPig,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
 func (m *GetRewards_S2C) Reset()         { *m = GetRewards_S2C{} }
@@ -815,16 +842,155 @@ func (m *GetRewards_S2C) GetRewardsNum() int32 {
 	return 0
 }
 
-func (m *GetRewards_S2C) GetRewardsMoney() int32 {
+func (m *GetRewards_S2C) GetGetMoney() float64 {
 	if m != nil {
-		return m.RewardsMoney
+		return m.GetMoney
 	}
 	return 0
 }
 
+func (m *GetRewards_S2C) GetLuckyPig() *ThreePig {
+	if m != nil {
+		return m.LuckyPig
+	}
+	return nil
+}
+
+// 财神接金币
+type PickUpGold_C2S struct {
+	BetNum               int32    `protobuf:"varint,1,opt,name=betNum,proto3" json:"betNum,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PickUpGold_C2S) Reset()         { *m = PickUpGold_C2S{} }
+func (m *PickUpGold_C2S) String() string { return proto.CompactTextString(m) }
+func (*PickUpGold_C2S) ProtoMessage()    {}
+func (*PickUpGold_C2S) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c06e4cca6c2cc899, []int{18}
+}
+
+func (m *PickUpGold_C2S) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PickUpGold_C2S.Unmarshal(m, b)
+}
+func (m *PickUpGold_C2S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PickUpGold_C2S.Marshal(b, m, deterministic)
+}
+func (m *PickUpGold_C2S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PickUpGold_C2S.Merge(m, src)
+}
+func (m *PickUpGold_C2S) XXX_Size() int {
+	return xxx_messageInfo_PickUpGold_C2S.Size(m)
+}
+func (m *PickUpGold_C2S) XXX_DiscardUnknown() {
+	xxx_messageInfo_PickUpGold_C2S.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PickUpGold_C2S proto.InternalMessageInfo
+
+func (m *PickUpGold_C2S) GetBetNum() int32 {
+	if m != nil {
+		return m.BetNum
+	}
+	return 0
+}
+
+// 返回金额和倍数
+type PickUpGold_S2C struct {
+	Money                float64  `protobuf:"fixed64,1,opt,name=money,proto3" json:"money,omitempty"`
+	Rate                 int32    `protobuf:"varint,2,opt,name=rate,proto3" json:"rate,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PickUpGold_S2C) Reset()         { *m = PickUpGold_S2C{} }
+func (m *PickUpGold_S2C) String() string { return proto.CompactTextString(m) }
+func (*PickUpGold_S2C) ProtoMessage()    {}
+func (*PickUpGold_S2C) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c06e4cca6c2cc899, []int{19}
+}
+
+func (m *PickUpGold_S2C) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PickUpGold_S2C.Unmarshal(m, b)
+}
+func (m *PickUpGold_S2C) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PickUpGold_S2C.Marshal(b, m, deterministic)
+}
+func (m *PickUpGold_S2C) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PickUpGold_S2C.Merge(m, src)
+}
+func (m *PickUpGold_S2C) XXX_Size() int {
+	return xxx_messageInfo_PickUpGold_S2C.Size(m)
+}
+func (m *PickUpGold_S2C) XXX_DiscardUnknown() {
+	xxx_messageInfo_PickUpGold_S2C.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PickUpGold_S2C proto.InternalMessageInfo
+
+func (m *PickUpGold_S2C) GetMoney() float64 {
+	if m != nil {
+		return m.Money
+	}
+	return 0
+}
+
+func (m *PickUpGold_S2C) GetRate() int32 {
+	if m != nil {
+		return m.Rate
+	}
+	return 0
+}
+
+type Coordinate struct {
+	Location             []string `protobuf:"bytes,1,rep,name=location,proto3" json:"location,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Coordinate) Reset()         { *m = Coordinate{} }
+func (m *Coordinate) String() string { return proto.CompactTextString(m) }
+func (*Coordinate) ProtoMessage()    {}
+func (*Coordinate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c06e4cca6c2cc899, []int{20}
+}
+
+func (m *Coordinate) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Coordinate.Unmarshal(m, b)
+}
+func (m *Coordinate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Coordinate.Marshal(b, m, deterministic)
+}
+func (m *Coordinate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Coordinate.Merge(m, src)
+}
+func (m *Coordinate) XXX_Size() int {
+	return xxx_messageInfo_Coordinate.Size(m)
+}
+func (m *Coordinate) XXX_DiscardUnknown() {
+	xxx_messageInfo_Coordinate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Coordinate proto.InternalMessageInfo
+
+func (m *Coordinate) GetLocation() []string {
+	if m != nil {
+		return m.Location
+	}
+	return nil
+}
+
 // 修改房间区分配置
 type ChangeRoomCfg_C2S struct {
-	Config               string   `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
+	// 保存的config
+	Config string `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
+	// 二维数组
+	Coordinates []*Coordinate `protobuf:"bytes,2,rep,name=coordinates,proto3" json:"coordinates,omitempty"`
+	// 切换的config
+	ChangeCfg            string   `protobuf:"bytes,3,opt,name=changeCfg,proto3" json:"changeCfg,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -834,7 +1000,7 @@ func (m *ChangeRoomCfg_C2S) Reset()         { *m = ChangeRoomCfg_C2S{} }
 func (m *ChangeRoomCfg_C2S) String() string { return proto.CompactTextString(m) }
 func (*ChangeRoomCfg_C2S) ProtoMessage()    {}
 func (*ChangeRoomCfg_C2S) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c06e4cca6c2cc899, []int{18}
+	return fileDescriptor_c06e4cca6c2cc899, []int{21}
 }
 
 func (m *ChangeRoomCfg_C2S) XXX_Unmarshal(b []byte) error {
@@ -862,18 +1028,34 @@ func (m *ChangeRoomCfg_C2S) GetConfig() string {
 	return ""
 }
 
+func (m *ChangeRoomCfg_C2S) GetCoordinates() []*Coordinate {
+	if m != nil {
+		return m.Coordinates
+	}
+	return nil
+}
+
+func (m *ChangeRoomCfg_C2S) GetChangeCfg() string {
+	if m != nil {
+		return m.ChangeCfg
+	}
+	return ""
+}
+
 // 返回配置信息
 type ChangeRoomCfg_S2C struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	IsChange             bool          `protobuf:"varint,1,opt,name=isChange,proto3" json:"isChange,omitempty"`
+	Coordinates          []*Coordinate `protobuf:"bytes,2,rep,name=coordinates,proto3" json:"coordinates,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
 }
 
 func (m *ChangeRoomCfg_S2C) Reset()         { *m = ChangeRoomCfg_S2C{} }
 func (m *ChangeRoomCfg_S2C) String() string { return proto.CompactTextString(m) }
 func (*ChangeRoomCfg_S2C) ProtoMessage()    {}
 func (*ChangeRoomCfg_S2C) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c06e4cca6c2cc899, []int{19}
+	return fileDescriptor_c06e4cca6c2cc899, []int{22}
 }
 
 func (m *ChangeRoomCfg_S2C) XXX_Unmarshal(b []byte) error {
@@ -894,6 +1076,20 @@ func (m *ChangeRoomCfg_S2C) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ChangeRoomCfg_S2C proto.InternalMessageInfo
 
+func (m *ChangeRoomCfg_S2C) GetIsChange() bool {
+	if m != nil {
+		return m.IsChange
+	}
+	return false
+}
+
+func (m *ChangeRoomCfg_S2C) GetCoordinates() []*Coordinate {
+	if m != nil {
+		return m.Coordinates
+	}
+	return nil
+}
+
 type ErrorMsg_S2C struct {
 	MsgData              string   `protobuf:"bytes,1,opt,name=msgData,proto3" json:"msgData,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -905,7 +1101,7 @@ func (m *ErrorMsg_S2C) Reset()         { *m = ErrorMsg_S2C{} }
 func (m *ErrorMsg_S2C) String() string { return proto.CompactTextString(m) }
 func (*ErrorMsg_S2C) ProtoMessage()    {}
 func (*ErrorMsg_S2C) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c06e4cca6c2cc899, []int{20}
+	return fileDescriptor_c06e4cca6c2cc899, []int{23}
 }
 
 func (m *ErrorMsg_S2C) XXX_Unmarshal(b []byte) error {
@@ -949,10 +1145,13 @@ func init() {
 	proto.RegisterType((*EnterRoom_S2C)(nil), "msg.EnterRoom_S2C")
 	proto.RegisterType((*PlayerAction_C2S)(nil), "msg.PlayerAction_C2S")
 	proto.RegisterType((*PlayerAction_S2C)(nil), "msg.PlayerAction_S2C")
-	proto.RegisterType((*SendWinMoney_C2S)(nil), "msg.SendWinMoney_C2S")
-	proto.RegisterType((*SendWinMoney_S2S)(nil), "msg.SendWinMoney_S2S")
-	proto.RegisterType((*GetRewards_C2S)(nil), "msg.GetRewards_C2S")
+	proto.RegisterType((*ProgressBar_C2S)(nil), "msg.ProgressBar_C2S")
+	proto.RegisterType((*ProgressBar_S2C)(nil), "msg.ProgressBar_S2C")
+	proto.RegisterType((*ThreePig)(nil), "msg.ThreePig")
 	proto.RegisterType((*GetRewards_S2C)(nil), "msg.GetRewards_S2C")
+	proto.RegisterType((*PickUpGold_C2S)(nil), "msg.PickUpGold_C2S")
+	proto.RegisterType((*PickUpGold_S2C)(nil), "msg.PickUpGold_S2C")
+	proto.RegisterType((*Coordinate)(nil), "msg.coordinate")
 	proto.RegisterType((*ChangeRoomCfg_C2S)(nil), "msg.ChangeRoomCfg_C2S")
 	proto.RegisterType((*ChangeRoomCfg_S2C)(nil), "msg.ChangeRoomCfg_S2C")
 	proto.RegisterType((*ErrorMsg_S2C)(nil), "msg.ErrorMsg_S2C")
@@ -963,45 +1162,55 @@ func init() {
 }
 
 var fileDescriptor_c06e4cca6c2cc899 = []byte{
-	// 629 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x54, 0x5d, 0x4f, 0xdb, 0x30,
-	0x14, 0x5d, 0x9b, 0xb6, 0xb4, 0x97, 0xb6, 0xb8, 0x5e, 0x41, 0xd9, 0x1e, 0x50, 0xe5, 0x87, 0xa9,
-	0xfb, 0x10, 0x93, 0xba, 0xa7, 0x4d, 0xdb, 0xc3, 0x16, 0x10, 0xea, 0x44, 0x51, 0x95, 0x20, 0xf1,
-	0x88, 0xb2, 0xc6, 0x35, 0x11, 0xc4, 0x46, 0x4e, 0x18, 0xe2, 0xbf, 0xec, 0xc7, 0x4e, 0xd7, 0x89,
-	0x43, 0x52, 0xfa, 0xb2, 0xbd, 0xf5, 0x9c, 0x7b, 0x7c, 0xee, 0x67, 0x03, 0xbd, 0x24, 0x15, 0x47,
-	0x77, 0x5a, 0x65, 0x8a, 0x3a, 0x49, 0x2a, 0x58, 0x07, 0x5a, 0xcb, 0x58, 0x0a, 0xf6, 0x06, 0x5a,
-	0x4b, 0x25, 0x05, 0x3d, 0x04, 0x48, 0xb9, 0xfe, 0xcd, 0xf5, 0x45, 0x9c, 0x70, 0xb7, 0x31, 0x69,
-	0x4c, 0x1d, 0xbf, 0xc2, 0xb0, 0x5b, 0x80, 0xe5, 0x6d, 0xf8, 0xc8, 0xf5, 0x5c, 0xae, 0x15, 0x1d,
-	0x42, 0x73, 0x1e, 0x19, 0x55, 0xcf, 0x6f, 0xce, 0x23, 0xfa, 0x1a, 0xba, 0x32, 0x5e, 0xdd, 0x9c,
-	0x87, 0x09, 0x77, 0x9b, 0x86, 0x2d, 0x31, 0x75, 0x61, 0xe7, 0x9a, 0x87, 0xd1, 0x3c, 0x11, 0xae,
-	0x63, 0x42, 0x16, 0x62, 0x24, 0x5c, 0xad, 0xd4, 0xbd, 0xcc, 0xdc, 0xd6, 0xa4, 0x31, 0x6d, 0xf8,
-	0x16, 0xb2, 0x05, 0xf4, 0xce, 0x94, 0x88, 0xe5, 0x95, 0x37, 0x0b, 0xb6, 0x25, 0x5b, 0x86, 0x69,
-	0x7a, 0xa9, 0x74, 0x64, 0x93, 0x59, 0x4c, 0xc7, 0xd0, 0xbe, 0x50, 0x37, 0x5c, 0x16, 0xa9, 0x72,
-	0xc0, 0xbe, 0x5a, 0xbb, 0x60, 0xe6, 0xd1, 0x8f, 0x00, 0x77, 0x65, 0x27, 0xc6, 0x76, 0x77, 0xb6,
-	0x77, 0x84, 0xe3, 0x79, 0x6a, 0xd0, 0xaf, 0x48, 0x58, 0x1f, 0xe0, 0x4c, 0x09, 0x75, 0x9f, 0x61,
-	0x35, 0x15, 0x14, 0xcc, 0x3c, 0xf6, 0xcd, 0x8e, 0xe5, 0x38, 0xcc, 0xc2, 0x7f, 0xb7, 0x0e, 0xa0,
-	0xeb, 0x2b, 0x95, 0x98, 0xc7, 0x07, 0xd0, 0xd1, 0x4a, 0x25, 0x65, 0xab, 0x05, 0x7a, 0x32, 0x45,
-	0x95, 0xdb, 0x9c, 0x38, 0x1b, 0xa6, 0x48, 0xfb, 0x15, 0x09, 0x9b, 0x40, 0xff, 0xa7, 0x8a, 0x25,
-	0x1a, 0x9b, 0xf9, 0x11, 0x70, 0x56, 0x6b, 0x51, 0xb8, 0xe2, 0x4f, 0xf6, 0xb9, 0xa2, 0xc0, 0x91,
-	0xbc, 0x85, 0xae, 0x2e, 0xca, 0x28, 0xaa, 0x1e, 0x98, 0x04, 0xb6, 0x36, 0xbf, 0x0c, 0xb3, 0x2f,
-	0x30, 0x38, 0x91, 0x19, 0xd7, 0xff, 0xf3, 0xf6, 0x03, 0x90, 0xbc, 0xe4, 0xef, 0xab, 0x2c, 0x56,
-	0xf9, 0x72, 0x5d, 0xd8, 0x89, 0xd4, 0x83, 0xfc, 0xc1, 0x33, 0xf3, 0xba, 0xe1, 0x5b, 0xc8, 0xa6,
-	0x1b, 0x6a, 0x4c, 0x36, 0x86, 0xf6, 0x3c, 0xbd, 0x8c, 0xa5, 0xd1, 0x76, 0xfd, 0x1c, 0xa0, 0x32,
-	0xe0, 0x32, 0xba, 0x8c, 0xe5, 0x42, 0x49, 0xfe, 0x68, 0x7c, 0xc7, 0xd0, 0x4e, 0x10, 0x14, 0xae,
-	0x39, 0xc0, 0x0a, 0x6a, 0xca, 0x20, 0xaf, 0xc0, 0x5e, 0x61, 0xa3, 0x7e, 0x85, 0x04, 0x86, 0xa7,
-	0x3c, 0xf3, 0xf9, 0x43, 0xa8, 0xa3, 0xd4, 0x2c, 0xff, 0xa2, 0xc6, 0x60, 0x45, 0x87, 0x00, 0x3a,
-	0x87, 0xe7, 0xf7, 0x89, 0x31, 0x68, 0xfb, 0x15, 0x86, 0x32, 0xe8, 0x17, 0xc8, 0x64, 0x34, 0x07,
-	0xdb, 0xf6, 0x6b, 0x1c, 0x7b, 0x0f, 0x23, 0xef, 0x3a, 0x94, 0x82, 0xe3, 0xcc, 0xbc, 0xb5, 0x30,
-	0x0d, 0x1c, 0x40, 0x67, 0xa5, 0xe4, 0x3a, 0xb6, 0x8b, 0x2b, 0x10, 0x7b, 0xb9, 0x29, 0xc6, 0x33,
-	0x9c, 0x42, 0xff, 0x44, 0x6b, 0xa5, 0x17, 0xa9, 0xc1, 0xd8, 0x53, 0x92, 0x8a, 0x72, 0x27, 0x3d,
-	0xdf, 0xc2, 0x77, 0x7f, 0x1c, 0xe8, 0x2d, 0x78, 0x9a, 0x86, 0x82, 0xcf, 0x8f, 0x69, 0x1f, 0xba,
-	0x8b, 0xe0, 0xf4, 0x0a, 0xbf, 0x04, 0xe4, 0x45, 0x89, 0x94, 0x14, 0xa4, 0x41, 0x47, 0x30, 0x40,
-	0x54, 0xfe, 0x0f, 0x49, 0xb3, 0x4e, 0x05, 0x33, 0x8f, 0x38, 0x94, 0xc2, 0xb0, 0xa0, 0x8a, 0x3f,
-	0x08, 0x69, 0x6d, 0x70, 0xa8, 0x6b, 0xd3, 0x31, 0x10, 0xe4, 0xaa, 0x87, 0x49, 0x3a, 0xcf, 0x58,
-	0xd4, 0xee, 0xd0, 0x7d, 0x18, 0x21, 0x5b, 0xbb, 0x33, 0xd2, 0xa5, 0x2e, 0x8c, 0x4d, 0x79, 0x1b,
-	0x27, 0x44, 0x7a, 0x5b, 0x23, 0x81, 0x37, 0x23, 0x60, 0x23, 0x9b, 0xe7, 0x41, 0x76, 0xb7, 0x46,
-	0x30, 0x4f, 0x9f, 0x1e, 0x00, 0xc5, 0x48, 0x7d, 0xf5, 0x64, 0xb0, 0x85, 0x47, 0xfd, 0x90, 0xbe,
-	0x82, 0x7d, 0xe4, 0x9f, 0xad, 0x90, 0xec, 0x6d, 0x0f, 0xe1, 0x2b, 0x62, 0x5b, 0xaf, 0xae, 0x8d,
-	0x8c, 0x7e, 0x75, 0xcc, 0x27, 0xfa, 0xd3, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xee, 0x1f, 0x58,
-	0x90, 0xaf, 0x05, 0x00, 0x00,
+	// 800 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x55, 0xdf, 0x6f, 0xdb, 0x36,
+	0x10, 0x9e, 0x7f, 0xc6, 0xbe, 0x38, 0x0e, 0xc3, 0xa5, 0x99, 0x56, 0x6c, 0x85, 0xc1, 0x87, 0xc1,
+	0x2d, 0x86, 0x0e, 0xd1, 0x9e, 0x56, 0x6c, 0x0f, 0x8b, 0x5a, 0x04, 0x1e, 0xe2, 0x42, 0xa0, 0x32,
+	0xec, 0x31, 0x50, 0x24, 0x9a, 0x11, 0x62, 0x91, 0x01, 0x29, 0xcf, 0x08, 0xb0, 0xbf, 0x6a, 0x7f,
+	0xe1, 0x40, 0x4a, 0x94, 0x25, 0xd7, 0x18, 0xd0, 0xbe, 0xe9, 0xfb, 0xee, 0xe3, 0xdd, 0xf1, 0x78,
+	0x77, 0x82, 0x71, 0xae, 0xf9, 0xdb, 0x27, 0x25, 0x0b, 0x89, 0x7b, 0xb9, 0xe6, 0x64, 0x08, 0xfd,
+	0x30, 0x13, 0x9c, 0xfc, 0x00, 0xfd, 0x50, 0x0a, 0x8e, 0x5f, 0x01, 0x68, 0xa6, 0xfe, 0x66, 0xea,
+	0x36, 0xcb, 0x99, 0xd7, 0x99, 0x75, 0xe6, 0x3d, 0xda, 0x60, 0xc8, 0x1a, 0x20, 0x5c, 0xc7, 0xcf,
+	0x4c, 0x2d, 0xc4, 0x4a, 0xe2, 0x29, 0x74, 0x17, 0xa9, 0x55, 0x8d, 0x69, 0x77, 0x91, 0xe2, 0x97,
+	0x30, 0x12, 0x59, 0xf2, 0xf8, 0x31, 0xce, 0x99, 0xd7, 0xb5, 0x6c, 0x8d, 0xb1, 0x07, 0x47, 0x0f,
+	0x2c, 0x4e, 0x17, 0x39, 0xf7, 0x7a, 0xd6, 0xe4, 0xa0, 0xb1, 0xc4, 0x49, 0x22, 0x37, 0xa2, 0xf0,
+	0xfa, 0xb3, 0xce, 0xbc, 0x43, 0x1d, 0x24, 0x4b, 0x18, 0xdf, 0x48, 0x9e, 0x89, 0xbb, 0xc0, 0x8f,
+	0x0e, 0x05, 0x0b, 0x63, 0xad, 0xff, 0x92, 0x2a, 0x75, 0xc1, 0x1c, 0xc6, 0xe7, 0x30, 0xb8, 0x95,
+	0x8f, 0x4c, 0x54, 0xa1, 0x4a, 0x40, 0x7e, 0x75, 0xee, 0x22, 0x3f, 0xc0, 0x3f, 0x01, 0x3c, 0xd5,
+	0x37, 0xb1, 0x6e, 0x8f, 0xfd, 0xd3, 0xb7, 0xa6, 0x3c, 0xbb, 0x0b, 0xd2, 0x86, 0x84, 0x4c, 0x00,
+	0x6e, 0x24, 0x97, 0x9b, 0xc2, 0x64, 0xd3, 0x40, 0x91, 0x1f, 0x90, 0xdf, 0x5c, 0x59, 0xde, 0xc7,
+	0x45, 0xfc, 0xf9, 0xae, 0x23, 0x18, 0x51, 0x29, 0x73, 0x7b, 0xf8, 0x02, 0x86, 0x4a, 0xca, 0xbc,
+	0xbe, 0x6a, 0x85, 0x76, 0x4e, 0x8d, 0xca, 0xeb, 0xce, 0x7a, 0x7b, 0x4e, 0x0d, 0x4d, 0x1b, 0x12,
+	0x32, 0x83, 0xc9, 0x1f, 0x32, 0x13, 0xc6, 0xb1, 0xad, 0x1f, 0x82, 0x5e, 0xb2, 0xe2, 0x95, 0x57,
+	0xf3, 0x49, 0x7e, 0x69, 0x28, 0x4c, 0x49, 0x5e, 0xc3, 0x48, 0x55, 0x69, 0x54, 0x59, 0x9f, 0xd8,
+	0x00, 0x2e, 0x37, 0x5a, 0x9b, 0xc9, 0x3b, 0x38, 0xf9, 0x20, 0x0a, 0xa6, 0xbe, 0xe4, 0xec, 0x8f,
+	0x80, 0xca, 0x94, 0x7f, 0x4f, 0x8a, 0x4c, 0x96, 0x8f, 0xeb, 0xc1, 0x51, 0x2a, 0xb7, 0xe2, 0x8a,
+	0x15, 0xf6, 0x74, 0x87, 0x3a, 0x48, 0xde, 0xec, 0xa9, 0x4d, 0xb0, 0x0b, 0x18, 0x6e, 0x33, 0xf1,
+	0x71, 0x93, 0x5b, 0xf1, 0x80, 0x56, 0x88, 0xbc, 0x86, 0xd3, 0x50, 0x49, 0xae, 0x98, 0xd6, 0x57,
+	0xb1, 0xb2, 0x8e, 0x2f, 0x60, 0x78, 0xcf, 0x8a, 0x86, 0xb4, 0x44, 0xfb, 0xd2, 0xca, 0xeb, 0x93,
+	0x92, 0x57, 0xb1, 0x72, 0xd2, 0x12, 0x91, 0x07, 0x18, 0xdd, 0x3e, 0x28, 0xc6, 0xc2, 0xcc, 0xce,
+	0x47, 0x98, 0xf1, 0x68, 0x93, 0x24, 0x4c, 0xeb, 0x2a, 0xd5, 0x06, 0x83, 0xbf, 0xb7, 0xf6, 0x1b,
+	0xa9, 0x99, 0xba, 0xbb, 0xb4, 0x6d, 0xd9, 0xa1, 0x63, 0xc7, 0x5c, 0xb6, 0xcc, 0xbe, 0x6d, 0xce,
+	0x86, 0xd9, 0x27, 0x5b, 0x98, 0x5e, 0xb3, 0x82, 0xb2, 0x6d, 0xac, 0x52, 0x6d, 0x73, 0x7a, 0x05,
+	0xa0, 0x4a, 0xb8, 0xbb, 0x42, 0x83, 0x31, 0x43, 0xc0, 0x59, 0xb1, 0x94, 0x82, 0x3d, 0x57, 0xd1,
+	0x6a, 0x6c, 0x9e, 0x64, 0xbd, 0x49, 0x1e, 0x9f, 0xc3, 0xac, 0x1c, 0x39, 0xf7, 0x24, 0xee, 0x32,
+	0xb4, 0x36, 0x93, 0x39, 0x4c, 0xc3, 0x2c, 0x79, 0xfc, 0xf3, 0xe9, 0x5a, 0xae, 0xd3, 0xff, 0xad,
+	0xdb, 0xbb, 0x96, 0xd2, 0xa4, 0x78, 0x0e, 0x83, 0xdc, 0xc6, 0x2f, 0xab, 0x51, 0x02, 0x8c, 0xa1,
+	0xaf, 0xe2, 0xa2, 0x5c, 0x03, 0x03, 0x6a, 0xbf, 0xc9, 0x1c, 0x20, 0x91, 0x52, 0xa5, 0x99, 0x88,
+	0x0b, 0x66, 0x52, 0x5f, 0xcb, 0x24, 0x36, 0x8f, 0xea, 0x75, 0x66, 0x3d, 0x33, 0xbf, 0x0e, 0x93,
+	0x7f, 0xe0, 0x2c, 0x78, 0x88, 0x05, 0x67, 0xa6, 0x7d, 0x82, 0x15, 0x77, 0x29, 0x25, 0x52, 0xac,
+	0x32, 0xd7, 0xc3, 0x15, 0xc2, 0x97, 0x70, 0xbc, 0x73, 0xab, 0x5b, 0xa3, 0xb1, 0xe3, 0x69, 0x53,
+	0x83, 0xbf, 0x83, 0x71, 0x62, 0xfd, 0x07, 0x2b, 0xb7, 0x8e, 0x76, 0x04, 0xb9, 0xdf, 0x8f, 0x6e,
+	0xae, 0xf9, 0x12, 0x46, 0x99, 0x2e, 0x69, 0x1b, 0x7f, 0x44, 0x6b, 0xfc, 0x05, 0x19, 0x90, 0x39,
+	0x4c, 0x3e, 0x28, 0x25, 0xd5, 0x52, 0x97, 0xee, 0x3d, 0x38, 0xca, 0x35, 0xaf, 0xc7, 0x67, 0x4c,
+	0x1d, 0x7c, 0xf3, 0x6f, 0x0f, 0xc6, 0x4b, 0xa6, 0x75, 0xcc, 0xd9, 0xe2, 0x3d, 0x9e, 0xc0, 0x68,
+	0x19, 0x5d, 0xdf, 0x99, 0xa5, 0x8d, 0xbe, 0xaa, 0x91, 0x14, 0x1c, 0x75, 0xf0, 0x19, 0x9c, 0x18,
+	0x54, 0xaf, 0x4c, 0xd4, 0x6d, 0x53, 0x91, 0x1f, 0xa0, 0x1e, 0xc6, 0x30, 0xad, 0xa8, 0x6a, 0x97,
+	0xa1, 0xfe, 0x1e, 0x67, 0x74, 0x03, 0x7c, 0x0e, 0xc8, 0x70, 0xcd, 0x1d, 0x82, 0x86, 0x9f, 0xb0,
+	0x46, 0x7b, 0x84, 0x5f, 0xc0, 0x99, 0x61, 0x5b, 0x2b, 0x01, 0x8d, 0xb0, 0x07, 0xe7, 0x36, 0xbd,
+	0xbd, 0x69, 0x47, 0xe3, 0x83, 0x96, 0x28, 0xf0, 0x11, 0xe0, 0x6f, 0xe0, 0x6b, 0x6b, 0x69, 0xcf,
+	0x31, 0x3a, 0x3e, 0x64, 0x30, 0x51, 0x26, 0xf8, 0x02, 0xb0, 0x31, 0xb4, 0x27, 0x07, 0x9d, 0x38,
+	0xbe, 0xdd, 0xd8, 0x68, 0x7a, 0x80, 0x37, 0xfa, 0x53, 0xfc, 0x2d, 0xbc, 0x30, 0xfc, 0x27, 0x8d,
+	0x87, 0xd0, 0x61, 0x93, 0x39, 0x75, 0xe6, 0x0a, 0xd2, 0x7c, 0x4c, 0x84, 0xef, 0x87, 0xf6, 0x1f,
+	0xfb, 0xf3, 0x7f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x58, 0x2a, 0x51, 0xda, 0x70, 0x07, 0x00, 0x00,
 }

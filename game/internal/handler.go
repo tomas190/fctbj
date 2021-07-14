@@ -17,8 +17,8 @@ func init() {
 	handlerReg(&msg.JoinRoom_C2S{}, handleJoinRoom)
 
 	handlerReg(&msg.PlayerAction_C2S{}, handlePlayerAction)
-	handlerReg(&msg.SendWinMoney_C2S{}, handleSendWinMoney)
-	handlerReg(&msg.GetRewards_C2S{}, handleGetRewards)
+	handlerReg(&msg.ProgressBar_C2S{}, handleProgressBar)
+	handlerReg(&msg.PickUpGold_C2S{}, handlePickUpGold)
 
 	handlerReg(&msg.ChangeRoomCfg_S2C{}, handleChangeRoomCfg)
 }
@@ -176,44 +176,46 @@ func handlePlayerAction(args []interface{}) {
 	log.Debug("handlePlayerAction 玩家开始行动~ : %v", p.Id)
 
 	if ok {
-		log.Debug("玩家行動:%v", m)
-		// 临时使用 todo
 		rid, _ := hall.UserRoom.Load(p.Id)
 		v, _ := hall.RoomRecord.Load(rid)
 		if v != nil {
 			room := v.(*Room)
+			log.Debug("玩家下注金额:%v", m)
 			p.PlayerAction(CfgMoney[room.Config])
 		}
 	}
 }
 
-func handleSendWinMoney(args []interface{}) {
-	m := args[0].(*msg.SendWinMoney_C2S)
+func handleProgressBar(args []interface{}) {
+	m := args[0].(*msg.ProgressBar_C2S)
 	a := args[1].(gate.Agent)
 
 	p, ok := a.UserData().(*Player)
-	log.Debug("handleSendWinMoney 玩家发送赢钱~ : %v", p.Id)
+	log.Debug("handleProgressBar 获取进度条金币~ : %v", p.Id)
+
 
 	if ok {
-		log.Debug("玩家赢钱:%v", m)
-		// 临时使用 todo
-		rid, _ := hall.UserRoom.Load(p.Id)
-		v, _ := hall.RoomRecord.Load(rid)
-		if v != nil {
-			room := v.(*Room)
-			p.GetPlayerWinMoney(CfgMoney[room.Config])
-		}
+		log.Debug("玩家进度条金币:%v", m)
+		p.ProgressBetResp(1)
+		//p.ProgressBetResp(m.BetNum)
 	}
 }
 
-func handleGetRewards(args []interface{}) {
+func handlePickUpGold(args []interface{}) {
+	m := args[0].(*msg.PickUpGold_C2S)
 	a := args[1].(gate.Agent)
 
 	p, ok := a.UserData().(*Player)
-	log.Debug("handleGetRewards 玩家获取奖源~ : %v", p.Id)
+	log.Debug("handleProgressBar 获取进度条金币~ : %v", p.Id)
 
 	if ok {
-		p.GetRewardsInfo()
+		// 获取财神接金币金额
+		rate, money := GetGOLD(m.BetNum)
+
+		data := &msg.PickUpGold_S2C{}
+		data.Rate = rate
+		data.Money = money
+		p.SendMsg(data)
 	}
 }
 
@@ -225,15 +227,6 @@ func handleChangeRoomCfg(args []interface{}) {
 	log.Debug("handleChangeRoomCfg 修改区分配置~ : %v", p.Id)
 
 	if ok {
-		rid, _ := hall.UserRoom.Load(p.Id)
-		v, _ := hall.RoomRecord.Load(rid)
-		if v != nil {
-			room := v.(*Room)
-			room.Config = m.Config
-
-			// 发送配置数据
-			data := &msg.ChangeRoomCfg_S2C{}
-			p.SendMsg(data)
-		}
+		p.ChangeRoomCfg(m)
 	}
 }

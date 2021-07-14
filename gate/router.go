@@ -14,8 +14,8 @@ func init() {
 	msg.Processor.SetRouter(&msg.JoinRoom_C2S{}, game.ChanRPC)
 
 	msg.Processor.SetRouter(&msg.PlayerAction_C2S{}, game.ChanRPC)
-	msg.Processor.SetRouter(&msg.SendWinMoney_C2S{}, game.ChanRPC)
-	msg.Processor.SetRouter(&msg.GetRewards_C2S{}, game.ChanRPC)
+	msg.Processor.SetRouter(&msg.ProgressBar_C2S{}, game.ChanRPC)
+	msg.Processor.SetRouter(&msg.PickUpGold_C2S{}, game.ChanRPC)
 
 	msg.Processor.SetRouter(&msg.ChangeRoomCfg_C2S{}, game.ChanRPC)
 }
