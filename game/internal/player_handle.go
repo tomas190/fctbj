@@ -178,46 +178,67 @@ func (p *Player) ProgressBetResp(bet int32) {
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
-		room := v.(*Room)
+		//room := v.(*Room)
 		// 房间配置金额
-		money := CfgMoney[room.Config]
-		surMoney := GetSurPlusMoney()
-
+		//money := CfgMoney[room.Config]
+		//surMoney := GetSurPlusMoney()
+		log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
+		
 		var betNum int32
-		// 盈余池金额足够小游戏获奖时
-		if money*Rate >= surMoney {
-			if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-				betNum = 1
-				data := &msg.ProgressBar_S2C{}
-				data.ProBar = betNum
-				p.SendMsg(data)
-			} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
-				betNum = 2
-				data := &msg.ProgressBar_S2C{}
-				data.ProBar = betNum
-				p.SendMsg(data)
-			} else if p.ProgressBet >= 15 {
-				betNum = 6
-				// 发送进度条
-				data := &msg.ProgressBar_S2C{}
-				data.ProBar = betNum
-				p.SendMsg(data)
-				// 小游戏执行
-				p.GetRewardsInfo()
-			}
-		} else { // 盈余池金额不足够小游戏获奖
-			if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-				betNum = 1
-				data := &msg.ProgressBar_S2C{}
-				data.ProBar = betNum
-				p.SendMsg(data)
-			} else if p.ProgressBet >= 6 {
-				betNum = 2
-				data := &msg.ProgressBar_S2C{}
-				data.ProBar = betNum
-				p.SendMsg(data)
-			}
+		if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+			betNum = 1
+			data := &msg.ProgressBar_S2C{}
+			data.ProBar = betNum
+			p.SendMsg(data)
+		} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
+			betNum = 2
+			data := &msg.ProgressBar_S2C{}
+			data.ProBar = betNum
+			p.SendMsg(data)
+		} else if p.ProgressBet >= 10 {
+			betNum = 6
+			// 发送进度条
+			data := &msg.ProgressBar_S2C{}
+			data.ProBar = betNum
+			p.SendMsg(data)
+			// 小游戏执行
+			p.GetRewardsInfo()
 		}
+
+		//// 盈余池金额足够小游戏获奖时
+		//if money*Rate >= surMoney {
+		//	if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+		//		betNum = 1
+		//		data := &msg.ProgressBar_S2C{}
+		//		data.ProBar = betNum
+		//		p.SendMsg(data)
+		//	} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
+		//		betNum = 2
+		//		data := &msg.ProgressBar_S2C{}
+		//		data.ProBar = betNum
+		//		p.SendMsg(data)
+		//	} else if p.ProgressBet >= 15 {
+		//		betNum = 6
+		//		// 发送进度条
+		//		data := &msg.ProgressBar_S2C{}
+		//		data.ProBar = betNum
+		//		p.SendMsg(data)
+		//		// 小游戏执行
+		//		p.GetRewardsInfo()
+		//	}
+		//} else { // 盈余池金额不足够小游戏获奖
+		//	if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+		//		betNum = 1
+		//		data := &msg.ProgressBar_S2C{}
+		//		data.ProBar = betNum
+		//		p.SendMsg(data)
+		//	} else if p.ProgressBet >= 6 {
+		//		betNum = 2
+		//		data := &msg.ProgressBar_S2C{}
+		//		data.ProBar = betNum
+		//		p.SendMsg(data)
+		//	}
+		//}
 	}
 }
 
