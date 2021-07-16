@@ -203,6 +203,7 @@ func (p *Player) ProgressBetResp(bet int32) {
 			p.SendMsg(data)
 			// 小游戏执行
 			p.GetRewardsInfo()
+			p.ProgressBet = 0
 		}
 
 		//// 盈余池金额足够小游戏获奖时
