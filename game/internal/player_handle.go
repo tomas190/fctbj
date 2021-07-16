@@ -183,7 +183,7 @@ func (p *Player) ProgressBetResp(bet int32) {
 		//money := CfgMoney[room.Config]
 		//surMoney := GetSurPlusMoney()
 		log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
-		
+
 		var betNum int32
 		if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
 			betNum = 1
