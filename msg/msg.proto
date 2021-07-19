@@ -84,6 +84,7 @@ message PlayerAction_C2S {
 
 message PlayerAction_S2C {
     int32 winNum = 1;
+    double account = 2; // 玩家最新金额
 }
 
 message ProgressBar_C2S {
@@ -105,6 +106,7 @@ message GetRewards_S2C {
     int32 rewardsNum = 1;
     double getMoney = 2;
     ThreePig luckyPig = 3;
+    double account = 4; // 玩家最新金额
 }
 
 // 财神接金币
@@ -116,6 +118,7 @@ message PickUpGold_C2S {
 message PickUpGold_S2C {
     double money = 1;
     int32 rate = 2;
+    double account = 3; // 玩家最新金额
 }
 
 message coordinate {

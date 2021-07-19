@@ -209,13 +209,7 @@ func handlePickUpGold(args []interface{}) {
 	log.Debug("handleProgressBar 获取进度条金币~ : %v", p.Id)
 
 	if ok {
-		// 获取财神接金币金额
-		rate, money := GetGOLD(m.BetNum)
-
-		data := &msg.PickUpGold_S2C{}
-		data.Rate = rate
-		data.Money = money
-		p.SendMsg(data)
+		p.GodPickUpGold(m.BetNum)
 	}
 }
 
