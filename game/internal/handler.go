@@ -177,7 +177,9 @@ func handlePlayerAction(args []interface{}) {
 
 	if ok {
 		rid, _ := hall.UserRoom.Load(p.Id)
+		log.Debug("UserRoom.Load:%v", rid)
 		v, _ := hall.RoomRecord.Load(rid)
+		log.Debug("RoomRecord.Load:%v", v)
 		if v != nil {
 			room := v.(*Room)
 			log.Debug("玩家下注金额:%v", m)
@@ -192,7 +194,6 @@ func handleProgressBar(args []interface{}) {
 
 	p, ok := a.UserData().(*Player)
 	log.Debug("handleProgressBar 获取进度条金币~ : %v", p.Id)
-
 
 	if ok {
 		log.Debug("玩家进度条金币:%v", m)

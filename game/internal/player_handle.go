@@ -83,8 +83,9 @@ func (p *Player) PlayerAction(downBet float64) {
 
 	// 先判断盈余池是否有钱，然后在处理玩家是否赢钱
 	surMoney := GetSurPlusMoney()
+	log.Debug("盈余池的金额:%v", surMoney)
 	var goldNum int32
-	if surMoney > 0 {
+	if surMoney >= 0 { //todo
 		goldNum = p.randGoldNum()
 		if goldNum > 0 {
 			// 玩家赢钱结算
@@ -126,6 +127,7 @@ func (p *Player) PlayerAction(downBet float64) {
 		}
 	}
 
+	log.Debug("玩家当前winNum：%v", goldNum)
 	data := &msg.PlayerAction_S2C{}
 	data.WinNum = goldNum
 	data.Account = p.Account
@@ -135,9 +137,9 @@ func (p *Player) PlayerAction(downBet float64) {
 func (p *Player) randGoldNum() int32 {
 	var goldNum int32
 	num := RandInRange(0, 100)
-	if num >= 0 && num <= 65 {
+	if num >= 0 && num <= 50 { //65
 		goldNum = 0
-	} else if num >= 66 && num <= 85 {
+	} else if num >= 51 && num <= 85 {
 		goldNum = 1
 	} else if num >= 86 && num <= 95 {
 		goldNum = 2
