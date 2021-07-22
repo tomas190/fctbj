@@ -85,47 +85,47 @@ func (p *Player) PlayerAction(downBet float64) {
 	surMoney := GetSurPlusMoney()
 	log.Debug("盈余池的金额:%v", surMoney)
 	var goldNum int32
-	if surMoney >= 0 { //todo
-		goldNum = p.randGoldNum()
-		if goldNum > 0 {
-			// 玩家赢钱结算
-			winMoney := downBet * float64(goldNum)
-			pac := packageTax[p.PackageId]
-			taxR := pac / 100
-			tax := winMoney * taxR
-			resultMoney := winMoney - tax
+	//if surMoney >= 0 { //todo
+	goldNum = p.randGoldNum()
+	if goldNum > 0 {
+		// 玩家赢钱结算
+		winMoney := downBet * float64(goldNum)
+		pac := packageTax[p.PackageId]
+		taxR := pac / 100
+		tax := winMoney * taxR
+		resultMoney := winMoney - tax
 
-			p.Account += resultMoney
-			p.WinResultMoney = winMoney
+		p.Account += resultMoney
+		p.WinResultMoney = winMoney
 
-			log.Debug("获取赢钱的金额:%v", winMoney)
+		log.Debug("获取赢钱的金额:%v", winMoney)
 
-			nowTime := time.Now().Unix() // todo
-			p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
-			winReason := "发财推币机赢钱"
-			c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
+		nowTime := time.Now().Unix() // todo
+		p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
+		winReason := "发财推币机赢钱"
+		c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
 
-			// 跑马灯 todo
-			if resultMoney > PaoMaDeng {
-				c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
-			}
-
-			// 插入盈余数据 todo
-			sur := &SurplusPoolDB{}
-			sur.UpdateTime = time.Now()
-			sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-			sur.Rid = roomId
-			sur.PlayerNum = LoadPlayerCount()
-			surPool := FindSurplusPool()
-			if surPool != nil {
-				sur.HistoryWin = surPool.HistoryWin
-				sur.HistoryLose = surPool.HistoryLose
-			}
-			sur.HistoryWin += Decimal(p.WinResultMoney)
-			sur.TotalWinMoney += Decimal(p.WinResultMoney)
-			InsertSurplusPool(sur)
+		// 跑马灯 todo
+		if resultMoney > PaoMaDeng {
+			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
 		}
+
+		// 插入盈余数据 todo
+		sur := &SurplusPoolDB{}
+		sur.UpdateTime = time.Now()
+		sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
+		sur.Rid = roomId
+		sur.PlayerNum = LoadPlayerCount()
+		surPool := FindSurplusPool()
+		if surPool != nil {
+			sur.HistoryWin = surPool.HistoryWin
+			sur.HistoryLose = surPool.HistoryLose
+		}
+		sur.HistoryWin += Decimal(p.WinResultMoney)
+		sur.TotalWinMoney += Decimal(p.WinResultMoney)
+		InsertSurplusPool(sur)
 	}
+	//}
 
 	log.Debug("玩家当前winNum：%v", goldNum)
 	data := &msg.PlayerAction_S2C{}
