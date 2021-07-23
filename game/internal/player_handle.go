@@ -26,8 +26,6 @@ func (p *Player) PlayerJoinRoom() {
 		// 插入玩家信息 todo
 		p.FindPlayerInfo()
 
-		log.Debug("发送进入房间!")
-
 		//返回前端房间信息
 		data := &msg.JoinRoom_S2C{}
 		data.RoomData = r.RespRoomData()

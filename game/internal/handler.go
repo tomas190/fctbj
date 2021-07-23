@@ -163,7 +163,7 @@ func handleJoinRoom(args []interface{}) {
 	log.Debug("handleJoinRoom 玩家加入房间~ : %v", p.Id)
 
 	if ok {
-		log.Debug("加入房间:%v", m)
+		log.Debug("接收handleJoinRoom加入房间:%v", m)
 		p.PlayerJoinRoom()
 	}
 }
@@ -176,15 +176,8 @@ func handlePlayerAction(args []interface{}) {
 	log.Debug("handlePlayerAction 玩家开始行动~ : %v", p.Id)
 
 	if ok {
-		rid, _ := hall.UserRoom.Load(p.Id)
-		log.Debug("UserRoom.Load:%v", rid)
-		v, _ := hall.RoomRecord.Load(rid)
-		log.Debug("RoomRecord.Load:%v", v)
-		if v != nil {
-			room := v.(*Room)
-			log.Debug("玩家下注金额:%v", m)
-			p.PlayerAction(CfgMoney[room.Config])
-		}
+		log.Debug("接收handlePlayerAction开始行动:%v", m)
+		p.PlayerAction(m.DownBet)
 	}
 }
 
@@ -196,9 +189,8 @@ func handleProgressBar(args []interface{}) {
 	log.Debug("handleProgressBar 获取进度条金币~ : %v", p.Id)
 
 	if ok {
-		log.Debug("玩家进度条金币:%v", m)
-		p.ProgressBetResp(1)
-		//p.ProgressBetResp(m.BetNum)
+		log.Debug("接收handleProgressBar:%v", m)
+		p.ProgressBetResp(m.BetNum)
 	}
 }
 
@@ -207,9 +199,10 @@ func handlePickUpGold(args []interface{}) {
 	a := args[1].(gate.Agent)
 
 	p, ok := a.UserData().(*Player)
-	log.Debug("handleProgressBar 获取进度条金币~ : %v", p.Id)
+	log.Debug("handleProgressBar 获取财神接金币~ : %v", p.Id)
 
 	if ok {
+		log.Debug("接收handlePickUpGold财神接金币:%v", m)
 		p.GodPickUpGold(m.BetNum)
 	}
 }
@@ -222,6 +215,7 @@ func handleChangeRoomCfg(args []interface{}) {
 	log.Debug("handleChangeRoomCfg 修改区分配置~ : %v", p.Id)
 
 	if ok {
+		log.Debug("接收handleChangeRoomCfg区分配置:%v", m)
 		p.ChangeRoomCfg(m)
 	}
 }
