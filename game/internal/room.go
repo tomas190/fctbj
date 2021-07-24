@@ -37,10 +37,10 @@ func (r *Room) Init() {
 func (r *Room) RespRoomData() *msg.RoomData {
 	rd := &msg.RoomData{}
 	rd.RoomId = r.RoomId
-	rd.PlayerInfo = new(msg.PlayerInfo)
-	rd.PlayerInfo.Id = r.Player.Id
-	rd.PlayerInfo.Account = r.Player.Account
-	rd.PlayerInfo.NickName = r.Player.NickName
-	rd.PlayerInfo.HeadImg = r.Player.HeadImg
+	//rd.PlayerInfo = new(msg.PlayerInfo)
+	//rd.PlayerInfo.Id = r.Player.Id
+	//rd.PlayerInfo.Account = r.Player.Account
+	//rd.PlayerInfo.NickName = r.Player.NickName
+	//rd.PlayerInfo.HeadImg = r.Player.HeadImg
 	return rd
 }
