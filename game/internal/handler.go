@@ -190,7 +190,8 @@ func handleProgressBar(args []interface{}) {
 
 	if ok {
 		log.Debug("接收handleProgressBar:%v", m)
-		p.ProgressBetResp(m.BetNum)
+		//p.ProgressBetResp(m.BetNum)
+		p.ProgressBetResp(1)
 	}
 }
 
