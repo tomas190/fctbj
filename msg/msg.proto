@@ -56,14 +56,9 @@ message Logout_S2C {
 }
 
 
-message PlayerData {
-    PlayerInfo playerInfo = 1;
-
-}
-
 message RoomData {
     string roomId = 1;
-    repeated PlayerData playerData = 2;
+    PlayerInfo playerInfo = 2;
 }
 
 message JoinRoom_C2S {
@@ -85,6 +80,7 @@ message PlayerAction_C2S {
 message PlayerAction_S2C {
     int32 winNum = 1;
     double account = 2; // 玩家最新金额
+    double tax = 3; // 税收
 }
 
 message ProgressBar_C2S {

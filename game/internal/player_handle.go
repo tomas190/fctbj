@@ -84,12 +84,14 @@ func (p *Player) PlayerAction(downBet float64) {
 	log.Debug("盈余池的金额:%v", surMoney)
 	var goldNum int32
 	//if surMoney >= 0 { //todo
+	var taxRate float64
 	goldNum = p.randGoldNum()
 	if goldNum > 0 {
 		// 玩家赢钱结算
 		winMoney := downBet * float64(goldNum)
 		pac := packageTax[p.PackageId]
 		taxR := pac / 100
+		taxRate = taxR
 		tax := winMoney * taxR
 		resultMoney := winMoney - tax
 
@@ -129,6 +131,7 @@ func (p *Player) PlayerAction(downBet float64) {
 	data := &msg.PlayerAction_S2C{}
 	data.WinNum = goldNum
 	data.Account = p.Account
+	data.Tax = taxRate
 	p.SendMsg(data)
 }
 
