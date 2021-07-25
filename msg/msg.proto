@@ -71,6 +71,8 @@ message JoinRoom_S2C {
 
 message EnterRoom_S2C {
     RoomData roomData = 1;
+    bool isChange = 2;
+    repeated coordinate coordinates = 3;
 }
 
 message PlayerAction_C2S {

@@ -15,7 +15,7 @@ func (m *Module) OnInit() {
 	m.Gate = &gate.Gate{
 		MaxConnNum:      conf.Server.MaxConnNum,
 		PendingWriteNum: conf.PendingWriteNum,
-		MaxMsgLen:       2 * 2048 * 2048,
+		MaxMsgLen:       4 * 2048 * 2048,
 		WSAddr:          conf.Server.WSAddr,
 		HTTPTimeout:     conf.HTTPTimeout,
 		CertFile:        conf.Server.CertFile,

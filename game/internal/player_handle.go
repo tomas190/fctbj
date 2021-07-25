@@ -12,9 +12,16 @@ func (p *Player) PlayerJoinRoom() {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil { // 当前玩家已经存在房间
 		room := v.(*Room)
-		roomData := room.RespRoomData()
 		enter := &msg.EnterRoom_S2C{}
-		enter.RoomData = roomData
+		enter.RoomData = room.RespRoomData()
+		// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
+		if p.ConfigPlace[room.Config] != nil {
+			enter.IsChange = true
+			enter.Coordinates = p.ConfigPlace[room.Config]
+		} else {
+			enter.IsChange = false
+			enter.Coordinates = p.ConfigPlace[room.Config]
+		}
 		p.SendMsg(enter)
 	} else {
 		// 创建房间
@@ -222,72 +229,73 @@ func (p *Player) GetRewardsInfo() {
 func (p *Player) ProgressBetResp(bet int32) {
 	p.ProgressBet += bet
 
-	rid, _ := hall.UserRoom.Load(p.Id)
-	v, _ := hall.RoomRecord.Load(rid)
-	if v != nil {
-		//room := v.(*Room)
-		// 房间配置金额
-		//money := CfgMoney[room.Config]
-		//surMoney := GetSurPlusMoney()
-		log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
+	log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
 
-		var betNum int32
-		if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-			betNum = 1
-			data := &msg.ProgressBar_S2C{}
-			data.ProBar = betNum
-			p.SendMsg(data)
-		} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
-			betNum = 2
-			data := &msg.ProgressBar_S2C{}
-			data.ProBar = betNum
-			p.SendMsg(data)
-		} else if p.ProgressBet >= 10 {
-			betNum = 6
-			// 发送进度条
-			data := &msg.ProgressBar_S2C{}
-			data.ProBar = betNum
-			p.SendMsg(data)
-			// 小游戏执行
-			p.GetRewardsInfo()
-			p.ProgressBet = 0
-		}
-
-		//// 盈余池金额足够小游戏获奖时
-		//if money*Rate >= surMoney {
-		//	if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-		//		betNum = 1
-		//		data := &msg.ProgressBar_S2C{}
-		//		data.ProBar = betNum
-		//		p.SendMsg(data)
-		//	} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
-		//		betNum = 2
-		//		data := &msg.ProgressBar_S2C{}
-		//		data.ProBar = betNum
-		//		p.SendMsg(data)
-		//	} else if p.ProgressBet >= 15 {
-		//		betNum = 6
-		//		// 发送进度条
-		//		data := &msg.ProgressBar_S2C{}
-		//		data.ProBar = betNum
-		//		p.SendMsg(data)
-		//		// 小游戏执行
-		//		p.GetRewardsInfo()
-		//	}
-		//} else { // 盈余池金额不足够小游戏获奖
-		//	if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-		//		betNum = 1
-		//		data := &msg.ProgressBar_S2C{}
-		//		data.ProBar = betNum
-		//		p.SendMsg(data)
-		//	} else if p.ProgressBet >= 6 {
-		//		betNum = 2
-		//		data := &msg.ProgressBar_S2C{}
-		//		data.ProBar = betNum
-		//		p.SendMsg(data)
-		//	}
-		//}
+	var betNum int32
+	if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+		betNum = 1
+		data := &msg.ProgressBar_S2C{}
+		data.ProBar = betNum
+		p.SendMsg(data)
+	} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
+		betNum = 2
+		data := &msg.ProgressBar_S2C{}
+		data.ProBar = betNum
+		p.SendMsg(data)
+	} else if p.ProgressBet >= 10 {
+		betNum = 6
+		// 发送进度条
+		data := &msg.ProgressBar_S2C{}
+		data.ProBar = betNum
+		p.SendMsg(data)
+		// 小游戏执行
+		p.GetRewardsInfo()
+		p.ProgressBet = 0
 	}
+
+	//rid, _ := hall.UserRoom.Load(p.Id)
+	//v, _ := hall.RoomRecord.Load(rid)
+	//if v != nil {
+	//	room := v.(*Room)
+	//	// 房间配置金额
+	//	money := CfgMoney[room.Config]
+	//	surMoney := GetSurPlusMoney()
+	//
+	//	// 盈余池金额足够小游戏获奖时
+	//	if money*Rate >= surMoney {
+	//		if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+	//			betNum = 1
+	//			data := &msg.ProgressBar_S2C{}
+	//			data.ProBar = betNum
+	//			p.SendMsg(data)
+	//		} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
+	//			betNum = 2
+	//			data := &msg.ProgressBar_S2C{}
+	//			data.ProBar = betNum
+	//			p.SendMsg(data)
+	//		} else if p.ProgressBet >= 15 {
+	//			betNum = 6
+	//			// 发送进度条
+	//			data := &msg.ProgressBar_S2C{}
+	//			data.ProBar = betNum
+	//			p.SendMsg(data)
+	//			// 小游戏执行
+	//			p.GetRewardsInfo()
+	//		}
+	//	} else { // 盈余池金额不足够小游戏获奖
+	//		if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+	//			betNum = 1
+	//			data := &msg.ProgressBar_S2C{}
+	//			data.ProBar = betNum
+	//			p.SendMsg(data)
+	//		} else if p.ProgressBet >= 6 {
+	//			betNum = 2
+	//			data := &msg.ProgressBar_S2C{}
+	//			data.ProBar = betNum
+	//			p.SendMsg(data)
+	//		}
+	//	}
+	//}
 }
 
 func (p *Player) GodPickUpGold(betNum int32) {

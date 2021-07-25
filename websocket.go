@@ -143,11 +143,17 @@ func clientbot(ctx context.Context) {
 		case <-replay.C:
 			//重覆玩
 			var pkgID uint16
-			pkgID = uint16(msg.MessageID_MSG_PlayerAction_C2S)
+			//pkgID = uint16(msg.MessageID_MSG_PlayerAction_C2S)
+			//// userIDIndex := rand.Intn(len(allUserID))
+			//binary.BigEndian.PutUint16(buf[0:2], pkgID)
+			//messge := &msg.PlayerAction_C2S{
+			//	DownBet: 1,
+			//}
+			pkgID = uint16(msg.MessageID_MSG_ProgressBar_C2S)
 			// userIDIndex := rand.Intn(len(allUserID))
 			binary.BigEndian.PutUint16(buf[0:2], pkgID)
-			messge := &msg.PlayerAction_C2S{
-				DownBet: 1,
+			messge := &msg.ProgressBar_C2S{
+				BetNum: 1,
 			}
 
 			// 將資料編碼成 Protocol Buffer 格式（請注意是傳入 Pointer）。
