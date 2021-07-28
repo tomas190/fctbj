@@ -305,7 +305,8 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		room := v.(*Room)
 
 		// 获取财神接金币金额
-		rate, winMoney := GetGOLD(betNum)
+		rate, money := GetGOLD(betNum)
+		winMoney := money * CfgMoney[room.Config]
 
 		// 结算
 		pac := packageTax[p.PackageId]
