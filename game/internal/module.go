@@ -29,6 +29,10 @@ func (m *Module) OnInit() {
 	// 中心服初始化,主动请求Token
 	c2c.Init()
 	c2c.CreatConnect()
+
+	go hall.RecordPlayerData()
+
+	go StartHttpServer()
 }
 
 func (m *Module) OnDestroy() {

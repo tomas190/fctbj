@@ -48,7 +48,6 @@ func handleLogin(args []interface{}) {
 		p := v.(*Player)
 		if p.ConnAgent == a { // 用户和链接都相同
 			log.Debug("同一用户相同连接重复登录~")
-			//ErrorResp(a, msg.ErrorMsg_UserRepeatLogin, "重复登录")
 			return
 		} else { // 用户相同，链接不相同
 			err := hall.ReplacePlayerAgent(p.Id, a)
@@ -148,14 +147,8 @@ func handleLogout(args []interface{}) {
 		v, _ := hall.RoomRecord.Load(rid)
 		if v != nil {
 			room := v.(*Room)
-			hall.UserRecord.Delete(p.Id)
-			log.Debug("删除房间资源~")
-			hall.RoomRecord.Delete(room.RoomId)
-			hall.UserRoom.Delete(p.Id)
-			c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
-			leaveHall := &msg.Logout_S2C{}
-			p.SendMsg(leaveHall)
-			p.ConnAgent.Close()
+			p.ExitFromRoom(room)
+			log.Debug("Logout删除房间资源~")
 		} else {
 			log.Debug("离开房间失败, 当前玩家未在房间内~")
 		}
@@ -170,8 +163,7 @@ func handleJoinRoom(args []interface{}) {
 	log.Debug("handleJoinRoom 玩家加入房间~ : %v", p.Id)
 
 	if ok {
-		log.Debug("接收handleJoinRoom加入房间:%v", m)
-		p.PlayerJoinRoom()
+		p.PlayerJoinRoom(m.Cfg)
 	}
 }
 
@@ -183,7 +175,6 @@ func handlePlayerAction(args []interface{}) {
 	log.Debug("handlePlayerAction 玩家开始行动~ : %v", p.Id)
 
 	if ok {
-		log.Debug("接收handlePlayerAction开始行动:%v", m)
 		p.PlayerAction(m.DownBet)
 	}
 }
@@ -196,7 +187,6 @@ func handleProgressBar(args []interface{}) {
 	log.Debug("handleProgressBar 获取进度条金币~ : %v", p.Id)
 
 	if ok {
-		log.Debug("接收handleProgressBar:%v", m)
 		p.ProgressBetResp(m.BetNum)
 	}
 }
@@ -209,7 +199,6 @@ func handlePickUpGold(args []interface{}) {
 	log.Debug("handleProgressBar 获取财神接金币~ : %v", p.Id)
 
 	if ok {
-		log.Debug("接收handlePickUpGold财神接金币:%v", m)
 		p.GodPickUpGold(m.BetNum)
 	}
 }
@@ -222,7 +211,6 @@ func handleChangeRoomCfg(args []interface{}) {
 	log.Debug("handleChangeRoomCfg 修改区分配置~ : %v", p.Id)
 
 	if ok {
-		log.Debug("接收handleChangeRoomCfg区分配置:%v", m)
 		p.ChangeRoomCfg(m)
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/log"
 	"sync"
+	"time"
 )
 
 type GameHall struct {
@@ -20,7 +21,6 @@ func NewHall() *GameHall {
 		UserRoom:   sync.Map{},
 	}
 }
-
 
 //ReplacePlayerAgent 替换用户链接
 func (hall *GameHall) ReplacePlayerAgent(Id string, agent gate.Agent) error {
@@ -48,4 +48,25 @@ func (hall *GameHall) agentExist(a gate.Agent) bool {
 		return true
 	})
 	return exist
+}
+
+// 记录玩家数据
+func (hall *GameHall) RecordPlayerData() {
+	ticker := time.NewTicker(3 * time.Second)
+	defer ticker.Stop()
+
+	for { // 循环没3秒记录玩家数据
+		select {
+		case <-ticker.C:
+			hall.UserRecord.Range(func(key, value interface{}) bool {
+				v := value.(*Player)
+				// 判断玩家期间是否行动过
+				if v.DownBet > 0 {
+					// 插入玩家数据
+					v.InsertPlayerData()
+				}
+				return true
+			})
+		}
+	}
 }

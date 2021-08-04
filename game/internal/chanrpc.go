@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fctbj/msg"
 	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/log"
 )
@@ -30,14 +29,8 @@ func rpcCloseAgent(args []interface{}) {
 		v, _ := hall.RoomRecord.Load(rid)
 		if v != nil {
 			room := v.(*Room)
-			hall.UserRecord.Delete(p.Id)
-			log.Debug("删除房间资源~")
-			hall.RoomRecord.Delete(room.RoomId)
-			hall.UserRoom.Delete(p.Id)
-			c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
-			leaveHall := &msg.Logout_S2C{}
-			p.SendMsg(leaveHall)
-			p.ConnAgent.Close()
+			p.ExitFromRoom(room)
+			log.Debug("Agent删除房间资源~")
 		}
 	}
 }

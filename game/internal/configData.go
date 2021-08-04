@@ -8,9 +8,10 @@ import (
 )
 
 const (
-	RECODE_UserMoneyNotEnough = "1001" // 玩家金额不足
-	RECODE_RoomCfgMoneyERROR  = "1002" // 房间配置金额不对
-	RECODE_SendWinMoneyERROR  = "1003" // 发送赢钱金额错误
+	RECODE_PlayerInfoIDIsNull = "1001" // 玩家ID为空
+	RECODE_UserMoneyNotEnough = "1002" // 玩家金额不足
+	RECODE_RoomCfgMoneyERROR  = "1003" // 房间配置金额不对
+	RECODE_SendWinMoneyERROR  = "1004" // 发送赢钱金额错误
 )
 
 var CfgMoney = map[string]float64{

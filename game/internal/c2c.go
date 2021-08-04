@@ -647,7 +647,7 @@ func (c4c *Conn4Center) ServerLoginCenter() {
 //UserLoginCenter 用户登录
 func (c4c *Conn4Center) UserLoginCenter(userId string, password string, token string, callback func(data *Player)) {
 	if !c4c.LoginStat {
-		log.Debug("<-------- caidaxiao not ready~!!! -------->")
+		log.Debug("<-------- fctbj not ready~!!! -------->")
 		return
 	}
 	baseData := &BaseMessage{}
@@ -715,7 +715,7 @@ func (c4c *Conn4Center) UserSyncWinScore(p *Player, timeUnix int64, roundId, rea
 	userWin.Info.ID = id
 	userWin.Info.LockMoney = 0
 	userWin.Info.Money = p.WinResultMoney
-	userWin.Info.BetMoney = betMoney
+	userWin.Info.BetMoney = 0
 	userWin.Info.Order = bson.NewObjectId().Hex()
 
 	userWin.Info.PayReason = reason

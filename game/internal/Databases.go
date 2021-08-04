@@ -21,6 +21,8 @@ const (
 	settleLoseMoney = "settleLoseMoney"
 	surPlusDB       = "surPlusDB"
 	surPool         = "surplus-pool"
+	accessDB        = "accessData"
+	StatementDB     = "StatementDB"
 )
 
 // 连接数据库集合的函数 传入集合 默认连接IM数据库
@@ -174,6 +176,11 @@ func InsertSurplusPool(sur *SurplusPoolDB) {
 	SurPool.CoefficientToTotalPlayer = sur.PlayerNum * 0
 	SurPool.PlayerLoseRateAfterSurplusPool = 0.7
 	SurPool.DataCorrection = 0
+	SurPool.PlayerWinRate = 0.6
+	SurPool.RandomCountAfterWin = 0
+	SurPool.RandomCountAfterLose = 0
+	SurPool.RandomPercentageAfterWin = 0.6
+	SurPool.RandomPercentageAfterLose = 0.6
 	FindSurPool(SurPool)
 }
 
@@ -189,6 +196,11 @@ type SurPool struct {
 	SurplusPool                    float64 `json:"surplus_pool" bson:"surplus_pool"`
 	PlayerLoseRateAfterSurplusPool float64 `json:"player_lose_rate_after_surplus_pool" bson:"player_lose_rate_after_surplus_pool"`
 	DataCorrection                 float64 `json:"data_correction" bson:"data_correction"`
+	PlayerWinRate                  float64 `json:"player_win_rate" bson:"player_win_rate"`
+	RandomCountAfterWin            float64 `json:"random_count_after_win" bson:"random_count_after_win"`
+	RandomCountAfterLose           float64 `json:"random_count_after_lose" bson:"random_count_after_lose"`
+	RandomPercentageAfterWin       float64 `json:"random_percentage_after_win" bson:"random_percentage_after_win"`
+	RandomPercentageAfterLose      float64 `json:"random_percentage_after_lose" bson:"random_percentage_after_lose"`
 }
 
 func FindSurPool(SurP *SurPool) {
@@ -208,6 +220,11 @@ func FindSurPool(SurP *SurPool) {
 		SurP.CoefficientToTotalPlayer = sur.CoefficientToTotalPlayer
 		SurP.PlayerLoseRateAfterSurplusPool = sur.PlayerLoseRateAfterSurplusPool
 		SurP.DataCorrection = sur.DataCorrection
+		SurP.PlayerWinRate = sur.PlayerWinRate
+		SurP.RandomCountAfterWin = sur.RandomCountAfterWin
+		SurP.RandomCountAfterLose = sur.RandomCountAfterLose
+		SurP.RandomPercentageAfterWin = sur.RandomPercentageAfterWin
+		SurP.RandomPercentageAfterLose = sur.RandomPercentageAfterLose
 		UpdateSurPool(SurP)
 	}
 }
@@ -239,6 +256,46 @@ func UpdateSurPool(sur *SurPool) {
 	log.Debug("<----- 更新SurPool数据成功 ~ ----->")
 }
 
+//GetDownRecodeList 获取盈余池数据
+func GetSurPoolData(selector bson.M) (SurPool, error) {
+	s, c := connect(dbName, surPool)
+	defer s.Close()
+
+	var wts SurPool
+
+	err := c.Find(selector).One(&wts)
+	if err != nil {
+		return wts, err
+	}
+	return wts, nil
+}
+
+func GetFindSurPool() *SurPool {
+	s, c := connect(dbName, surPool)
+	defer s.Close()
+
+	sur := &SurPool{}
+	err := c.Find(nil).One(sur)
+	if err != nil {
+		log.Debug("获取GetFindSurPool数据为空:%v", err)
+		sur.GameId = conf.Server.GameID
+		sur.TotalPlayer = LoadPlayerCount()
+		sur.FinalPercentage = 0.5
+		sur.PercentageToTotalWin = 1
+		sur.CoefficientToTotalPlayer = sur.TotalPlayer * 0
+		sur.PlayerLoseRateAfterSurplusPool = 0.7
+		sur.DataCorrection = 0
+		sur.PlayerWinRate = 0.6
+		sur.RandomCountAfterWin = 0
+		sur.RandomCountAfterLose = 0
+		sur.RandomPercentageAfterWin = 0.6
+		sur.RandomPercentageAfterLose = 0.6
+		InsertSurPool(sur)
+		return sur
+	}
+	return sur
+}
+
 func GetSurPlusMoney() float64 {
 	s, c := connect(dbName, surPool)
 	defer s.Close()
@@ -252,4 +309,91 @@ func GetSurPlusMoney() float64 {
 		return 0
 	}
 	return sur.SurplusPool
+}
+
+// 玩家的记录
+type PlayerDownBetRecode struct {
+	Id              string  `json:"id" bson:"id"`                             // 玩家Id
+	GameId          string  `json:"game_id" bson:"game_id"`                   // gameId
+	RoundId         string  `json:"round_id" bson:"round_id"`                 // 随机Id
+	RoomId          string  `json:"room_id" bson:"room_id"`                   // 所在房间
+	DownBetInfo     float64 `json:"down_bet_info" bson:"down_bet_info"`       // 玩家下注的金额
+	DownBetTime     int64   `json:"down_bet_time" bson:"down_bet_time"`       // 下注时间
+	StartTime       int64   `json:"start_time" bson:"start_time"`             // 开始时间
+	EndTime         int64   `json:"end_time" bson:"end_time"`                 // 结束时间
+	SettlementFunds float64 `json:"settlement_funds" bson:"settlement_funds"` // 当局输赢结果(税后)
+	SpareCash       float64 `json:"spare_cash" bson:"spare_cash"`             // 剩余金额
+	TaxRate         float64 `json:"tax_rate" bson:"tax_rate"`                 // 税率
+}
+
+//InsertAccessData 插入运营数据接入
+func InsertAccessData(data *PlayerDownBetRecode) {
+	s, c := connect(dbName, accessDB)
+	defer s.Close()
+
+	log.Debug("AccessData 数据: %v", data)
+	err := c.Insert(data)
+	if err != nil {
+		log.Error("<----- 运营接入数据插入失败 ~ ----->:%v", err)
+		return
+	}
+	log.Debug("<----- 运营接入数据插入成功 ~ ----->")
+}
+
+//GetDownRecodeList 获取运营数据接入
+func GetDownRecodeList(page, limit int, selector bson.M, sortBy string) ([]PlayerDownBetRecode, int, error) {
+	s, c := connect(dbName, accessDB)
+	defer s.Close()
+
+	var wts []PlayerDownBetRecode
+
+	n, err := c.Find(selector).Count()
+	if err != nil {
+		return nil, 0, err
+	}
+	log.Debug("获取 %v 条数据,limit:%v", n, limit)
+	skip := (page - 1) * limit
+	err = c.Find(selector).Sort(sortBy).Skip(skip).Limit(limit).All(&wts)
+	if err != nil {
+		return nil, 0, err
+	}
+	return wts, n, nil
+}
+
+type StatementData struct {
+	Id                 string  `json:"id" bson:"id"`
+	GameId             string  `json:"game_id" bson:"game_id"`
+	GameName           string  `json:"game_name" bson:"game_name"`
+	StartTime          int64   `json:"start_time" bson:"start_time"`
+	EndTime            int64   `json:"end_time" bson:"end_time"`
+	DownBetTime        int64   `json:"down_bet_time" bson:"down_bet_time"`
+	PackageId          uint16  `json:"package_id" bson:"package_id"`
+	WinStatementTotal  float64 `json:"win_statement_total" bson:"win_statement_total"`
+	LoseStatementTotal float64 `json:"lose_statement_total" bson:"lose_statement_total"`
+	BetMoney           float64 `json:"bet_money" bson:"bet_money"`
+}
+
+func InsertStatementDB(sd *StatementData) {
+	s, c := connect(dbName, StatementDB)
+	defer s.Close()
+
+	err := c.Insert(sd)
+	if err != nil {
+		log.Debug("插入游戏统计数据失败:%v", err)
+		return
+	}
+	log.Debug("插入游戏统计数据成功~")
+}
+
+func GetStatementList(selector bson.M) ([]StatementData, error) {
+	s, c := connect(dbName, StatementDB)
+	defer s.Close()
+
+	var wts []StatementData
+
+	err := c.Find(selector).All(&wts)
+	if err != nil {
+		return nil, err
+	}
+	return wts, nil
 }

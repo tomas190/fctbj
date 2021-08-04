@@ -7,7 +7,13 @@ import (
 	"time"
 )
 
-func (p *Player) PlayerJoinRoom() {
+func (p *Player) PlayerJoinRoom(cfgId string) {
+	// 判断玩家信息是否为空
+	if p.Id == "" {
+		p.SendErrMsg(RECODE_PlayerInfoIDIsNull)
+		return
+	}
+
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil { // 当前玩家已经存在房间
@@ -27,8 +33,11 @@ func (p *Player) PlayerJoinRoom() {
 		// 创建房间
 		r := &Room{}
 		r.Init()
+		r.Config = cfgId
 		hall.RoomRecord.Store(r.RoomId, r)
 		hall.UserRoom.Store(p.Id, r.RoomId)
+
+		p.RoomId = r.RoomId
 
 		// 插入玩家信息 todo
 		p.FindPlayerInfo()
@@ -40,7 +49,30 @@ func (p *Player) PlayerJoinRoom() {
 	}
 }
 
+func (p *Player) ExitFromRoom(room *Room) {
+	// 判断玩家期间是否行动过
+	if p.DownBet > 0 {
+		// 插入玩家数据
+		p.InsertPlayerData()
+	}
+
+	// 删除房间资源
+	hall.UserRecord.Delete(p.Id)
+	hall.RoomRecord.Delete(room.RoomId)
+	hall.UserRoom.Delete(p.Id)
+	c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
+	leaveHall := &msg.Logout_S2C{}
+	p.SendMsg(leaveHall)
+	p.ConnAgent.Close()
+}
+
 func (p *Player) PlayerAction(downBet float64) {
+	// 判断玩家信息是否为空
+	if p.Id == "" {
+		p.SendErrMsg(RECODE_PlayerInfoIDIsNull)
+		log.Debug("玩家信息ID为空,不能进行下注")
+		return
+	}
 	// 判断玩家金额是否足够
 	if p.Account < downBet {
 		p.SendErrMsg(RECODE_UserMoneyNotEnough)
@@ -49,12 +81,10 @@ func (p *Player) PlayerAction(downBet float64) {
 	}
 
 	// 判断下注金币是否对应房间配置金额(防止刷钱)
-	var roomId string
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
-		roomId = room.RoomId
 		if CfgMoney[room.Config] != downBet {
 			log.Debug("房间配置金额:%v,%v", CfgMoney[room.Config], downBet)
 			p.SendErrMsg(RECODE_RoomCfgMoneyERROR)
@@ -63,6 +93,10 @@ func (p *Player) PlayerAction(downBet float64) {
 		}
 	}
 
+	p.DownBet += downBet
+	p.ResultMoney -= downBet
+	p.TotalLoseMoney -= downBet
+
 	p.Account -= downBet
 	p.LoseResultMoney = downBet
 
@@ -70,21 +104,6 @@ func (p *Player) PlayerAction(downBet float64) {
 	p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
 	loseReason := "发财推币机输钱"
 	c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, downBet)
-
-	// 插入盈余数据 todo
-	sur := &SurplusPoolDB{}
-	sur.UpdateTime = time.Now()
-	sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-	sur.Rid = roomId
-	sur.PlayerNum = LoadPlayerCount()
-	surPool := FindSurplusPool()
-	if surPool != nil {
-		sur.HistoryWin = surPool.HistoryWin
-		sur.HistoryLose = surPool.HistoryLose
-	}
-	sur.HistoryLose += Decimal(p.LoseResultMoney)
-	sur.TotalLoseMoney += Decimal(p.LoseResultMoney)
-	InsertSurplusPool(sur)
 
 	// 先判断盈余池是否有钱，然后在处理玩家是否赢钱
 	surMoney := GetSurPlusMoney()
@@ -103,7 +122,9 @@ func (p *Player) PlayerAction(downBet float64) {
 		resultMoney := winMoney - tax
 
 		p.Account += resultMoney
+		p.ResultMoney += resultMoney
 		p.WinResultMoney = winMoney
+		p.TotalWinMoney += winMoney
 
 		log.Debug("获取赢钱的金额:%v", winMoney)
 
@@ -116,23 +137,7 @@ func (p *Player) PlayerAction(downBet float64) {
 		if resultMoney > PaoMaDeng {
 			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
 		}
-
-		// 插入盈余数据 todo
-		sur := &SurplusPoolDB{}
-		sur.UpdateTime = time.Now()
-		sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-		sur.Rid = roomId
-		sur.PlayerNum = LoadPlayerCount()
-		surPool := FindSurplusPool()
-		if surPool != nil {
-			sur.HistoryWin = surPool.HistoryWin
-			sur.HistoryLose = surPool.HistoryLose
-		}
-		sur.HistoryWin += Decimal(p.WinResultMoney)
-		sur.TotalWinMoney += Decimal(p.WinResultMoney)
-		InsertSurplusPool(sur)
 	}
-	//}
 
 	log.Debug("玩家当前winNum：%v", goldNum)
 	data := &msg.PlayerAction_S2C{}
@@ -191,7 +196,9 @@ func (p *Player) GetRewardsInfo() {
 		resultMoney := winMoney - tax
 
 		p.Account += resultMoney
+		p.ResultMoney += resultMoney
 		p.WinResultMoney = winMoney
+		p.TotalWinMoney += winMoney
 
 		// 发送小游戏获奖
 		data.Account = p.Account
@@ -208,21 +215,6 @@ func (p *Player) GetRewardsInfo() {
 		if resultMoney > PaoMaDeng {
 			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
 		}
-
-		// 插入盈余数据 todo
-		sur := &SurplusPoolDB{}
-		sur.UpdateTime = time.Now()
-		sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-		sur.Rid = room.RoomId
-		sur.PlayerNum = LoadPlayerCount()
-		surPool := FindSurplusPool()
-		if surPool != nil {
-			sur.HistoryWin = surPool.HistoryWin
-			sur.HistoryLose = surPool.HistoryLose
-		}
-		sur.HistoryWin += Decimal(p.WinResultMoney)
-		sur.TotalWinMoney += Decimal(p.WinResultMoney)
-		InsertSurplusPool(sur)
 	}
 }
 
@@ -231,71 +223,73 @@ func (p *Player) ProgressBetResp(bet int32) {
 
 	log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
 
-	var betNum int32
-	if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-		betNum = 1
-		data := &msg.ProgressBar_S2C{}
-		data.ProBar = betNum
-		p.SendMsg(data)
-	} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
-		betNum = 2
-		data := &msg.ProgressBar_S2C{}
-		data.ProBar = betNum
-		p.SendMsg(data)
-	} else if p.ProgressBet >= 10 {
-		betNum = 6
-		// 发送进度条
-		data := &msg.ProgressBar_S2C{}
-		data.ProBar = betNum
-		p.SendMsg(data)
-		// 小游戏执行
-		p.GetRewardsInfo()
-		p.ProgressBet = 0
-	}
-
-	//rid, _ := hall.UserRoom.Load(p.Id)
-	//v, _ := hall.RoomRecord.Load(rid)
-	//if v != nil {
-	//	room := v.(*Room)
-	//	// 房间配置金额
-	//	money := CfgMoney[room.Config]
-	//	surMoney := GetSurPlusMoney()
-	//
-	//	// 盈余池金额足够小游戏获奖时
-	//	if money*Rate >= surMoney {
-	//		if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-	//			betNum = 1
-	//			data := &msg.ProgressBar_S2C{}
-	//			data.ProBar = betNum
-	//			p.SendMsg(data)
-	//		} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
-	//			betNum = 2
-	//			data := &msg.ProgressBar_S2C{}
-	//			data.ProBar = betNum
-	//			p.SendMsg(data)
-	//		} else if p.ProgressBet >= 15 {
-	//			betNum = 6
-	//			// 发送进度条
-	//			data := &msg.ProgressBar_S2C{}
-	//			data.ProBar = betNum
-	//			p.SendMsg(data)
-	//			// 小游戏执行
-	//			p.GetRewardsInfo()
-	//		}
-	//	} else { // 盈余池金额不足够小游戏获奖
-	//		if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-	//			betNum = 1
-	//			data := &msg.ProgressBar_S2C{}
-	//			data.ProBar = betNum
-	//			p.SendMsg(data)
-	//		} else if p.ProgressBet >= 6 {
-	//			betNum = 2
-	//			data := &msg.ProgressBar_S2C{}
-	//			data.ProBar = betNum
-	//			p.SendMsg(data)
-	//		}
-	//	}
+	//var betNum int32
+	//if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+	//	betNum = 1
+	//	data := &msg.ProgressBar_S2C{}
+	//	data.ProBar = betNum
+	//	p.SendMsg(data)
+	//} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
+	//	betNum = 2
+	//	data := &msg.ProgressBar_S2C{}
+	//	data.ProBar = betNum
+	//	p.SendMsg(data)
+	//} else if p.ProgressBet >= 10 {
+	//	betNum = 6
+	//	// 发送进度条
+	//	data := &msg.ProgressBar_S2C{}
+	//	data.ProBar = betNum
+	//	p.SendMsg(data)
+	//	// 小游戏执行
+	//	p.GetRewardsInfo()
+	//	p.ProgressBet = 0
 	//}
+
+	var betNum int32
+	rid, _ := hall.UserRoom.Load(p.Id)
+	v, _ := hall.RoomRecord.Load(rid)
+	if v != nil {
+		room := v.(*Room)
+		// 房间配置金额
+		money := CfgMoney[room.Config]
+		surMoney := GetSurPlusMoney()
+
+		// 盈余池金额足够小游戏获奖时
+		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
+		if money*Rate <= surMoney {
+			if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+				betNum = 1
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				p.SendMsg(data)
+			} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
+				betNum = 2
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				p.SendMsg(data)
+			} else if p.ProgressBet >= 15 {
+				betNum = 6
+				// 发送进度条
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				p.SendMsg(data)
+				// 小游戏执行
+				p.GetRewardsInfo()
+			}
+		} else { // 盈余池金额不足够小游戏获奖
+			if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+				betNum = 1
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				p.SendMsg(data)
+			} else if p.ProgressBet >= 6 {
+				betNum = 2
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				p.SendMsg(data)
+			}
+		}
+	}
 }
 
 func (p *Player) GodPickUpGold(betNum int32) {
@@ -315,7 +309,9 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		resultMoney := winMoney - tax
 
 		p.Account += resultMoney
+		p.ResultMoney += resultMoney
 		p.WinResultMoney = winMoney
+		p.TotalWinMoney += winMoney
 
 		log.Debug("获取赢钱的金额:%v", winMoney)
 
@@ -334,25 +330,16 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		if resultMoney > PaoMaDeng {
 			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
 		}
-
-		// 插入盈余数据 todo
-		sur := &SurplusPoolDB{}
-		sur.UpdateTime = time.Now()
-		sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-		sur.Rid = room.RoomId
-		sur.PlayerNum = LoadPlayerCount()
-		surPool := FindSurplusPool()
-		if surPool != nil {
-			sur.HistoryWin = surPool.HistoryWin
-			sur.HistoryLose = surPool.HistoryLose
-		}
-		sur.HistoryWin += Decimal(p.WinResultMoney)
-		sur.TotalWinMoney += Decimal(p.WinResultMoney)
-		InsertSurplusPool(sur)
 	}
 }
 
 func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
+	// 判断玩家信息是否为空
+	if p.Id == "" {
+		p.SendErrMsg(RECODE_PlayerInfoIDIsNull)
+		return
+	}
+
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
