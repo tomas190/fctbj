@@ -3,6 +3,7 @@ package internal
 import (
 	"fctbj/conf"
 	"fctbj/msg"
+	"fmt"
 	"github.com/name5566/leaf/gate"
 	"time"
 )
@@ -22,13 +23,10 @@ type Player struct {
 	PackageId uint16
 
 	DownBet        float64 // 累计下注
-	ResultMoney    float64 // 累计结算
+	DownBetCount   int32   // 累计下注次数
 	TotalWinMoney  float64 // 累计赢钱
 	TotalLoseMoney float64 // 累计输钱
-
-	ProgressBet     int32 // 掉落金币累计
-	WinResultMoney  float64
-	LoseResultMoney float64
+	ProgressBet    int32   // 掉落金币累计
 
 	ConfigPlace map[string][]*msg.Coordinate
 }
@@ -37,13 +35,11 @@ func (p *Player) Init() {
 	p.RoomId = ""
 	p.RoundId = ""
 	p.DownBet = 0
-	p.ResultMoney = 0
+	p.DownBetCount = 0
 	p.TotalWinMoney = 0
 	p.TotalLoseMoney = 0
 
 	p.ProgressBet = 0
-	p.WinResultMoney = 0
-	p.LoseResultMoney = 0
 
 	p.ConfigPlace = make(map[string][]*msg.Coordinate)
 }
@@ -63,10 +59,29 @@ func (p *Player) SendErrMsg(errData string) {
 }
 
 //InsertPlayerData 插入玩家数据
-func (p *Player) InsertPlayerData() {
+func (p *Player) HandlePlayerData() {
 	nowTime := time.Now().Unix()
+	if p.TotalLoseMoney > 0 {
+		p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
+		loseReason := "发财推币机输钱"
+		c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, p.TotalLoseMoney)
+	}
+
+	if p.TotalWinMoney > 0 {
+		p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
+		winReason := "发财推币机赢钱"
+		c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, p.TotalWinMoney)
+	}
+
 	pac := packageTax[p.PackageId]
 	taxR := pac / 100
+	tax := p.TotalWinMoney * taxR
+	resultMoney := (p.TotalWinMoney - tax) - p.TotalLoseMoney
+
+	// 跑马灯
+	if resultMoney > PaoMaDeng {
+		c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
+	}
 
 	// 插入运营数据
 	data := &PlayerDownBetRecode{}
@@ -78,7 +93,7 @@ func (p *Player) InsertPlayerData() {
 	data.DownBetTime = nowTime - 180
 	data.StartTime = nowTime - 180
 	data.EndTime = nowTime
-	data.SettlementFunds = p.ResultMoney
+	data.SettlementFunds = resultMoney
 	data.SpareCash = p.Account
 	data.TaxRate = taxR
 	InsertAccessData(data)
@@ -110,13 +125,12 @@ func (p *Player) InsertPlayerData() {
 	}
 	sur.HistoryWin += Decimal(p.TotalWinMoney)
 	sur.TotalWinMoney += Decimal(p.TotalWinMoney)
-	sur.HistoryLose += Decimal(p.LoseResultMoney)
-	sur.TotalLoseMoney += Decimal(p.LoseResultMoney)
+	sur.HistoryLose += Decimal(p.TotalLoseMoney)
+	sur.TotalLoseMoney += Decimal(p.TotalLoseMoney)
 	InsertSurplusPool(sur)
 
 	// 清除玩家累计数据
 	p.DownBet = 0
-	p.ResultMoney = 0
 	p.TotalWinMoney = 0
 	p.TotalLoseMoney = 0
 }

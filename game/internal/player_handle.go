@@ -2,9 +2,7 @@ package internal
 
 import (
 	"fctbj/msg"
-	"fmt"
 	"github.com/name5566/leaf/log"
-	"time"
 )
 
 func (p *Player) PlayerJoinRoom(cfgId string) {
@@ -53,7 +51,7 @@ func (p *Player) ExitFromRoom(room *Room) {
 	// 判断玩家期间是否行动过
 	if p.DownBet > 0 {
 		// 插入玩家数据
-		p.InsertPlayerData()
+		p.HandlePlayerData()
 	}
 
 	// 删除房间资源
@@ -93,49 +91,36 @@ func (p *Player) PlayerAction(downBet float64) {
 		}
 	}
 
-	p.DownBet += downBet
-	p.ResultMoney -= downBet
-	p.TotalLoseMoney -= downBet
-
 	p.Account -= downBet
-	p.LoseResultMoney = downBet
+	p.DownBet += downBet
+	p.TotalLoseMoney += downBet
 
-	nowTime := time.Now().Unix() // todo
-	p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
-	loseReason := "发财推币机输钱"
-	c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, downBet)
+	p.DownBetCount++
+	var IsDown bool
+	if p.DownBetCount >= 50 {
+		IsDown = true
+		p.DownBetCount = 0
+	}
 
 	// 先判断盈余池是否有钱，然后在处理玩家是否赢钱
 	surMoney := GetSurPlusMoney()
 	log.Debug("盈余池的金额:%v", surMoney)
 	var goldNum int32
-	//if surMoney >= 0 { //todo
-	var taxRate float64
-	goldNum = p.randGoldNum()
-	if goldNum > 0 {
-		// 玩家赢钱结算
-		winMoney := downBet * float64(goldNum)
-		pac := packageTax[p.PackageId]
-		taxR := pac / 100
-		taxRate = taxR
-		tax := winMoney * taxR
-		resultMoney := winMoney - tax
+	var taxR float64
+	if surMoney >= 0 { //todo
+		goldNum = p.randGoldNum()
+		if goldNum > 0 {
+			// 玩家赢钱结算
+			winMoney := downBet * float64(goldNum)
+			pac := packageTax[p.PackageId]
+			taxR = pac / 100
+			tax := winMoney * taxR
+			resultMoney := winMoney - tax
 
-		p.Account += resultMoney
-		p.ResultMoney += resultMoney
-		p.WinResultMoney = winMoney
-		p.TotalWinMoney += winMoney
+			p.Account += resultMoney
+			p.TotalWinMoney += winMoney
 
-		log.Debug("获取赢钱的金额:%v", winMoney)
-
-		nowTime := time.Now().Unix() // todo
-		p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
-		winReason := "发财推币机赢钱"
-		c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
-
-		// 跑马灯 todo
-		if resultMoney > PaoMaDeng {
-			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
+			log.Debug("获取赢钱的金额:%v", winMoney)
 		}
 	}
 
@@ -143,7 +128,8 @@ func (p *Player) PlayerAction(downBet float64) {
 	data := &msg.PlayerAction_S2C{}
 	data.WinNum = goldNum
 	data.Account = p.Account
-	data.Tax = taxRate
+	data.Tax = taxR
+	data.LuckyBag = IsDown
 	p.SendMsg(data)
 }
 
@@ -196,8 +182,6 @@ func (p *Player) GetRewardsInfo() {
 		resultMoney := winMoney - tax
 
 		p.Account += resultMoney
-		p.ResultMoney += resultMoney
-		p.WinResultMoney = winMoney
 		p.TotalWinMoney += winMoney
 
 		// 发送小游戏获奖
@@ -205,16 +189,6 @@ func (p *Player) GetRewardsInfo() {
 		p.SendMsg(data)
 
 		log.Debug("获取赢钱的金额:%v", winMoney)
-
-		nowTime := time.Now().Unix() // todo
-		p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
-		winReason := "发财推币机赢钱"
-		c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
-
-		// 跑马灯 todo
-		if resultMoney > PaoMaDeng {
-			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
-		}
 	}
 }
 
@@ -309,26 +283,41 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		resultMoney := winMoney - tax
 
 		p.Account += resultMoney
-		p.ResultMoney += resultMoney
-		p.WinResultMoney = winMoney
 		p.TotalWinMoney += winMoney
 
 		log.Debug("获取赢钱的金额:%v", winMoney)
-
-		nowTime := time.Now().Unix() // todo
-		p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
-		winReason := "发财推币机赢钱"
-		c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
 
 		data := &msg.PickUpGold_S2C{}
 		data.Money = winMoney
 		data.Rate = rate
 		data.Account = p.Account
 		p.SendMsg(data)
+	}
+}
 
-		// 跑马灯 todo
-		if resultMoney > PaoMaDeng {
-			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
+func (p *Player) HandleLuckyBag() {
+	rid, _ := hall.UserRoom.Load(p.Id)
+	v, _ := hall.RoomRecord.Load(rid)
+	if v != nil {
+		room := v.(*Room)
+
+		rate := GetLuckyBag()
+		surMoney := GetSurPlusMoney()
+		luckyMoney := CfgMoney[room.Config] * float64(rate)
+		if luckyMoney <= surMoney { // 判断福袋盈余池是否足够
+			pac := packageTax[p.PackageId]
+			taxR := pac / 100
+			tax := luckyMoney * taxR
+			resultMoney := luckyMoney - tax
+
+			p.Account += resultMoney
+			p.TotalWinMoney += luckyMoney
+
+			data := &msg.LuckyBagAction_S2C{}
+			data.IsDown = true
+			data.Money = luckyMoney
+			data.Account = p.Account
+			p.SendMsg(data)
 		}
 	}
 }

@@ -63,7 +63,7 @@ func (hall *GameHall) RecordPlayerData() {
 				// 判断玩家期间是否行动过
 				if v.DownBet > 0 {
 					// 插入玩家数据
-					v.InsertPlayerData()
+					v.HandlePlayerData()
 				}
 				return true
 			})

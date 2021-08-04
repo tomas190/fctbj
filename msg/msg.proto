@@ -83,6 +83,7 @@ message PlayerAction_S2C {
     int32 winNum = 1;
     double account = 2; // 玩家最新金额
     double tax = 3; // 税收
+    bool luckyBag = 4; // 福袋
 }
 
 message ProgressBar_C2S {
@@ -137,6 +138,16 @@ message ChangeRoomCfg_C2S {
 message ChangeRoomCfg_S2C {
     bool isChange = 1;
     repeated coordinate coordinates = 2;
+}
+
+message LuckyBagAction_C2S {
+
+}
+
+message LuckyBagAction_S2C {
+    bool IsDown = 1;
+    double money = 2;
+    double account = 3; // 玩家最新金额
 }
 
 message ErrorMsg_S2C {

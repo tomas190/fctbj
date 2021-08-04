@@ -28,5 +28,7 @@ func init() {
 	Processor.Register(&PickUpGold_S2C{})
 	Processor.Register(&ChangeRoomCfg_C2S{})
 	Processor.Register(&ChangeRoomCfg_S2C{})
+	Processor.Register(&LuckyBagAction_C2S{})
+	Processor.Register(&LuckyBagAction_S2C{})
 	Processor.Register(&ErrorMsg_S2C{})
 }

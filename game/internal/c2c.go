@@ -714,7 +714,7 @@ func (c4c *Conn4Center) UserSyncWinScore(p *Player, timeUnix int64, roundId, rea
 	userWin.Info.GameId = c4c.GameId
 	userWin.Info.ID = id
 	userWin.Info.LockMoney = 0
-	userWin.Info.Money = p.WinResultMoney
+	userWin.Info.Money = p.TotalWinMoney
 	userWin.Info.BetMoney = 0
 	userWin.Info.Order = bson.NewObjectId().Hex()
 
@@ -737,7 +737,7 @@ func (c4c *Conn4Center) UserSyncLoseScore(p *Player, timeUnix int64, roundId, re
 	userLose.Info.GameId = c4c.GameId
 	userLose.Info.ID = id
 	userLose.Info.LockMoney = 0
-	userLose.Info.Money = p.LoseResultMoney
+	userLose.Info.Money = p.TotalLoseMoney
 	userLose.Info.BetMoney = betMoney
 	userLose.Info.Order = bson.NewObjectId().Hex()
 	userLose.Info.PayReason = reason

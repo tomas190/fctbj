@@ -46,3 +46,18 @@ func GetGOLD(betNum int32) (int32, float64) {
 	push := float64(num) * float64(betNum)
 	return int32(num), push
 }
+
+func GetLuckyBag() int {
+	num := RandInRange(0, 100)
+	if num >= 0 && num <= 50 {
+		rate := RandInRange(1, 11)
+		return rate * 10
+	} else if num >= 51 && num <= 85 {
+		rate := RandInRange(11, 16)
+		return rate * 10
+	} else if num >= 85 && num <= 100 {
+		rate := RandInRange(16, 21)
+		return rate * 10
+	}
+	return 0
+}

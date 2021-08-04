@@ -19,6 +19,7 @@ func init() {
 	handlerReg(&msg.PlayerAction_C2S{}, handlePlayerAction)
 	handlerReg(&msg.ProgressBar_C2S{}, handleProgressBar)
 	handlerReg(&msg.PickUpGold_C2S{}, handlePickUpGold)
+	handlerReg(&msg.LuckyBagAction_C2S{}, handleLuckyBagAction)
 
 	handlerReg(&msg.ChangeRoomCfg_C2S{}, handleChangeRoomCfg)
 }
@@ -200,6 +201,17 @@ func handlePickUpGold(args []interface{}) {
 
 	if ok {
 		p.GodPickUpGold(m.BetNum)
+	}
+}
+
+func handleLuckyBagAction(args []interface{}) {
+	a := args[1].(gate.Agent)
+
+	p, ok := a.UserData().(*Player)
+	log.Debug("handleLuckyBagAction 获取奖源福袋~ : %v", p.Id)
+
+	if ok {
+		p.HandleLuckyBag()
 	}
 }
 
