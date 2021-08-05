@@ -55,7 +55,7 @@ func (hall *GameHall) RecordPlayerData() {
 	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
 
-	for { // 循环没3秒记录玩家数据
+	for { // 循环每3秒处理玩家数据
 		select {
 		case <-ticker.C:
 			hall.UserRecord.Range(func(key, value interface{}) bool {
