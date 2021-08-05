@@ -52,7 +52,7 @@ func (hall *GameHall) agentExist(a gate.Agent) bool {
 
 // 记录玩家数据
 func (hall *GameHall) RecordPlayerData() {
-	ticker := time.NewTicker(3 * time.Second)
+	ticker := time.NewTicker(180 * time.Second)
 	defer ticker.Stop()
 
 	for { // 循环每3秒处理玩家数据
