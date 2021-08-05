@@ -22,7 +22,9 @@ enum MessageID {
     MSG_PickUpGold_S2C = 15;
     MSG_ChangeRoomCfg_C2S = 16;
     MSG_ChangeRoomCfg_S2C = 17;
-    MSG_ErrorMsg_S2C = 18;
+    MSG_LuckyBagAction_C2S = 18;
+    MSG_LuckyBagAction_S2C = 19;
+    MSG_ErrorMsg_S2C = 20;
 }
 
 message Ping {
