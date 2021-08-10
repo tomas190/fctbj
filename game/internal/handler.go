@@ -17,9 +17,9 @@ func init() {
 	handlerReg(&msg.JoinRoom_C2S{}, handleJoinRoom)
 
 	handlerReg(&msg.PlayerAction_C2S{}, handlePlayerAction)
+	handlerReg(&msg.ActionResult_C2S{}, handleActionResult)
 	handlerReg(&msg.ProgressBar_C2S{}, handleProgressBar)
 	handlerReg(&msg.PickUpGold_C2S{}, handlePickUpGold)
-	handlerReg(&msg.LuckyBagAction_C2S{}, handleLuckyBagAction)
 
 	handlerReg(&msg.ChangeRoomCfg_C2S{}, handleChangeRoomCfg)
 }
@@ -180,6 +180,18 @@ func handlePlayerAction(args []interface{}) {
 	}
 }
 
+func handleActionResult(args []interface{}) {
+	m := args[0].(*msg.ActionResult_C2S)
+	a := args[1].(gate.Agent)
+
+	p, ok := a.UserData().(*Player)
+	log.Debug("handleActionResult 玩家行动结算~ : %v", p.Id)
+
+	if ok {
+		p.PlayerResult(m.CoinList)
+	}
+}
+
 func handleProgressBar(args []interface{}) {
 	m := args[0].(*msg.ProgressBar_C2S)
 	a := args[1].(gate.Agent)
@@ -201,17 +213,6 @@ func handlePickUpGold(args []interface{}) {
 
 	if ok {
 		p.GodPickUpGold(m.BetNum)
-	}
-}
-
-func handleLuckyBagAction(args []interface{}) {
-	a := args[1].(gate.Agent)
-
-	p, ok := a.UserData().(*Player)
-	log.Debug("handleLuckyBagAction 获取奖源福袋~ : %v", p.Id)
-
-	if ok {
-		p.HandleLuckyBag()
 	}
 }
 

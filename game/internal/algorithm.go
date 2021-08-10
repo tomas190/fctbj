@@ -14,10 +14,36 @@ func GetRICH(money float64) float64 {
 	return rich
 }
 
-func GetPUSH(money float64) float64 {
-	num := RandInRange(70, 100)
-	push := float64(num) * money
-	return push
+func (r *Room) GetPUSH(p *Player, money float64) float64 {
+	fudai1 := RandInRange(1, 4)
+	fudai2 := RandInRange(0, 2)
+	for i := 0; i < fudai1; i++ {
+		r.CoinList[r.Config] = append(r.CoinList[r.Config], FuDai)
+	}
+	for i := 0; i < fudai2; i++ {
+		r.CoinList[r.Config] = append(r.CoinList[r.Config], FuDai2)
+	}
+
+	down := &msg.DownLuckyBag_S2C{}
+	down.LuckyBag1 = int32(fudai1)
+	down.LuckyBag2 = int32(fudai2)
+	down.CoinList = r.CoinList[r.Config]
+	p.SendMsg(down)
+
+	var winNum int
+	var luckyBag1 int
+	var luckyBag2 int
+	for _, v := range r.CoinList[r.Config] {
+		if v == FuDai {
+			luckyBag1++
+		} else if v == FuDai2 {
+			luckyBag2++
+		} else {
+			winNum++
+		}
+	}
+	winMoney := (float64(winNum) * money) + float64(luckyBag1*LuckyBag) + float64(luckyBag2*LuckyBag2)
+	return winMoney
 }
 
 func GetLUCKY(money float64) *msg.ThreePig {
@@ -45,19 +71,4 @@ func GetGOLD(betNum int32) (int32, float64) {
 	num := RandInRange(2, 7)
 	push := float64(num) * float64(betNum)
 	return int32(num), push
-}
-
-func GetLuckyBag() int {
-	num := RandInRange(0, 100)
-	if num >= 0 && num <= 50 {
-		rate := RandInRange(1, 11)
-		return rate * 10
-	} else if num >= 51 && num <= 85 {
-		rate := RandInRange(11, 16)
-		return rate * 10
-	} else if num >= 85 && num <= 100 {
-		rate := RandInRange(16, 21)
-		return rate * 10
-	}
-	return 0
 }

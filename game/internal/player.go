@@ -28,6 +28,8 @@ type Player struct {
 	TotalLoseMoney float64 // 累计输钱
 	ProgressBet    int32   // 掉落金币累计
 
+	DownBetList []string // 掉落金币切片
+
 	ConfigPlace map[string][]*msg.Coordinate
 }
 
@@ -38,8 +40,9 @@ func (p *Player) Init() {
 	p.DownBetCount = 0
 	p.TotalWinMoney = 0
 	p.TotalLoseMoney = 0
-
 	p.ProgressBet = 0
+
+	p.DownBetList = nil
 
 	p.ConfigPlace = make(map[string][]*msg.Coordinate)
 }
@@ -134,3 +137,5 @@ func (p *Player) HandlePlayerData() {
 	p.TotalWinMoney = 0
 	p.TotalLoseMoney = 0
 }
+
+

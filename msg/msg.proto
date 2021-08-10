@@ -15,16 +15,18 @@ enum MessageID {
     MSG_EnterRoom_S2C = 8;
     MSG_PlayerAction_C2S = 9;
     MSG_PlayerAction_SC2 = 10;
-    MSG_ProgressBar_C2S = 11;
-    MSG_ProgressBar_S2C = 12;
-    MSG_GetRewards_S2C = 13;
-    MSG_PickUpGold_C2S = 14;
-    MSG_PickUpGold_S2C = 15;
-    MSG_ChangeRoomCfg_C2S = 16;
-    MSG_ChangeRoomCfg_S2C = 17;
-    MSG_LuckyBagAction_C2S = 18;
-    MSG_LuckyBagAction_S2C = 19;
-    MSG_ErrorMsg_S2C = 20;
+    MSG_ActionResult_C2S = 11;
+    MSG_ActionResult_S2C = 12;
+    MSG_ProgressBar_C2S = 13;
+    MSG_ProgressBar_S2C = 14;
+    MSG_DownLuckyBag_S2C = 15;
+    MSG_ReCreatGold_S2C = 16;
+    MSG_GetRewards_S2C = 17;
+    MSG_PickUpGold_C2S = 18;
+    MSG_PickUpGold_S2C = 19;
+    MSG_ChangeRoomCfg_C2S = 20;
+    MSG_ChangeRoomCfg_S2C = 21;
+    MSG_ErrorMsg_S2C = 22;
 }
 
 message Ping {
@@ -60,7 +62,9 @@ message Logout_S2C {
 
 message RoomData {
     string roomId = 1;
-    PlayerInfo playerInfo = 2;
+    string cfgId = 2;
+    PlayerInfo playerInfo = 3;
+    repeated string coinList = 4;
 }
 
 message JoinRoom_C2S {
@@ -82,10 +86,17 @@ message PlayerAction_C2S {
 }
 
 message PlayerAction_S2C {
-    int32 winNum = 1;
-    double account = 2; // 玩家最新金额
-    double tax = 3; // 税收
-    bool luckyBag = 4; // 福袋
+    bool luckyBag = 1; // 福袋
+    repeated string coinList = 2;
+}
+
+// 行动结算返回
+message ActionResult_C2S {
+    repeated string coinList = 1;
+}
+
+message ActionResult_S2C {
+    double account = 1; // 玩家最新金额
 }
 
 message ProgressBar_C2S {
@@ -100,6 +111,18 @@ message ThreePig {
     double PigSuccess = 1; // 中奖小猪
     double PigLoser_1 = 2; // 未中奖小猪
     double PigLoser_2 = 3; // 未中奖小猪
+}
+
+// 福袋掉落
+message DownLuckyBag_S2C {
+    int32 luckyBag1 = 1;
+    int32 luckyBag2 = 2;
+    repeated string coinList = 3;
+}
+
+// 重新生成金币
+message ReCreatGold_S2C {
+    repeated string coinList = 1;
 }
 
 // 获奖小游戏
@@ -139,17 +162,8 @@ message ChangeRoomCfg_C2S {
 // 返回配置信息
 message ChangeRoomCfg_S2C {
     bool isChange = 1;
-    repeated coordinate coordinates = 2;
-}
-
-message LuckyBagAction_C2S {
-
-}
-
-message LuckyBagAction_S2C {
-    bool IsDown = 1;
-    double money = 2;
-    double account = 3; // 玩家最新金额
+    repeated string coinList = 2;
+    repeated coordinate coordinates = 3;
 }
 
 message ErrorMsg_S2C {

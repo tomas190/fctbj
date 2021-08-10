@@ -74,20 +74,35 @@ func (p *Player) PlayerAction(downBet float64) {
 	// 判断玩家金额是否足够
 	if p.Account < downBet {
 		p.SendErrMsg(RECODE_UserMoneyNotEnough)
-		log.Debug("玩家金额不足,不能进行下注~")
+		log.Debug("玩家金额不足,不能进行下注:%v,%v", p.Account, downBet)
 		return
 	}
 
-	// 判断下注金币是否对应房间配置金额(防止刷钱)
+	var IsDown bool
+
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
+
+		// 判断下注金币是否对应房间配置金额(防止刷钱)
 		if CfgMoney[room.Config] != downBet {
-			log.Debug("房间配置金额:%v,%v", CfgMoney[room.Config], downBet)
 			p.SendErrMsg(RECODE_RoomCfgMoneyERROR)
-			log.Debug("房间配置金额不对!")
+			log.Debug("房间配置金额错误:%v,%v", CfgMoney[room.Config], downBet)
 			return
+		}
+
+		// 记录当前 Coin的序号 和 Coin列表
+		room.CoinNum[room.Config]++
+		room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+string(room.CoinNum[room.Config]))
+
+		// 判断是否掉落福袋
+		p.DownBetCount++
+		IsLucky := room.ExistLuckyBag()
+		if p.DownBetCount >= 50 && IsLucky == false {
+			IsDown = true
+			p.DownBetCount = 0
+			room.CoinList[room.Config] = append(room.CoinList[room.Config], FuDai)
 		}
 	}
 
@@ -95,57 +110,181 @@ func (p *Player) PlayerAction(downBet float64) {
 	p.DownBet += downBet
 	p.TotalLoseMoney += downBet
 
-	p.DownBetCount++
-	var IsDown bool
-	if p.DownBetCount >= 50 {
-		IsDown = true
-		p.DownBetCount = 0
+	// 游戏赢率结算
+	p.GameSurSettle()
+
+	data := &msg.PlayerAction_S2C{}
+	data.LuckyBag = IsDown
+	data.CoinList = p.DownBetList
+	p.SendMsg(data)
+}
+
+func (p *Player) PlayerResult(coinList []string) {
+	if coinList == nil {
+		p.SendErrMsg(RECODE_ActionCoinNotHave)
+		log.Debug("玩家行动金币为空!")
+		return
 	}
 
-	// 先判断盈余池是否有钱，然后在处理玩家是否赢钱
-	surMoney := GetSurPlusMoney()
-	log.Debug("盈余池的金额:%v", surMoney)
-	var goldNum int32
-	var taxR float64
-	//if surMoney >= 0 { //todo
-	goldNum = p.randGoldNum()
-	if goldNum > 0 {
+	rid, _ := hall.UserRoom.Load(p.Id)
+	v, _ := hall.RoomRecord.Load(rid)
+	if v != nil {
+		room := v.(*Room)
+		// 获取相同的金币进行赢钱结算
+		var winNum int
+		var luckyBag bool
+		for _, v := range coinList {
+			if v == FuDai {
+				luckyBag = true
+			}
+			// 判断获取相同的金币并删除
+			for k, c := range room.CoinList[room.Config] {
+				if v == c {
+					winNum++
+					room.CoinList[room.Config] = append(room.CoinList[room.Config][:k], room.CoinList[room.Config][k+1:]...)
+				}
+			}
+		}
+
 		// 玩家赢钱结算
-		winMoney := downBet * float64(goldNum)
+		var winMoney float64
+		// 福袋结算
+		if luckyBag == true {
+			winMoney += CfgMoney[room.Config] * float64(LuckyBag)
+		}
+		// 金币结算
+		winMoney += CfgMoney[room.Config] * float64(winNum)
 		pac := packageTax[p.PackageId]
-		taxR = pac / 100
+		taxR := pac / 100
 		tax := winMoney * taxR
 		resultMoney := winMoney - tax
 
 		p.Account += resultMoney
 		p.TotalWinMoney += winMoney
-
 		log.Debug("获取赢钱的金额:%v", winMoney)
-	}
-	//}
 
-	log.Debug("玩家当前winNum：%v", goldNum)
-	data := &msg.PlayerAction_S2C{}
-	data.WinNum = goldNum
-	data.Account = p.Account
-	data.Tax = taxR
-	data.LuckyBag = IsDown
-	p.SendMsg(data)
+		data := &msg.ActionResult_S2C{}
+		data.Account = p.Account
+		p.SendMsg(data)
+	}
 }
 
-func (p *Player) randGoldNum() int32 {
-	var goldNum int32
-	num := RandInRange(0, 100)
-	if num >= 0 && num <= 50 { //65
-		goldNum = 0
-	} else if num >= 51 && num <= 85 {
-		goldNum = 1
-	} else if num >= 86 && num <= 95 {
-		goldNum = 2
-	} else if num >= 96 && num <= 100 {
-		goldNum = 3
+func (p *Player) GameSurSettle() {
+	sur := GetFindSurPool()
+	loseRate := sur.PlayerLoseRateAfterSurplusPool * 100
+	percentageWin := sur.RandomPercentageAfterWin * 100
+	percentageLose := sur.RandomPercentageAfterLose * 100
+	countWin := sur.RandomCountAfterWin
+	countLose := sur.RandomCountAfterLose
+	surplusPool := sur.SurplusPool
+
+	num := RandInRange(1, 101)
+	if num >= 0 { // 玩家赢钱
+		settle := p.GetGoldSettle()
+		for {
+			loseRateNum := RandInRange(1, 101)
+			percentageWinNum := RandInRange(1, 101)
+			if countWin > 0 {
+				if percentageWinNum > int(percentageWin) { // 盈余池判定
+					if surplusPool > settle { // 盈余池足够
+						break
+					} else {                             // 盈余池不足
+						if loseRateNum > int(loseRate) { // 30%玩家赢钱
+							break
+						} else { // 70%玩家输钱
+							p.DownBetList = nil
+							break
+						}
+					}
+				} else { // 又随机生成牌型
+					settle := p.GetGoldSettle()
+					if settle > 0 { // 玩家赢
+						countWin--
+					} else {
+						break
+					}
+				}
+			} else {
+				// 盈余池判定
+				if surplusPool > settle { // 盈余池足够
+					break
+				} else {                             // 盈余池不足
+					if loseRateNum > int(loseRate) { // 30%玩家赢钱
+						break
+					} else { // 70%玩家输钱
+						p.DownBetList = nil
+						return
+					}
+				}
+			}
+		}
+	} else { // 玩家输钱
+		for {
+			loseRateNum := RandInRange(1, 101)
+			percentageLoseNum := RandInRange(1, 101)
+			if countLose > 0 {
+				if percentageLoseNum > int(percentageLose) {
+					break
+				} else { // 又随机生成牌型
+					settle := p.GetGoldSettle()
+					if settle > 0 { // 玩家赢
+						// 盈余池判定
+						if surplusPool > settle { // 盈余池足够
+							break
+						} else {                             // 盈余池不足
+							if loseRateNum > int(loseRate) { // 30%玩家赢钱
+								for {
+									settle := p.GetGoldSettle()
+									if settle >= 0 {
+										return
+									}
+								}
+							} else { // 70%玩家输钱
+								p.DownBetList = nil
+								return
+							}
+						}
+					} else {
+						countLose--
+					}
+				}
+			} else { // 玩家输钱
+				p.DownBetList = nil
+				return
+			}
+		}
 	}
-	return goldNum
+}
+
+func (p *Player) randGoldNum() int {
+	num := RandInRange(1, 101)
+	return num
+}
+
+func (p *Player) GetGoldSettle() float64 {
+	rid, _ := hall.UserRoom.Load(p.Id)
+	v, _ := hall.RoomRecord.Load(rid)
+	if v != nil {
+		room := v.(*Room)
+		if len(room.CoinList) == 0 {
+			p.SendErrMsg(RECODE_TableNotHaveGold)
+			log.Debug("玩家桌面金币为空!")
+			return 0
+		}
+		// 房间配置金额
+		cfgMoney := CfgMoney[room.Config]
+		var goldNum int
+		for { // 循环获取随机金币,避免随机到金币大于桌面金币数量
+			goldNum = p.randGoldNum()
+			if len(room.CoinList) >= goldNum {
+				break
+			}
+		}
+		p.DownBetList = room.CoinList[room.Config][:goldNum]
+		settle := cfgMoney * float64(goldNum)
+		return settle
+	}
+	return 0
 }
 
 func (p *Player) GetRewardsInfo() {
@@ -167,7 +306,7 @@ func (p *Player) GetRewardsInfo() {
 			winMoney = data.GetMoney
 		} else if num >= 13 && num <= 30 {
 			data.RewardsNum = PUSH
-			data.GetMoney = GetPUSH(cfgMoney)
+			data.GetMoney = room.GetPUSH(p, cfgMoney)
 			winMoney = data.GetMoney
 		} else if num >= 31 && num <= 100 {
 			data.RewardsNum = LUCKY
@@ -187,83 +326,71 @@ func (p *Player) GetRewardsInfo() {
 		// 发送小游戏获奖
 		data.Account = p.Account
 		p.SendMsg(data)
-
 		log.Debug("获取赢钱的金额:%v", winMoney)
+
+		// Push中奖,清除桌面金币和福袋,重新生成新的金币
+		if data.RewardsNum == PUSH {
+			room.CoinList[room.Config] = nil
+			for i := 1; i <= 100; i++ {
+				room.CoinNum[room.Config] += int32(i)
+				room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+string(room.CoinNum[room.Config]))
+			}
+			creat := &msg.ReCreatGold_S2C{}
+			creat.CoinList = room.CoinList[room.Config]
+			p.SendMsg(creat)
+		}
 	}
 }
 
 func (p *Player) ProgressBetResp(bet int32) {
 	p.ProgressBet += bet
-
 	log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
 
 	var betNum int32
-	if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-		betNum = 1
-		data := &msg.ProgressBar_S2C{}
-		data.ProBar = betNum
-		p.SendMsg(data)
-	} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
-		betNum = 2
-		data := &msg.ProgressBar_S2C{}
-		data.ProBar = betNum
-		p.SendMsg(data)
-	} else if p.ProgressBet >= 10 {
-		betNum = 6
-		// 发送进度条
-		data := &msg.ProgressBar_S2C{}
-		data.ProBar = betNum
-		p.SendMsg(data)
-		// 小游戏执行
-		p.GetRewardsInfo()
-		p.ProgressBet = 0
-	}
+	rid, _ := hall.UserRoom.Load(p.Id)
+	v, _ := hall.RoomRecord.Load(rid)
+	if v != nil {
+		room := v.(*Room)
+		// 房间配置金额
+		money := CfgMoney[room.Config]
+		surMoney := GetSurPlusMoney()
 
-	//var betNum int32
-	//rid, _ := hall.UserRoom.Load(p.Id)
-	//v, _ := hall.RoomRecord.Load(rid)
-	//if v != nil {
-	//	room := v.(*Room)
-	//	// 房间配置金额
-	//	money := CfgMoney[room.Config]
-	//	surMoney := GetSurPlusMoney()
-	//
-	//	// 盈余池金额足够小游戏获奖时
-	//	log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
-	//	if money*Rate <= surMoney {
-	//		if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-	//			betNum = 1
-	//			data := &msg.ProgressBar_S2C{}
-	//			data.ProBar = betNum
-	//			p.SendMsg(data)
-	//		} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
-	//			betNum = 2
-	//			data := &msg.ProgressBar_S2C{}
-	//			data.ProBar = betNum
-	//			p.SendMsg(data)
-	//		} else if p.ProgressBet >= 15 {
-	//			betNum = 6
-	//			// 发送进度条
-	//			data := &msg.ProgressBar_S2C{}
-	//			data.ProBar = betNum
-	//			p.SendMsg(data)
-	//			// 小游戏执行
-	//			p.GetRewardsInfo()
-	//		}
-	//	} else { // 盈余池金额不足够小游戏获奖
-	//		if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
-	//			betNum = 1
-	//			data := &msg.ProgressBar_S2C{}
-	//			data.ProBar = betNum
-	//			p.SendMsg(data)
-	//		} else if p.ProgressBet >= 6 {
-	//			betNum = 2
-	//			data := &msg.ProgressBar_S2C{}
-	//			data.ProBar = betNum
-	//			p.SendMsg(data)
-	//		}
-	//	}
-	//}
+		// 盈余池金额足够小游戏获奖时
+		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
+		if money*Rate <= surMoney {
+			if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+				betNum = 1
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				p.SendMsg(data)
+			} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
+				betNum = 2
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				p.SendMsg(data)
+			} else if p.ProgressBet >= 15 {
+				betNum = 6
+				// 发送进度条
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				p.SendMsg(data)
+				// 小游戏执行
+				p.GetRewardsInfo()
+			}
+		} else { // 盈余池金额不足够小游戏获奖
+			if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+				betNum = 1
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				p.SendMsg(data)
+			} else if p.ProgressBet >= 6 {
+				betNum = 2
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				p.SendMsg(data)
+			}
+		}
+	}
 }
 
 func (p *Player) GodPickUpGold(betNum int32) {
@@ -295,33 +422,6 @@ func (p *Player) GodPickUpGold(betNum int32) {
 	}
 }
 
-func (p *Player) HandleLuckyBag() {
-	rid, _ := hall.UserRoom.Load(p.Id)
-	v, _ := hall.RoomRecord.Load(rid)
-	if v != nil {
-		room := v.(*Room)
-
-		rate := GetLuckyBag()
-		surMoney := GetSurPlusMoney()
-		luckyMoney := CfgMoney[room.Config] * float64(rate)
-		if luckyMoney <= surMoney { // 判断福袋盈余池是否足够
-			pac := packageTax[p.PackageId]
-			taxR := pac / 100
-			tax := luckyMoney * taxR
-			resultMoney := luckyMoney - tax
-
-			p.Account += resultMoney
-			p.TotalWinMoney += luckyMoney
-
-			data := &msg.LuckyBagAction_S2C{}
-			data.IsDown = true
-			data.Money = luckyMoney
-			data.Account = p.Account
-			p.SendMsg(data)
-		}
-	}
-}
-
 func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 	// 判断玩家信息是否为空
 	if p.Id == "" {
@@ -343,12 +443,14 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 			// 发送配置数据
 			data := &msg.ChangeRoomCfg_S2C{}
 			data.IsChange = true
+			data.CoinList = room.CoinList[room.Config]
 			data.Coordinates = p.ConfigPlace[room.Config]
 			p.SendMsg(data)
 		} else {
 			// 发送配置数据
 			data := &msg.ChangeRoomCfg_S2C{}
 			data.IsChange = false
+			data.CoinList = room.CoinList[room.Config]
 			data.Coordinates = p.ConfigPlace[room.Config]
 			p.SendMsg(data)
 		}

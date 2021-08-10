@@ -155,8 +155,10 @@ func InsertSurplusPool(sur *SurplusPoolDB) {
 	s, c := connect(dbName, surPlusDB)
 	defer s.Close()
 
+	c.RemoveAll(nil)
+
 	sur.PoolMoney = (sur.HistoryLose - (sur.HistoryWin * 1)) * 0.5
-	log.Debug("surplusPoolDB 数据: %v", sur)
+	log.Debug("surplusPoolDB 数据: %v", sur.PoolMoney)
 	err := c.Insert(sur)
 	if err != nil {
 		log.Error("<----- 数据库插入SurplusPool数据失败 ~ ----->:%v", err)

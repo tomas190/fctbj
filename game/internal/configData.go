@@ -11,7 +11,8 @@ const (
 	RECODE_PlayerInfoIDIsNull = "1001" // 玩家ID为空
 	RECODE_UserMoneyNotEnough = "1002" // 玩家金额不足
 	RECODE_RoomCfgMoneyERROR  = "1003" // 房间配置金额不对
-	RECODE_SendWinMoneyERROR  = "1004" // 发送赢钱金额错误
+	RECODE_TableNotHaveGold   = "1004" // 玩家桌面金币为空
+	RECODE_ActionCoinNotHave  = "1005" // 玩家行动金币为空
 )
 
 var CfgMoney = map[string]float64{
