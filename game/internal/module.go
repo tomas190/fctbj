@@ -30,10 +30,6 @@ func (m *Module) OnInit() {
 	c2c.Init()
 	c2c.CreatConnect()
 
-	sur := &SurplusPoolDB{}
-	sur.TotalLoseMoney += 50000
-	UpdateSurplusPool(sur)
-
 	go hall.RecordPlayerData()
 
 	go StartHttpServer()
