@@ -87,7 +87,8 @@ message PlayerAction_C2S {
 
 message PlayerAction_S2C {
     bool luckyBag = 1; // 福袋
-    repeated string coinList = 2;
+    string coin = 2;
+    repeated string coinList = 3;
 }
 
 // 行动结算返回
@@ -101,6 +102,7 @@ message ActionResult_S2C {
 
 message ProgressBar_C2S {
     int32 betNum = 1;
+    string coin = 2;
 }
 
 message ProgressBar_S2C {

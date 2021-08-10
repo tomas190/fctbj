@@ -4,6 +4,7 @@ import (
 	"fctbj/msg"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -84,21 +85,21 @@ func (r *Room) CoinInit() {
 		r.CoinNum["13"] += int32(i)
 		r.CoinNum["14"] += int32(i)
 		r.CoinNum["15"] += int32(i)
-		r.CoinList["1"] = append(r.CoinList["1"], Coin+string(r.CoinNum["1"]))
-		r.CoinList["2"] = append(r.CoinList["2"], Coin+string(r.CoinNum["2"]))
-		r.CoinList["3"] = append(r.CoinList["3"], Coin+string(r.CoinNum["3"]))
-		r.CoinList["4"] = append(r.CoinList["4"], Coin+string(r.CoinNum["4"]))
-		r.CoinList["5"] = append(r.CoinList["5"], Coin+string(r.CoinNum["5"]))
-		r.CoinList["6"] = append(r.CoinList["6"], Coin+string(r.CoinNum["6"]))
-		r.CoinList["7"] = append(r.CoinList["7"], Coin+string(r.CoinNum["7"]))
-		r.CoinList["8"] = append(r.CoinList["8"], Coin+string(r.CoinNum["8"]))
-		r.CoinList["9"] = append(r.CoinList["9"], Coin+string(r.CoinNum["9"]))
-		r.CoinList["10"] = append(r.CoinList["10"], Coin+string(r.CoinNum["10"]))
-		r.CoinList["11"] = append(r.CoinList["11"], Coin+string(r.CoinNum["11"]))
-		r.CoinList["12"] = append(r.CoinList["12"], Coin+string(r.CoinNum["12"]))
-		r.CoinList["13"] = append(r.CoinList["13"], Coin+string(r.CoinNum["13"]))
-		r.CoinList["14"] = append(r.CoinList["14"], Coin+string(r.CoinNum["14"]))
-		r.CoinList["15"] = append(r.CoinList["15"], Coin+string(r.CoinNum["15"]))
+		r.CoinList["1"] = append(r.CoinList["1"], Coin+strconv.Itoa(int(r.CoinNum["1"])))
+		r.CoinList["2"] = append(r.CoinList["2"], Coin+strconv.Itoa(int(r.CoinNum["2"])))
+		r.CoinList["3"] = append(r.CoinList["3"], Coin+strconv.Itoa(int(r.CoinNum["3"])))
+		r.CoinList["4"] = append(r.CoinList["4"], Coin+strconv.Itoa(int(r.CoinNum["4"])))
+		r.CoinList["5"] = append(r.CoinList["5"], Coin+strconv.Itoa(int(r.CoinNum["5"])))
+		r.CoinList["6"] = append(r.CoinList["6"], Coin+strconv.Itoa(int(r.CoinNum["6"])))
+		r.CoinList["7"] = append(r.CoinList["7"], Coin+strconv.Itoa(int(r.CoinNum["7"])))
+		r.CoinList["8"] = append(r.CoinList["8"], Coin+strconv.Itoa(int(r.CoinNum["8"])))
+		r.CoinList["9"] = append(r.CoinList["9"], Coin+strconv.Itoa(int(r.CoinNum["9"])))
+		r.CoinList["10"] = append(r.CoinList["10"], Coin+strconv.Itoa(int(r.CoinNum["10"])))
+		r.CoinList["11"] = append(r.CoinList["11"], Coin+strconv.Itoa(int(r.CoinNum["11"])))
+		r.CoinList["12"] = append(r.CoinList["12"], Coin+strconv.Itoa(int(r.CoinNum["12"])))
+		r.CoinList["13"] = append(r.CoinList["13"], Coin+strconv.Itoa(int(r.CoinNum["13"])))
+		r.CoinList["14"] = append(r.CoinList["14"], Coin+strconv.Itoa(int(r.CoinNum["14"])))
+		r.CoinList["15"] = append(r.CoinList["15"], Coin+strconv.Itoa(int(r.CoinNum["15"])))
 	}
 	r.CoinList["1"] = append(r.CoinList["1"], FuDai)
 	r.CoinList["2"] = append(r.CoinList["2"], FuDai)

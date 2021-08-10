@@ -3,6 +3,7 @@ package internal
 import (
 	"fctbj/msg"
 	"github.com/name5566/leaf/log"
+	"strconv"
 )
 
 func (p *Player) PlayerJoinRoom(cfgId string) {
@@ -79,7 +80,7 @@ func (p *Player) PlayerAction(downBet float64) {
 	}
 
 	var IsDown bool
-
+	var coinName string
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
@@ -94,7 +95,8 @@ func (p *Player) PlayerAction(downBet float64) {
 
 		// 记录当前 Coin的序号 和 Coin列表
 		room.CoinNum[room.Config]++
-		room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+string(room.CoinNum[room.Config]))
+		coinName = Coin + strconv.Itoa(int(room.CoinNum[room.Config]))
+		room.CoinList[room.Config] = append(room.CoinList[room.Config], coinName)
 
 		// 判断是否掉落福袋
 		p.DownBetCount++
@@ -115,6 +117,7 @@ func (p *Player) PlayerAction(downBet float64) {
 
 	data := &msg.PlayerAction_S2C{}
 	data.LuckyBag = IsDown
+	data.Coin = coinName
 	data.CoinList = p.DownBetList
 	p.SendMsg(data)
 }
@@ -341,7 +344,7 @@ func (p *Player) GetRewardsInfo() {
 			room.CoinList[room.Config] = nil
 			for i := 1; i <= 100; i++ {
 				room.CoinNum[room.Config] += int32(i)
-				room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+string(room.CoinNum[room.Config]))
+				room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+strconv.Itoa(int(room.CoinNum[room.Config])))
 			}
 			creat := &msg.ReCreatGold_S2C{}
 			creat.CoinList = room.CoinList[room.Config]
@@ -350,19 +353,26 @@ func (p *Player) GetRewardsInfo() {
 	}
 }
 
-func (p *Player) ProgressBetResp(bet int32) {
-	p.ProgressBet += bet
-	log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
+func (p *Player) ProgressBetResp(bet int32, coin string) {
 
 	var betNum int32
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
+
+		p.ProgressBet += bet
+		log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
+
+		for k, v := range room.CoinList[room.Config] {
+			if v == coin {
+				room.CoinList[room.Config] = append(room.CoinList[room.Config][:k], room.CoinList[room.Config][k+1:]...)
+			}
+		}
+
 		// 房间配置金额
 		money := CfgMoney[room.Config]
 		surMoney := GetSurPlusMoney()
-
 		// 盈余池金额足够小游戏获奖时
 		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
 		if money*Rate <= surMoney {

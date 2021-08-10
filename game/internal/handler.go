@@ -200,7 +200,7 @@ func handleProgressBar(args []interface{}) {
 	log.Debug("handleProgressBar 获取进度条金币~ : %v", p.Id)
 
 	if ok {
-		p.ProgressBetResp(m.BetNum)
+		p.ProgressBetResp(m.BetNum, m.Coin)
 	}
 }
 
