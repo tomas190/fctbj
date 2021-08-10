@@ -155,8 +155,6 @@ func InsertSurplusPool(sur *SurplusPoolDB) {
 	s, c := connect(dbName, surPlusDB)
 	defer s.Close()
 
-	c.RemoveAll(nil)
-
 	sur.PoolMoney = (sur.HistoryLose - (sur.HistoryWin * 1)) * 0.5
 	log.Debug("surplusPoolDB 数据: %v", sur.PoolMoney)
 	err := c.Insert(sur)
@@ -184,6 +182,18 @@ func InsertSurplusPool(sur *SurplusPoolDB) {
 	SurPool.RandomPercentageAfterWin = 0.6
 	SurPool.RandomPercentageAfterLose = 0.6
 	FindSurPool(SurPool)
+}
+
+func UpdateSurplusPool(sur *SurplusPoolDB) {
+	s, c := connect(dbName, surPlusDB)
+	defer s.Close()
+
+	err := c.Update(bson.M{}, sur)
+	if err != nil {
+		log.Error("<----- 更新 UpdateSurplusPool数据失败 ~ ----->:%v", err)
+		return
+	}
+	log.Debug("<----- 更新UpdateSurplusPool数据成功 ~ ----->")
 }
 
 type SurPool struct {
@@ -255,7 +265,7 @@ func UpdateSurPool(sur *SurPool) {
 		log.Error("<----- 更新 SurPool数据失败 ~ ----->:%v", err)
 		return
 	}
-	log.Debug("<----- 更新SurPool数据成功 ~ ----->")
+	log.Debug("<----- 更新SurPool数据成功, 盈余池金额 ~ ----->:%v", sur.SurplusPool)
 }
 
 //GetDownRecodeList 获取盈余池数据

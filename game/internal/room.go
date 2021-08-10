@@ -47,6 +47,8 @@ type Room struct {
 func (r *Room) Init() {
 	r.RoomId = fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
 	r.Config = "1"
+	r.CoinNum = make(map[string]int32)
+	r.CoinList = make(map[string][]string)
 	r.CoinInit()
 }
 
