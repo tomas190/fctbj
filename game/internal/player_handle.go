@@ -297,6 +297,8 @@ func (p *Player) GetRewardsInfo() {
 
 		data := &msg.GetRewards_S2C{}
 		var winMoney float64
+		var fudai1 int
+		var fudai2 int
 		num := RandInRange(0, 100)
 		if num >= 0 && num <= 5 {
 			data.RewardsNum = GOLD
@@ -306,8 +308,7 @@ func (p *Player) GetRewardsInfo() {
 			winMoney = data.GetMoney
 		} else if num >= 13 && num <= 30 {
 			data.RewardsNum = PUSH
-			data.GetMoney = room.GetPUSH(p, cfgMoney)
-			winMoney = data.GetMoney
+			winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
 		} else if num >= 31 && num <= 100 {
 			data.RewardsNum = LUCKY
 			data.LuckyPig = GetLUCKY(cfgMoney)
@@ -327,6 +328,13 @@ func (p *Player) GetRewardsInfo() {
 		data.Account = p.Account
 		p.SendMsg(data)
 		log.Debug("获取赢钱的金额:%v", winMoney)
+
+		down := &msg.DownLuckyBag_S2C{}
+		down.LuckyBag1 = int32(fudai1)
+		down.LuckyBag2 = int32(fudai2)
+		down.CoinList = room.CoinList[room.Config]
+		down.Money = resultMoney
+		p.SendMsg(down)
 
 		// Push中奖,清除桌面金币和福袋,重新生成新的金币
 		if data.RewardsNum == PUSH {
@@ -415,7 +423,7 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		log.Debug("获取赢钱的金额:%v", winMoney)
 
 		data := &msg.PickUpGold_S2C{}
-		data.Money = winMoney
+		data.Money = resultMoney
 		data.Rate = rate
 		data.Account = p.Account
 		p.SendMsg(data)
