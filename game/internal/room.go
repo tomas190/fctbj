@@ -70,21 +70,21 @@ func (r *Room) CoinInit() {
 	r.CoinNum["14"] = 0
 	r.CoinNum["15"] = 0
 	for i := 1; i <= 100; i++ {
-		r.CoinNum["1"] += int32(i)
-		r.CoinNum["2"] += int32(i)
-		r.CoinNum["3"] += int32(i)
-		r.CoinNum["4"] += int32(i)
-		r.CoinNum["5"] += int32(i)
-		r.CoinNum["6"] += int32(i)
-		r.CoinNum["7"] += int32(i)
-		r.CoinNum["8"] += int32(i)
-		r.CoinNum["9"] += int32(i)
-		r.CoinNum["10"] += int32(i)
-		r.CoinNum["11"] += int32(i)
-		r.CoinNum["12"] += int32(i)
-		r.CoinNum["13"] += int32(i)
-		r.CoinNum["14"] += int32(i)
-		r.CoinNum["15"] += int32(i)
+		r.CoinNum["1"] ++
+		r.CoinNum["2"] ++
+		r.CoinNum["3"] ++
+		r.CoinNum["4"] ++
+		r.CoinNum["5"] ++
+		r.CoinNum["6"] ++
+		r.CoinNum["7"] ++
+		r.CoinNum["8"] ++
+		r.CoinNum["9"] ++
+		r.CoinNum["10"] ++
+		r.CoinNum["11"] ++
+		r.CoinNum["12"] ++
+		r.CoinNum["13"] ++
+		r.CoinNum["14"] ++
+		r.CoinNum["15"] ++
 		r.CoinList["1"] = append(r.CoinList["1"], Coin+strconv.Itoa(int(r.CoinNum["1"])))
 		r.CoinList["2"] = append(r.CoinList["2"], Coin+strconv.Itoa(int(r.CoinNum["2"])))
 		r.CoinList["3"] = append(r.CoinList["3"], Coin+strconv.Itoa(int(r.CoinNum["3"])))

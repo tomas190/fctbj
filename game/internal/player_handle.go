@@ -269,7 +269,7 @@ func (p *Player) GetGoldSettle() float64 {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
-		if len(room.CoinList) == 0 {
+		if len(room.CoinList[room.Config]) == 0 {
 			p.SendErrMsg(RECODE_TableNotHaveGold)
 			log.Debug("玩家桌面金币为空!")
 			return 0
@@ -279,11 +279,12 @@ func (p *Player) GetGoldSettle() float64 {
 		var goldNum int
 		for { // 循环获取随机金币,避免随机到金币大于桌面金币数量
 			goldNum = p.randGoldNum()
-			if len(room.CoinList) >= goldNum {
+			if len(room.CoinList[room.Config]) >= goldNum {
 				break
 			}
 		}
 		p.DownBetList = room.CoinList[room.Config][:goldNum]
+		log.Debug("随机金币的数量:%v,切片值:%v", goldNum, p.DownBetList)
 		settle := cfgMoney * float64(goldNum)
 		return settle
 	}
@@ -343,7 +344,7 @@ func (p *Player) GetRewardsInfo() {
 		if data.RewardsNum == PUSH {
 			room.CoinList[room.Config] = nil
 			for i := 1; i <= 100; i++ {
-				room.CoinNum[room.Config] += int32(i)
+				room.CoinNum[room.Config] ++
 				room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+strconv.Itoa(int(room.CoinNum[room.Config])))
 			}
 			creat := &msg.ReCreatGold_S2C{}
