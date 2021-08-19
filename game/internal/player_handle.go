@@ -66,7 +66,7 @@ func (p *Player) ExitFromRoom(room *Room) {
 	p.ConnAgent.Close()
 }
 
-func (p *Player) PlayerAction(downBet float64) {
+func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	// 判断玩家信息是否为空
 	if p.Id == "" {
 		p.SendErrMsg(RECODE_PlayerInfoIDIsNull)
@@ -74,9 +74,9 @@ func (p *Player) PlayerAction(downBet float64) {
 		return
 	}
 	// 判断玩家金额是否足够
-	if p.Account < downBet {
+	if p.Account < m.DownBet {
 		p.SendErrMsg(RECODE_UserMoneyNotEnough)
-		log.Debug("玩家金额不足,不能进行下注:%v,%v", p.Account, downBet)
+		log.Debug("玩家金额不足,不能进行下注:%v,%v", p.Account, m.DownBet)
 		return
 	}
 
@@ -88,11 +88,14 @@ func (p *Player) PlayerAction(downBet float64) {
 		room := v.(*Room)
 
 		// 判断下注金币是否对应房间配置金额(防止刷钱)
-		if CfgMoney[room.Config] != downBet {
+		if CfgMoney[room.Config] != m.DownBet {
 			p.SendErrMsg(RECODE_RoomCfgMoneyERROR)
-			log.Debug("房间配置金额错误:%v,%v", CfgMoney[room.Config], downBet)
+			log.Debug("房间配置金额错误:%v,%v", CfgMoney[room.Config], m.DownBet)
 			return
 		}
+
+		// 保存区间节点位置
+		p.ConfigPlace[room.Config] = m.Coordinates
 
 		// 记录当前 Coin的序号 和 Coin列表
 		room.CoinNum[room.Config]++
@@ -110,15 +113,15 @@ func (p *Player) PlayerAction(downBet float64) {
 	}
 	p.DownBet = 0
 
-	p.Account -= downBet
-	p.LoseResultMoney = downBet
-	p.DownBet += downBet
-	p.TotalLoseMoney += downBet
+	p.Account -= m.DownBet
+	p.LoseResultMoney = m.DownBet
+	p.DownBet += m.DownBet
+	p.TotalLoseMoney += m.DownBet
 
 	nowTime := time.Now().Unix()
 	p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
 	loseReason := "发财推币机输钱"
-	c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, downBet)
+	c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, m.DownBet)
 
 	pac := packageTax[p.PackageId]
 	taxR := pac / 100

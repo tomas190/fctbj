@@ -156,7 +156,7 @@ func handlePlayerAction(args []interface{}) {
 	log.Debug("handlePlayerAction 玩家开始行动~ : %v", p.Id)
 
 	if ok {
-		p.PlayerAction(m.DownBet)
+		p.PlayerAction(m)
 	}
 }
 

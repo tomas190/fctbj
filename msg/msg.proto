@@ -83,6 +83,7 @@ message EnterRoom_S2C {
 
 message PlayerAction_C2S {
     double downBet = 1; // 下注金额
+    repeated coordinate coordinates = 2;
 }
 
 message PlayerAction_S2C {
