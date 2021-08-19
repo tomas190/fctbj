@@ -70,3 +70,32 @@ func (hall *GameHall) RecordPlayerData() {
 		}
 	}
 }
+
+// 处理房间数据
+func (hall *GameHall) HandleRoomData() {
+	ticker := time.NewTicker(time.Hour)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			tn := time.Now().Hour()
+			hall.UserRecord.Range(func(key, value interface{}) bool {
+				v := value.(*Player)
+				if v.OffLineTime != -1 {
+					if v.OffLineTime-tn == 0 {
+						hall.UserRecord.Delete(v.Id)
+						hall.UserRoom.Delete(v.Id)
+						rid, _ := hall.UserRoom.Load(v.Id)
+						v, _ := hall.RoomRecord.Load(rid)
+						if v != nil {
+							room := v.(*Room)
+							hall.RoomRecord.Delete(room.RoomId)
+						}
+					}
+				}
+				return true
+			})
+		}
+	}
+}

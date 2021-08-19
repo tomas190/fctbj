@@ -6,15 +6,15 @@ import (
 	"time"
 )
 
-func GetRICH(money float64) float64 {
+func GetRICH(money float64) (float64, float64) {
 	slice := []float64{200, 200, 200, 200, 200, 200, 250, 250, 300, 500}
 	rand.Seed(time.Now().UnixNano())
 	n := rand.Intn(len(slice))
 	rich := slice[n] * money
-	return rich
+	return slice[n], rich
 }
 
-func (r *Room) GetPUSH(money float64) (float64, int, int) {
+func (r *Room) GetPUSH(money float64) (float64, float64, int, int) {
 	fudai1 := RandInRange(1, 4)
 	fudai2 := RandInRange(0, 2)
 	for i := 0; i < fudai1; i++ {
@@ -37,10 +37,11 @@ func (r *Room) GetPUSH(money float64) (float64, int, int) {
 		}
 	}
 	winMoney := (float64(winNum) * money) + float64(luckyBag1*LuckyBag) + float64(luckyBag2*LuckyBag2)
-	return winMoney, fudai1, fudai2
+	rate := winMoney / CfgMoney[r.Config]
+	return rate, winMoney, fudai1, fudai2
 }
 
-func GetLUCKY(money float64) *msg.ThreePig {
+func GetLUCKY(money float64) (float64, *msg.ThreePig) {
 	data := &msg.ThreePig{}
 	slice := []float64{30, 30, 30, 30, 30, 40, 40, 40, 50, 50}
 	rand.Seed(time.Now().UnixNano())
@@ -58,7 +59,7 @@ func GetLUCKY(money float64) *msg.ThreePig {
 		data.PigLoser_1 = 30 * money
 		data.PigLoser_2 = 40 * money
 	}
-	return data
+	return slice[n], data
 }
 
 func GetGOLD(betNum int32) (int32, float64) {

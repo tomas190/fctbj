@@ -69,6 +69,8 @@ func handleLogin(args []interface{}) {
 
 				p.ConnAgent = a
 				p.ConnAgent.SetUserData(u)
+
+				p.OffLineTime = -1
 			}
 
 			rid, _ := hall.UserRoom.Load(p.Id)
@@ -90,29 +92,6 @@ func handleLogin(args []interface{}) {
 			}
 		}
 	} else if !hall.agentExist(a) { // 玩家首次登入
-		//u := &Player{}
-		//u.Id = m.Id
-		//u.Account = 10000
-		//u.NickName = m.Id
-		//u.Token = m.Token
-		//
-		//login := &msg.Login_S2C{}
-		//login.PlayerInfo = new(msg.PlayerInfo)
-		//login.PlayerInfo.Id = u.Id
-		//login.PlayerInfo.NickName = u.NickName
-		//login.PlayerInfo.HeadImg = u.HeadImg
-		//login.PlayerInfo.Account = u.Account
-		//a.WriteMsg(login)
-		//
-		//u.Init()
-		//// 重新绑定信息
-		//u.ConnAgent = a
-		//a.SetUserData(u)
-		//
-		//u.Password = m.GetPassWord()
-		//u.Token = m.GetToken()
-		//
-		//hall.UserRecord.Store(u.Id, u)
 
 		c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { //todo
 
@@ -130,6 +109,7 @@ func handleLogin(args []interface{}) {
 			u.ConnAgent = a
 			a.SetUserData(u)
 
+			u.OffLineTime = -1
 			u.Password = m.GetPassWord()
 			u.Token = m.GetToken()
 

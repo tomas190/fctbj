@@ -30,7 +30,9 @@ func (m *Module) OnInit() {
 	c2c.Init()
 	c2c.CreatConnect()
 
-	go hall.RecordPlayerData()
+	//go hall.RecordPlayerData()
+
+	go hall.HandleRoomData()
 
 	go StartHttpServer()
 }

@@ -1,17 +1,14 @@
 package msg
 
 import (
-	"fmt"
 	"github.com/name5566/leaf/log"
 	"github.com/name5566/leaf/network/protobuf"
-	"strconv"
 )
 
 // 使用默认的 Json 消息处理器 (默认还提供了 ProtoBuf 消息处理器)
 var Processor = protobuf.NewProcessor()
 
 func init() {
-	test()
 	log.Debug("msg init ~~~")
 	Processor.Register(&Ping{})
 	Processor.Register(&Pong{})
@@ -36,11 +33,4 @@ func init() {
 	Processor.Register(&ChangeRoomCfg_C2S{})
 	Processor.Register(&ChangeRoomCfg_S2C{})
 	Processor.Register(&ErrorMsg_S2C{})
-}
-
-func test() {
-	a := 1
-	b := 2
-	fmt.Println(strconv.Itoa(a))
-	fmt.Println(strconv.Itoa(b))
 }

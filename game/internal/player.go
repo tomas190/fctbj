@@ -22,11 +22,15 @@ type Player struct {
 	RoundId   string
 	PackageId uint16
 
+	WinResultMoney  float64
+	LoseResultMoney float64
+
 	DownBet        float64 // 累计下注
 	DownBetCount   int32   // 累计下注次数
 	TotalWinMoney  float64 // 累计赢钱
 	TotalLoseMoney float64 // 累计输钱
 	ProgressBet    int32   // 掉落金币累计
+	OffLineTime    int     // 离线时间
 
 	DownBetList []string // 掉落金币切片
 
@@ -36,11 +40,14 @@ type Player struct {
 func (p *Player) Init() {
 	p.RoomId = ""
 	p.RoundId = ""
+	p.WinResultMoney = 0
+	p.LoseResultMoney = 0
 	p.DownBet = 0
 	p.DownBetCount = 0
 	p.TotalWinMoney = 0
 	p.TotalLoseMoney = 0
 	p.ProgressBet = 0
+	p.OffLineTime = -1
 
 	p.DownBetList = nil
 
@@ -137,5 +144,3 @@ func (p *Player) HandlePlayerData() {
 	p.TotalWinMoney = 0
 	p.TotalLoseMoney = 0
 }
-
-
