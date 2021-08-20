@@ -56,10 +56,8 @@ func handleLogin(args []interface{}) {
 				log.Error("用户链接替换错误", err)
 			}
 
-			login := &msg.Login_S2C{}
-			user, _ := hall.UserRecord.Load(p.Id)
-			if user != nil {
-				u := user.(*Player)
+			c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) {
+				login := &msg.Login_S2C{}
 				login.PlayerInfo = new(msg.PlayerInfo)
 				login.PlayerInfo.Id = u.Id
 				login.PlayerInfo.NickName = u.NickName
@@ -71,7 +69,7 @@ func handleLogin(args []interface{}) {
 				p.ConnAgent.SetUserData(u)
 
 				p.OffLineTime = -1
-			}
+			})
 
 			rid, _ := hall.UserRoom.Load(p.Id)
 			v, _ := hall.RoomRecord.Load(rid)
@@ -168,7 +166,7 @@ func handleActionResult(args []interface{}) {
 	log.Debug("handleActionResult 玩家行动结算~ : %v", p.Id)
 
 	if ok {
-		p.PlayerResult(m.CoinList)
+		p.PlayerResult(m)
 	}
 }
 

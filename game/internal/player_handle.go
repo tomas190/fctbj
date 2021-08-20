@@ -16,39 +16,22 @@ func (p *Player) PlayerJoinRoom(cfgId string) {
 		return
 	}
 
-	rid, _ := hall.UserRoom.Load(p.Id)
-	v, _ := hall.RoomRecord.Load(rid)
-	if v != nil { // 当前玩家已经存在房间
-		room := v.(*Room)
-		enter := &msg.EnterRoom_S2C{}
-		enter.RoomData = room.RespRoomData()
-		// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
-		if p.ConfigPlace[room.Config] != nil {
-			enter.IsChange = true
-			enter.Coordinates = p.ConfigPlace[room.Config]
-		} else {
-			enter.IsChange = false
-			enter.Coordinates = p.ConfigPlace[room.Config]
-		}
-		p.SendMsg(enter)
-	} else {
-		// 创建房间
-		r := &Room{}
-		r.Init()
-		r.Config = cfgId
-		hall.RoomRecord.Store(r.RoomId, r)
-		hall.UserRoom.Store(p.Id, r.RoomId)
+	// 创建房间
+	r := &Room{}
+	r.Init()
+	r.Config = cfgId
+	hall.RoomRecord.Store(r.RoomId, r)
+	hall.UserRoom.Store(p.Id, r.RoomId)
 
-		p.RoomId = r.RoomId
+	p.RoomId = r.RoomId
 
-		// 插入玩家信息 todo
-		p.FindPlayerInfo()
+	// 插入玩家信息 todo
+	p.FindPlayerInfo()
 
-		//返回前端房间信息
-		data := &msg.JoinRoom_S2C{}
-		data.RoomData = r.RespRoomData()
-		p.SendMsg(data)
-	}
+	//返回前端房间信息
+	data := &msg.JoinRoom_S2C{}
+	data.RoomData = r.RespRoomData()
+	p.SendMsg(data)
 }
 
 func (p *Player) ExitFromRoom(room *Room) {
@@ -179,8 +162,8 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	p.SendMsg(data)
 }
 
-func (p *Player) PlayerResult(coinList []string) {
-	if coinList == nil {
+func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
+	if m.CoinList == nil {
 		p.SendErrMsg(RECODE_ActionCoinNotHave)
 		log.Debug("玩家行动金币为空!")
 		return
@@ -190,10 +173,13 @@ func (p *Player) PlayerResult(coinList []string) {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
+		// 保存区间节点位置
+		p.ConfigPlace[room.Config] = m.Coordinates
+
 		// 获取相同的金币进行赢钱结算
 		var winNum int
 		var luckyBag bool
-		for _, v := range coinList {
+		for _, v := range m.CoinList {
 			if v == FuDai {
 				luckyBag = true
 			}
