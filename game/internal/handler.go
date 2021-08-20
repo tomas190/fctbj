@@ -56,8 +56,12 @@ func handleLogin(args []interface{}) {
 				log.Error("用户链接替换错误", err)
 			}
 
-			c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) {
-				login := &msg.Login_S2C{}
+			c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) {})
+
+			login := &msg.Login_S2C{}
+			user, _ := hall.UserRecord.Load(p.Id)
+			if user != nil {
+				u := user.(*Player)
 				login.PlayerInfo = new(msg.PlayerInfo)
 				login.PlayerInfo.Id = u.Id
 				login.PlayerInfo.NickName = u.NickName
@@ -69,7 +73,7 @@ func handleLogin(args []interface{}) {
 				p.ConnAgent.SetUserData(u)
 
 				p.OffLineTime = -1
-			})
+			}
 
 			rid, _ := hall.UserRoom.Load(p.Id)
 			v, _ := hall.RoomRecord.Load(rid)
