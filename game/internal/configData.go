@@ -13,6 +13,7 @@ const (
 	RECODE_RoomCfgMoneyERROR  = "1003" // 房间配置金额不对
 	RECODE_TableNotHaveGold   = "1004" // 玩家桌面金币为空
 	RECODE_ActionCoinNotHave  = "1005" // 玩家行动金币为空
+	RECODE_PlayerExistRoom    = "1006" // 玩家已在房间内
 )
 
 var CfgMoney = map[string]float64{

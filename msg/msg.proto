@@ -26,7 +26,8 @@ enum MessageID {
     MSG_PickUpGold_S2C = 19;
     MSG_ChangeRoomCfg_C2S = 20;
     MSG_ChangeRoomCfg_S2C = 21;
-    MSG_ErrorMsg_S2C = 22;
+    MSG_SendCoordinate_C2S = 22;
+    MSG_ErrorMsg_S2C = 23;
 }
 
 message Ping {
@@ -50,7 +51,8 @@ message Login_C2S {
 }
 
 message Login_S2C {
-    PlayerInfo playerInfo = 1;
+    bool IsBack = 1;
+    PlayerInfo playerInfo = 2;
 }
 
 message Logout_C2S {
@@ -169,6 +171,10 @@ message ChangeRoomCfg_S2C {
     bool isChange = 1;
     repeated string coinList = 2;
     repeated coordinate coordinates = 3;
+}
+
+message SendCoordinate_C2S {
+    repeated coordinate coordinates = 1;
 }
 
 message ErrorMsg_S2C {

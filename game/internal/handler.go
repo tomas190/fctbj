@@ -22,6 +22,7 @@ func init() {
 	handlerReg(&msg.PickUpGold_C2S{}, handlePickUpGold)
 
 	handlerReg(&msg.ChangeRoomCfg_C2S{}, handleChangeRoomCfg)
+	handlerReg(&msg.SendCoordinate_C2S{}, handleSendCoordinate)
 }
 
 // 注册消息处理函数
@@ -58,10 +59,15 @@ func handleLogin(args []interface{}) {
 
 			c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) {})
 
-			login := &msg.Login_S2C{}
 			user, _ := hall.UserRecord.Load(p.Id)
 			if user != nil {
 				u := user.(*Player)
+				login := &msg.Login_S2C{}
+				rid, _ := hall.UserRoom.Load(p.Id)
+				v, _ := hall.RoomRecord.Load(rid)
+				if v != nil {
+					login.IsBack = true
+				}
 				login.PlayerInfo = new(msg.PlayerInfo)
 				login.PlayerInfo.Id = u.Id
 				login.PlayerInfo.NickName = u.NickName
@@ -79,6 +85,7 @@ func handleLogin(args []interface{}) {
 			v, _ := hall.RoomRecord.Load(rid)
 			if v != nil {
 				room := v.(*Room)
+				p.IsExist = true
 				enter := &msg.EnterRoom_S2C{}
 				enter.RoomData = room.RespRoomData()
 				// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
@@ -99,6 +106,7 @@ func handleLogin(args []interface{}) {
 
 			log.Debug("玩家首次登陆:%v", u.Id)
 			login := &msg.Login_S2C{}
+			login.IsBack = false
 			login.PlayerInfo = new(msg.PlayerInfo)
 			login.PlayerInfo.Id = u.Id
 			login.PlayerInfo.NickName = u.NickName
@@ -207,5 +215,17 @@ func handleChangeRoomCfg(args []interface{}) {
 
 	if ok {
 		p.ChangeRoomCfg(m)
+	}
+}
+
+func handleSendCoordinate(args []interface{}) {
+	m := args[0].(*msg.SendCoordinate_C2S)
+	a := args[1].(gate.Agent)
+
+	p, ok := a.UserData().(*Player)
+	log.Debug("handleSendCoordinate 保存位置信息~ : %v", p.Id)
+
+	if ok {
+		p.SaveCoordinate(m)
 	}
 }

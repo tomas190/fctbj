@@ -31,6 +31,7 @@ type Player struct {
 	TotalLoseMoney float64 // 累计输钱
 	ProgressBet    int32   // 掉落金币累计
 	OffLineTime    int     // 离线时间
+	IsExist        bool
 
 	DownBetList []string // 掉落金币切片
 
@@ -48,6 +49,7 @@ func (p *Player) Init() {
 	p.TotalLoseMoney = 0
 	p.ProgressBet = 0
 	p.OffLineTime = -1
+	p.IsExist = false
 
 	p.DownBetList = nil
 

@@ -19,4 +19,5 @@ func init() {
 	msg.Processor.SetRouter(&msg.PickUpGold_C2S{}, game.ChanRPC)
 
 	msg.Processor.SetRouter(&msg.ChangeRoomCfg_C2S{}, game.ChanRPC)
+	msg.Processor.SetRouter(&msg.SendCoordinate_C2S{}, game.ChanRPC)
 }

@@ -15,6 +15,10 @@ func (p *Player) PlayerJoinRoom(cfgId string) {
 		p.SendErrMsg(RECODE_PlayerInfoIDIsNull)
 		return
 	}
+	if p.IsExist == true {
+		p.SendErrMsg(RECODE_PlayerExistRoom)
+		return
+	}
 
 	// 创建房间
 	r := &Room{}
@@ -41,6 +45,7 @@ func (p *Player) ExitFromRoom(room *Room) {
 	//	p.HandlePlayerData()
 	//}
 
+	p.IsExist = false
 	p.OffLineTime = time.Now().Hour()
 
 	c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
@@ -678,10 +683,10 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
-		// 保存区间节点位置
-		p.ConfigPlace[m.Config] = m.Coordinates
 		// 修改当前配置区间
 		room.Config = m.ChangeCfg
+		// 保存区间节点位置
+		p.ConfigPlace[room.Config] = m.Coordinates
 
 		// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
 		if p.ConfigPlace[m.ChangeCfg] != nil {
@@ -699,5 +704,15 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 			data.Coordinates = p.ConfigPlace[room.Config]
 			p.SendMsg(data)
 		}
+	}
+}
+
+func (p *Player) SaveCoordinate(m *msg.SendCoordinate_C2S) {
+	rid, _ := hall.UserRoom.Load(p.Id)
+	v, _ := hall.RoomRecord.Load(rid)
+	if v != nil {
+		room := v.(*Room)
+		// 保存区间节点位置
+		p.ConfigPlace[room.Config] = m.Coordinates
 	}
 }
