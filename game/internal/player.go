@@ -31,7 +31,7 @@ type Player struct {
 	TotalLoseMoney float64 // 累计输钱
 	ProgressBet    int32   // 掉落金币累计
 	OffLineTime    int     // 离线时间
-	IsExist        bool
+	IsExist        bool    // 是否存在房间内
 
 	DownBetList []string // 掉落金币切片
 

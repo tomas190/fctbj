@@ -18,13 +18,13 @@ import (
 )
 
 // 定義flag參數，這邊會返回一個相應的指針
-var addr = flag.String("addr", "localhost:1355", "http service address")
+var addr = flag.String("addr", "localhost:1362", "http service address")
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	t := time.NewTicker(time.Millisecond)
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 10000; i++ {
 		<-t.C
 		fmt.Println(i)
 		go clientbot(ctx)
@@ -39,10 +39,10 @@ func FirstLogin(ws *websocket.Conn) {
 	pkgID = uint16(msg.MessageID_MSG_Login_C2S)
 	buf := make([]byte, 100)
 	binary.BigEndian.PutUint16(buf[0:2], pkgID)
-	//playerId := fmt.Sprintf("%08v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(100000000))
+	playerId := fmt.Sprintf("%08v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(100000000))
 	data := msg.Login_C2S{
 		//Id:       playerId,
-		Id:       "951150497",
+		Id:       playerId,
 		PassWord: "123456",
 	}
 
@@ -82,8 +82,8 @@ func clientbot(ctx context.Context) {
 	// logger.Debug("connecting to %s", u.String())
 	_ = u
 	// 連接服務器 本機
-	//ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-	ws, _, err := websocket.DefaultDialer.Dial("ws://game.539316.com/fctbj", nil)
+	ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+	//ws, _, err := websocket.DefaultDialer.Dial("ws://game.539316.com/fctbj", nil)
 	// ws, _, err := websocket.DefaultDialer.Dial("ws://game.tampk.club/caidaxiao", nil)
 	if err != nil {
 		log.Fatal("dial:", err)
@@ -123,6 +123,31 @@ func clientbot(ctx context.Context) {
 						proto.Unmarshal(message[2:], &bodyClass)
 						userID = bodyClass.PlayerInfo.Id
 						// logger.Debug("登陸回傳recv: %v %v %v %v", pkgID, int16(myMsg.MessageKind_LoginR), message, userID)
+					} else if int16(pkgID) == int16(msg.MessageID_MSG_PlayerAction_SC2) {
+						var bodyClass msg.PlayerAction_S2C
+						proto.Unmarshal(message[2:], &bodyClass)
+						//if len(bodyClass.CoinList) > 0 {
+						//	var pkgID uint16
+						//	pkgID = uint16(msg.MessageID_MSG_ActionResult_C2S)
+						//	binary.BigEndian.PutUint16(buf[0:2], pkgID)
+						//	num := RandInRange(0, len(bodyClass.CoinList))
+						//	data := bodyClass.CoinList[:num]
+						//	messge := &msg.ActionResult_C2S{
+						//		CoinList: data,
+						//	}
+						//	// 將資料編碼成 Protocol Buffer 格式（請注意是傳入 Pointer）。
+						//	dataBuffer, _ := proto.Marshal(messge)
+						//
+						//	// 將消息ID與DATA整合，一起送出
+						//	pkgData := [][]byte{buf[:2], dataBuffer}
+						//	pkgDatas := bytes.Join(pkgData, []byte{})
+						//	err = ws.WriteMessage(websocket.BinaryMessage, pkgDatas)
+						//
+						//	if err != nil {
+						//		log.Println("write:", err)
+						//		return
+						//	}
+						//}
 					} else {
 						// logger.Debug("recv: %v ", message)
 					}
@@ -149,11 +174,11 @@ func clientbot(ctx context.Context) {
 			//messge := &msg.PlayerAction_C2S{
 			//	DownBet: 1,
 			//}
-			pkgID = uint16(msg.MessageID_MSG_ProgressBar_C2S)
+			pkgID = uint16(msg.MessageID_MSG_PlayerAction_C2S)
 			// userIDIndex := rand.Intn(len(allUserID))
 			binary.BigEndian.PutUint16(buf[0:2], pkgID)
-			messge := &msg.ProgressBar_C2S{
-				BetNum: 1,
+			messge := &msg.PlayerAction_C2S{
+				DownBet: 0.1,
 			}
 
 			// 將資料編碼成 Protocol Buffer 格式（請注意是傳入 Pointer）。

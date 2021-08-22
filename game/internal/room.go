@@ -37,6 +37,15 @@ var (
 	packageTax map[uint16]float64
 )
 
+var surplusPool float64 = 0 //todo
+var tTotalWin float64 = 0
+var tTotalLose float64 = 0
+var loseRate = 70
+var percentageWin float64 = 60
+var percentageLose float64 = 60
+var countWin = 0
+var countLose = 0
+
 type Room struct {
 	RoomId   string              // 房间号
 	Config   string              // 房间配置
