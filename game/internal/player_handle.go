@@ -48,7 +48,7 @@ func (p *Player) ExitFromRoom(room *Room) {
 	p.IsExist = false
 	p.OffLineTime = time.Now().Hour()
 
-	c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
+	//c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
 	leaveHall := &msg.Logout_S2C{}
 	p.SendMsg(leaveHall)
 	p.ConnAgent.Close()
