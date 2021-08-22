@@ -24,13 +24,13 @@ func (m *Module) OnInit() {
 	packageTax = make(map[uint16]float64)
 
 	// todo
-	//InitMongoDB()
+	InitMongoDB()
 
 	// 中心服初始化,主动请求Token
-	//c2c.Init()
-	//c2c.CreatConnect()
+	c2c.Init()
+	c2c.CreatConnect()
 
-	//go hall.RecordPlayerData()
+	go hall.RecordPlayerData()
 
 	go hall.HandleRoomData()
 
