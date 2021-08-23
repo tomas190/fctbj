@@ -82,6 +82,8 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 			return
 		}
 
+		log.Debug("当前房间配置:%v,玩家下注金额:%v", room.Config, m.DownBet)
+
 		// 保存区间节点位置
 		p.ConfigPlace[room.Config] = m.Coordinates
 
