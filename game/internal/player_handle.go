@@ -512,15 +512,15 @@ func (p *Player) GetRewardsInfo() {
 			InsertSurplusPool(sur)
 		}
 
-		down := &msg.DownLuckyBag_S2C{}
-		down.LuckyBag1 = int32(fudai1)
-		down.LuckyBag2 = int32(fudai2)
-		down.CoinList = room.CoinList[room.Config]
-		down.Money = resultMoney
-		p.SendMsg(down)
-
 		// Push中奖,清除桌面金币和福袋,重新生成新的金币
 		if data.RewardsNum == PUSH {
+			down := &msg.DownLuckyBag_S2C{}
+			down.LuckyBag1 = int32(fudai1)
+			down.LuckyBag2 = int32(fudai2)
+			down.CoinList = room.CoinList[room.Config]
+			down.Money = resultMoney
+			p.SendMsg(down)
+
 			room.CoinList[room.Config] = nil
 			for i := 1; i <= 100; i++ {
 				room.CoinNum[room.Config] ++
