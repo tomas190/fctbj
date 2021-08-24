@@ -70,6 +70,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 
 	var IsDown bool
 	var coinName string
+	var storageCoin []string
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
@@ -100,6 +101,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 			p.DownBetCount = 0
 			room.CoinList[room.Config] = append(room.CoinList[room.Config], FuDai)
 		}
+		storageCoin = room.CoinList[room.Config]
 	}
 	p.DownBet = 0
 
@@ -167,6 +169,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	data.LuckyBag = IsDown
 	data.Coin = coinName
 	data.CoinList = p.DownBetList
+	data.StorageList = storageCoin
 	p.SendMsg(data)
 }
 
@@ -444,6 +447,7 @@ func (p *Player) GetRewardsInfo() {
 		p.TotalWinMoney += winMoney
 
 		// 发送小游戏获奖
+		data.GetMoney = winMoney
 		data.Account = p.Account
 		p.SendMsg(data)
 

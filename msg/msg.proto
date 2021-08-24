@@ -92,6 +92,7 @@ message PlayerAction_S2C {
     bool luckyBag = 1; // 福袋
     string coin = 2;
     repeated string coinList = 3;
+    repeated string storageList = 4;
 }
 
 // 行动结算返回
