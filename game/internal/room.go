@@ -37,7 +37,6 @@ var (
 	packageTax map[uint16]float64
 )
 
-
 type Room struct {
 	RoomId   string              // 房间号
 	Config   string              // 房间配置
