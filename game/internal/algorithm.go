@@ -32,11 +32,16 @@ func (r *Room) GetPUSH(money float64) (float64, float64, int, int) {
 			luckyBag1++
 		} else if v == FuDai2 {
 			luckyBag2++
-		} else {
-			winNum++
 		}
 	}
-	winMoney := (float64(winNum) * money) + float64(luckyBag1*LuckyBag) + float64(luckyBag2*LuckyBag2)
+	for {
+		winNum = RandInRange(50, 200)
+		if winNum+(luckyBag1*LuckyBag)+(luckyBag2*LuckyBag2) <= 200 {
+			break
+		}
+	}
+
+	winMoney := (float64(winNum) * money) + (money * float64(luckyBag1*LuckyBag)) + (money * float64(luckyBag2*LuckyBag2))
 	rate := winMoney / CfgMoney[r.Config]
 	return rate, winMoney, fudai1, fudai2
 }

@@ -548,7 +548,7 @@ func (p *Player) ProgressBetResp(bet int32, coin string) {
 	if v != nil {
 		room := v.(*Room)
 
-		p.ProgressBet += bet
+		p.ProgressBet++
 		log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
 
 		for k, v := range room.CoinList[room.Config] {
@@ -563,17 +563,17 @@ func (p *Player) ProgressBetResp(bet int32, coin string) {
 		// 盈余池金额足够小游戏获奖时
 		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
 		if money*Rate <= surMoney {
-			if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+			if p.ProgressBet >= 3 && p.ProgressBet <= 7 {
 				betNum = 1
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
 				p.SendMsg(data)
-			} else if p.ProgressBet >= 6 && p.ProgressBet <= 8 {
+			} else if p.ProgressBet >= 8 && p.ProgressBet <= 15 {
 				betNum = 2
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
 				p.SendMsg(data)
-			} else if p.ProgressBet >= 15 {
+			} else if p.ProgressBet >= 18 {
 				betNum = 6
 				// 发送进度条
 				data := &msg.ProgressBar_S2C{}
