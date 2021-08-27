@@ -45,10 +45,6 @@ func (p *Player) ExitFromRoom(room *Room) {
 	//	p.HandlePlayerData()
 	//}
 
-	hall.UserRecord.Delete(p.Id)
-	hall.UserRoom.Delete(p.Id)
-	hall.RoomRecord.Delete(room.RoomId)
-
 	p.IsExist = false
 	p.OffLineTime = time.Now().Hour()
 

@@ -195,7 +195,9 @@ func getAccessData(w http.ResponseWriter, r *http.Request) {
 		gd.RoundId = pr.RoundId
 		gd.BetInfo = pr.DownBetInfo
 		gd.GameReward = new(GameRewards)
-		gd.GameReward = pr.GameReward
+		gd.GameReward.Game = pr.GameReward.Game
+		gd.GameReward.Rate = pr.GameReward.Rate
+		gd.GameReward.WinMoney = pr.GameReward.WinMoney
 		gd.SettlementFunds = pr.SettlementFunds
 		gd.SpareCash = pr.SpareCash
 		gd.TaxRate = pr.TaxRate
