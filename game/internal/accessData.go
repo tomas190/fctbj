@@ -29,18 +29,19 @@ type ApiResp struct {
 }
 
 type GameData struct {
-	Time            int64       `json:"time"`
-	TimeFmt         string      `json:"time_fmt"`
-	StartTime       int64       `json:"start_time"`
-	EndTime         int64       `json:"end_time"`
-	PlayerId        string      `json:"player_id"`
-	RoundId         string      `json:"round_id"`
-	RoomId          string      `json:"room_id"`
-	TaxRate         float64     `json:"tax_rate"`
-	BetInfo         float64     `json:"bet_info"`         // 玩家下注信息
-	SettlementFunds interface{} `json:"settlement_funds"` // 结算信息 输赢结果
-	SpareCash       interface{} `json:"spare_cash"`       // 剩余金额
-	CreatedAt       int64       `json:"created_at"`
+	Time            int64        `json:"time"`
+	TimeFmt         string       `json:"time_fmt"`
+	StartTime       int64        `json:"start_time"`
+	EndTime         int64        `json:"end_time"`
+	PlayerId        string       `json:"player_id"`
+	RoundId         string       `json:"round_id"`
+	RoomId          string       `json:"room_id"`
+	TaxRate         float64      `json:"tax_rate"`
+	BetInfo         float64      `json:"bet_info"` // 玩家下注信息
+	GameReward      *GameRewards `json:"game_reward"`
+	SettlementFunds interface{}  `json:"settlement_funds"` // 结算信息 输赢结果
+	SpareCash       interface{}  `json:"spare_cash"`       // 剩余金额
+	CreatedAt       int64        `json:"created_at"`
 }
 
 type pageData struct {
@@ -193,6 +194,8 @@ func getAccessData(w http.ResponseWriter, r *http.Request) {
 		gd.RoomId = pr.RoomId
 		gd.RoundId = pr.RoundId
 		gd.BetInfo = pr.DownBetInfo
+		gd.GameReward = new(GameRewards)
+		gd.GameReward = pr.GameReward
 		gd.SettlementFunds = pr.SettlementFunds
 		gd.SpareCash = pr.SpareCash
 		gd.TaxRate = pr.TaxRate

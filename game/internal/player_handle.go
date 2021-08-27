@@ -700,10 +700,10 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
-		// 修改当前配置区间
-		room.Config = m.ChangeCfg
 		// 保存区间节点位置
 		p.ConfigPlace[room.Config] = m.Coordinates
+		// 修改当前配置区间
+		room.Config = m.ChangeCfg
 
 		// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
 		if p.ConfigPlace[m.ChangeCfg] != nil {
