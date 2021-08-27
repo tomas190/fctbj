@@ -121,6 +121,7 @@ func (c4c *Conn4Center) CreatConnect() {
 		log.Fatal("CreatConnect:%v", err.Error())
 	} else {
 		c4c.Run()
+		SendTgMessage("启动成功")
 	}
 }
 
@@ -452,6 +453,8 @@ func (c4c *Conn4Center) onUserLoseScore(msgBody interface{}) {
 	}
 	if code != 200 {
 		log.Error("同步中心服输钱失败:%v", data)
+		dataByte, _ := json.Marshal(data)
+		SendTgMessage("扣钱失败:" + string(dataByte))
 		return
 	}
 

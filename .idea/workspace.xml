@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2c7aa91e-b2c0-48d0-b1b2-71befe609a48" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/game/internal/tgMessage.go" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../newFile/.idea/.gitignore" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../newFile/.idea/misc.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../newFile/.idea/modules.xml" afterDir="false" />
@@ -7870,6 +7871,8 @@
       <change beforePath="$PROJECT_DIR$/../caidaxiao" beforeDir="false" afterPath="$PROJECT_DIR$/../caidaxiao" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../creator.d.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../doudizhu-cocos/.idea/doudizhu-cocos.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/internal/c2c.go" beforeDir="false" afterPath="$PROJECT_DIR$/game/internal/c2c.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../jsconfig.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../packages/ccc-png-auto-compress/CHANGELOG.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../packages/ccc-png-auto-compress/LICENSE" beforeDir="false" />
@@ -9830,9 +9833,9 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="321" y="73" width="638" height="534" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1629983349623" />
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1624615067423">
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1630063951833">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1624615067423" />
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1630063951833" />
   </component>
 </project>
