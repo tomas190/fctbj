@@ -19,4 +19,5 @@ func main() {
 		game.Module,
 		gate.Module,
 	)
+	test()
 }
