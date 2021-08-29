@@ -121,7 +121,6 @@ func (c4c *Conn4Center) CreatConnect() {
 		log.Fatal("CreatConnect:%v", err.Error())
 	} else {
 		c4c.Run()
-		SendTgMessage("启动成功")
 	}
 }
 
@@ -251,6 +250,8 @@ func (c4c *Conn4Center) onServerLogin(msgBody interface{}) {
 	if data["status"] == "SUCCESS" && code == 200 {
 		log.Debug("<-------- serverLogin SUCCESS~!!! -------->")
 		c4c.LoginStat = true
+
+		SendTgMessage("启动成功")
 
 		msginfo := data["msg"].(map[string]interface{})
 		//fmt.Println("globals:", msginfo["globals"], reflect.TypeOf(msginfo["globals"]))

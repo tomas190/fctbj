@@ -57,7 +57,7 @@ func handleLogin(args []interface{}) {
 				log.Error("用户链接替换错误", err)
 			}
 
-			c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) {}) // todo
+			//c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) {}) // todo
 
 			user, _ := hall.UserRecord.Load(p.Id)
 			if user != nil {
@@ -102,52 +102,52 @@ func handleLogin(args []interface{}) {
 			}
 		}
 	} else if !hall.agentExist(a) { // 玩家首次登入
-		//u := &Player{}
-		//u.Id = m.Id
-		//u.Account = 10000
-		//u.NickName = m.Id
-		//u.Token = m.Token
-		//
-		//login := &msg.Login_S2C{}
-		//login.PlayerInfo = new(msg.PlayerInfo)
-		//login.PlayerInfo.Id = u.Id
-		//login.PlayerInfo.NickName = u.NickName
-		//login.PlayerInfo.HeadImg = u.HeadImg
-		//login.PlayerInfo.Account = u.Account
-		//a.WriteMsg(login)
-		//
-		//u.Init()
-		//// 重新绑定信息
-		//u.ConnAgent = a
-		//a.SetUserData(u)
-		//
-		//u.Password = m.GetPassWord()
-		//u.Token = m.GetToken()
-		//
-		//hall.UserRecord.Store(u.Id, u)
+		u := &Player{}
+		u.Id = m.Id
+		u.Account = 10000
+		u.NickName = m.Id
+		u.Token = m.Token
 
-		c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { //todo
-			log.Debug("玩家首次登陆:%v", u.Id)
-			login := &msg.Login_S2C{}
-			login.IsBack = false
-			login.PlayerInfo = new(msg.PlayerInfo)
-			login.PlayerInfo.Id = u.Id
-			login.PlayerInfo.NickName = u.NickName
-			login.PlayerInfo.HeadImg = u.HeadImg
-			login.PlayerInfo.Account = u.Account
-			a.WriteMsg(login)
+		login := &msg.Login_S2C{}
+		login.PlayerInfo = new(msg.PlayerInfo)
+		login.PlayerInfo.Id = u.Id
+		login.PlayerInfo.NickName = u.NickName
+		login.PlayerInfo.HeadImg = u.HeadImg
+		login.PlayerInfo.Account = u.Account
+		a.WriteMsg(login)
 
-			u.Init()
-			// 重新绑定信息
-			u.ConnAgent = a
-			a.SetUserData(u)
+		u.Init()
+		// 重新绑定信息
+		u.ConnAgent = a
+		a.SetUserData(u)
 
-			u.OffLineTime = -1
-			u.Password = m.GetPassWord()
-			u.Token = m.GetToken()
+		u.Password = m.GetPassWord()
+		u.Token = m.GetToken()
 
-			hall.UserRecord.Store(u.Id, u)
-		})
+		hall.UserRecord.Store(u.Id, u)
+
+		//c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { //todo
+		//	log.Debug("玩家首次登陆:%v", u.Id)
+		//	login := &msg.Login_S2C{}
+		//	login.IsBack = false
+		//	login.PlayerInfo = new(msg.PlayerInfo)
+		//	login.PlayerInfo.Id = u.Id
+		//	login.PlayerInfo.NickName = u.NickName
+		//	login.PlayerInfo.HeadImg = u.HeadImg
+		//	login.PlayerInfo.Account = u.Account
+		//	a.WriteMsg(login)
+		//
+		//	u.Init()
+		//	// 重新绑定信息
+		//	u.ConnAgent = a
+		//	a.SetUserData(u)
+		//
+		//	u.OffLineTime = -1
+		//	u.Password = m.GetPassWord()
+		//	u.Token = m.GetToken()
+		//
+		//	hall.UserRecord.Store(u.Id, u)
+		//})
 	}
 }
 

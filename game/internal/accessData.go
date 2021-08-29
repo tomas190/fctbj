@@ -186,6 +186,7 @@ func getAccessData(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < len(recodes); i++ {
 		var gd GameData
 		pr := recodes[i]
+		log.Debug("GameReward 数据:%v",pr.GameReward)
 		gd.Time = pr.DownBetTime
 		gd.TimeFmt = FormatTime(pr.DownBetTime, "2006-01-02 15:04:05")
 		gd.StartTime = pr.StartTime
