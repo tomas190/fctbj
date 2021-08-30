@@ -186,7 +186,7 @@ func getAccessData(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < len(recodes); i++ {
 		var gd GameData
 		pr := recodes[i]
-		log.Debug("GameReward 数据:%v",pr.GameReward)
+		log.Debug("GameReward 数据:%v", pr.GameReward)
 		gd.Time = pr.DownBetTime
 		gd.TimeFmt = FormatTime(pr.DownBetTime, "2006-01-02 15:04:05")
 		gd.StartTime = pr.StartTime
@@ -196,9 +196,7 @@ func getAccessData(w http.ResponseWriter, r *http.Request) {
 		gd.RoundId = pr.RoundId
 		gd.BetInfo = pr.DownBetInfo
 		gd.GameReward = new(GameRewards)
-		gd.GameReward.Game = pr.GameReward.Game
-		gd.GameReward.Rate = pr.GameReward.Rate
-		gd.GameReward.WinMoney = pr.GameReward.WinMoney
+		gd.GameReward = pr.GameReward
 		gd.SettlementFunds = pr.SettlementFunds
 		gd.SpareCash = pr.SpareCash
 		gd.TaxRate = pr.TaxRate
