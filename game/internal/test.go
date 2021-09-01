@@ -208,8 +208,3 @@ func JoinRoom(ws *websocket.Conn) {
 		return
 	}
 }
-
-func RandInRange(min int, max int) int {
-	time.Sleep(1 * time.Nanosecond)
-	return rand.Intn(max-min) + min
-}
