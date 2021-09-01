@@ -24,7 +24,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	t := time.NewTicker(time.Millisecond)
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 10000; i++ {
 		<-t.C
 		fmt.Println(i)
 		go clientbot(ctx)
