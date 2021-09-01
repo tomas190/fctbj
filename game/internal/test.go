@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"bytes"
@@ -19,7 +19,7 @@ import (
 // 定義flag參數，這邊會返回一個相應的指針   47.56.69.120
 var addr = flag.String("addr", "localhost:1362", "http service address")
 
-func main() {
+func test() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	t := time.NewTicker(time.Millisecond)
