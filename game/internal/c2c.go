@@ -73,23 +73,6 @@ func (c4c *Conn4Center) onDestroy() {
 	//c4c.UserLogoutCenter("991738698","123456") //测试用户 和 密码
 }
 
-func (c4c *Conn4Center) WebConnect() {
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, syscall.SIGTERM) //signal.Notify(interrupt, syscall.SIGTERM)
-
-	socket := gowebsocket.New(conf.Server.CenterUrl)
-
-	//websocket loglevel set
-	socket.EnableLogging()
-	socket.GetLogger().SetLevel(logging.WARNING)
-
-	// 與中心服連線錯誤
-	socket.OnConnectError = func(err error, socket gowebsocket.Socket) {
-		log.Debug("Received connect error ", err)
-	}
-
-}
-
 //ReqCenterToken 向中心服务器请求token
 func (c4c *Conn4Center) ReqCenterToken() {
 	// 拼接center Url
