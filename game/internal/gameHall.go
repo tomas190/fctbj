@@ -9,16 +9,18 @@ import (
 )
 
 type GameHall struct {
-	UserRecord sync.Map // 用户记录
-	RoomRecord sync.Map // 房间记录
-	UserRoom   sync.Map // 用户房间
+	UserRecord    sync.Map // 用户记录
+	RoomRecord    sync.Map // 房间记录
+	UserRoom      sync.Map // 用户房间
+	OrderIDRecord sync.Map // orderID对应user
 }
 
 func NewHall() *GameHall {
 	return &GameHall{
-		UserRecord: sync.Map{},
-		RoomRecord: sync.Map{},
-		UserRoom:   sync.Map{},
+		UserRecord:    sync.Map{},
+		RoomRecord:    sync.Map{},
+		UserRoom:      sync.Map{},
+		OrderIDRecord: sync.Map{},
 	}
 }
 

@@ -33,6 +33,7 @@ func (m *Module) OnInit() {
 	go hall.HandleRoomData()
 
 	go StartHttpServer()
+
 }
 
 func (m *Module) OnDestroy() {

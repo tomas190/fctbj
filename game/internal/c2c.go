@@ -5,17 +5,22 @@ import (
 	"encoding/json"
 	"fctbj/conf"
 	"fmt"
+	logging "github.com/sacOO7/go-logger"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"os/signal"
 	"reflect"
 	"runtime"
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/name5566/leaf/log"
+	"github.com/sacOO7/gowebsocket"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -66,6 +71,23 @@ func (c4c *Conn4Center) Init() {
 func (c4c *Conn4Center) onDestroy() {
 	log.Debug("Conn4Center onDestroy ~")
 	//c4c.UserLogoutCenter("991738698","123456") //测试用户 和 密码
+}
+
+func (c4c *Conn4Center) WebConnect() {
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, syscall.SIGTERM) //signal.Notify(interrupt, syscall.SIGTERM)
+
+	socket := gowebsocket.New(conf.Server.CenterUrl)
+
+	//websocket loglevel set
+	socket.EnableLogging()
+	socket.GetLogger().SetLevel(logging.WARNING)
+
+	// 與中心服連線錯誤
+	socket.OnConnectError = func(err error, socket gowebsocket.Socket) {
+		log.Debug("Received connect error ", err)
+	}
+
 }
 
 //ReqCenterToken 向中心服务器请求token
@@ -452,29 +474,44 @@ func (c4c *Conn4Center) onUserLoseScore(msgBody interface{}) {
 	if err != nil {
 		log.Error(err.Error())
 	}
-	if code != 200 {
-		log.Error("同步中心服输钱失败:%v", data)
-		dataByte, _ := json.Marshal(data)
-		SendTgMessage("扣钱失败:" + string(dataByte))
-		return
-	}
+	msgData, ok := data["msg"].(map[string]interface{})
+	if ok {
+		order := msgData["order"]
+		if code != 200 {
+			log.Debug("同步中心服输钱失败:%v", data)
+			v, ok := hall.OrderIDRecord.Load(order)
+			if ok {
+				p := v.(*Player)
+				rid, _ := hall.UserRoom.Load(p.Id)
+				v, _ := hall.RoomRecord.Load(rid)
+				if v != nil {
+					room := v.(*Room)
+					SendTgMessage("玩家输钱失败并登出")
+					p.ExitFromRoom(room)
+					hall.OrderIDRecord.Delete(order)
+				}
+			}
+			return
+		}
+		if data["status"] == "SUCCESS" && code == 200 {
+			log.Debug("<-------- UserLoseScore SUCCESS~ -------->")
 
-	if data["status"] == "SUCCESS" && code == 200 {
-		log.Debug("<-------- UserLoseScore SUCCESS~ -------->")
+			hall.OrderIDRecord.Delete(order)
 
-		//将Lose数据插入数据
-		InsertLoseMoney(msgBody) //todo
+			//将Lose数据插入数据
+			InsertLoseMoney(msgBody)
 
-		userInfo, ok := data["msg"].(map[string]interface{})
-		if ok {
-			jsonScore := userInfo["final_pay"]
-			score, err := jsonScore.(json.Number).Float64()
+			userInfo, ok := data["msg"].(map[string]interface{})
+			if ok {
+				jsonScore := userInfo["final_pay"]
+				score, err := jsonScore.(json.Number).Float64()
 
-			log.Debug("同步中心服输钱成功:%v", score)
+				log.Debug("同步中心服输钱成功:%v", score)
 
-			if err != nil {
-				log.Error(err.Error())
-				return
+				if err != nil {
+					log.Error(err.Error())
+					return
+				}
 			}
 		}
 	}
@@ -749,6 +786,7 @@ func (c4c *Conn4Center) UserSyncLoseScore(p *Player, timeUnix int64, roundId, re
 	userLose.Info.RoundId = roundId
 	baseData.Data = userLose
 	c4c.SendMsg2Center(baseData)
+	hall.OrderIDRecord.Store(userLose.Info.Order, p)
 }
 
 //锁钱

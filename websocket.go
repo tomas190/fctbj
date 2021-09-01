@@ -17,14 +17,14 @@ import (
 	"fctbj/msg"
 )
 
-// 定義flag參數，這邊會返回一個相應的指針
-var addr = flag.String("addr", "47.56.69.120:1362", "http service address")
+// 定義flag參數，這邊會返回一個相應的指針   47.56.69.120
+var addr = flag.String("addr", "localhost:1362", "http service address")
 
-func test() {
+func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	t := time.NewTicker(time.Millisecond)
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 1; i++ {
 		<-t.C
 		fmt.Println(i)
 		go clientbot(ctx)
@@ -81,8 +81,8 @@ func clientbot(ctx context.Context) {
 	// logger.Debug("connecting to %s", u.String())
 	_ = u
 	// 連接服務器 本機
-	//ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-	ws, _, err := websocket.DefaultDialer.Dial("ws://game.539316.com/fctbj", nil)
+	ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+	//ws, _, err := websocket.DefaultDialer.Dial("ws://game.539316.com/fctbj", nil)
 	// ws, _, err := websocket.DefaultDialer.Dial("ws://game.tampk.club/fctbj", nil)
 	if err != nil {
 		log.Fatal("dial:", err)
@@ -133,7 +133,7 @@ func clientbot(ctx context.Context) {
 	}(slotCtx)
 
 	FirstLogin(ws)
-	JoinRoom(ws)
+	//JoinRoom(ws)
 	time.Sleep(1) //確保玩家登入再傳心跳
 
 	// 計時器定時發任務
