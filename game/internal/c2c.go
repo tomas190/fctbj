@@ -107,6 +107,39 @@ func (c4c *Conn4Center) ReqCenterToken() {
 
 //CreatConnect 和Center建立链接
 func (c4c *Conn4Center) CreatConnect() {
+	// 开始运行
+	c4c.Run()
+
+	ticker := time.NewTicker(time.Second * 5)
+	go func() {
+		for { //循环
+			select {
+			case <-ticker.C:
+				c4c.onBreath()
+			default:
+				typeId, message, err := c4c.conn.ReadMessage()
+				if err != nil {
+					log.Debug("Here is error by ReadMessage~ %v", err)
+					log.Error(err.Error())
+				}
+				if typeId == -1 {
+					log.Debug("中心服异常消息~")
+					c4c.LoginStat = false
+					time.Sleep(time.Second * 2)
+					c4c.Run()
+				} else {
+					c4c.onReceive(typeId, message)
+				}
+			}
+		}
+	}()
+}
+
+//Run 开始运行,监听中心服务器的返回
+func (c4c *Conn4Center) Run() {
+	if c4c.LoginStat == true {
+		return
+	}
 	c4c.centerUrl = conf.Server.CenterUrl
 	//c4c.centerUrl = "ws://172.16.1.41:9502/" //Pre
 	//c4c.centerUrl = "ws://172.16.100.2:9502/" //上线
@@ -119,64 +152,7 @@ func (c4c *Conn4Center) CreatConnect() {
 
 	if err != nil {
 		log.Fatal("CreatConnect:%v", err.Error())
-	} else {
-		c4c.Run()
 	}
-}
-
-func (c4c *Conn4Center) ReConnect() {
-	go func() {
-		for {
-			c4c.closebreathchan <- true
-			c4c.closereceivechan <- true
-			if c4c.LoginStat == true {
-				return
-			}
-			time.Sleep(time.Second * 5)
-			c4c.CreatConnect()
-		}
-	}()
-}
-
-//Run 开始运行,监听中心服务器的返回
-func (c4c *Conn4Center) Run() {
-	ticker := time.NewTicker(time.Second * 5)
-	go func() {
-		for { //循环
-			select {
-			case <-ticker.C:
-				c4c.onBreath()
-				break
-			case <-c4c.closebreathchan:
-				return
-			}
-		}
-	}()
-
-	go func() {
-		for {
-			select {
-			case <-c4c.closereceivechan:
-				return
-			default:
-				typeId, message, err := c4c.conn.ReadMessage()
-				if err != nil {
-					log.Debug("Here is error by ReadMessage~ %v", err)
-					log.Error(err.Error())
-				}
-				if typeId == -1 {
-					log.Debug("中心服异常消息~")
-					c4c.LoginStat = false
-					c4c.ReConnect()
-					return
-				} else {
-					c4c.onReceive(typeId, message)
-				}
-				break
-			}
-		}
-	}()
-
 	c4c.ServerLoginCenter()
 }
 
