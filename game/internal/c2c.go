@@ -5,22 +5,17 @@ import (
 	"encoding/json"
 	"fctbj/conf"
 	"fmt"
-	logging "github.com/sacOO7/go-logger"
 	"io/ioutil"
 	"net/http"
-	"os"
-	"os/signal"
 	"reflect"
 	"runtime"
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/name5566/leaf/log"
-	"github.com/sacOO7/gowebsocket"
 	"gopkg.in/mgo.v2/bson"
 )
 
