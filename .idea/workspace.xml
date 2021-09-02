@@ -9828,6 +9828,10 @@
     <proxy>direct</proxy>
   </component>
   <component name="WindowStateProjectService">
+    <state x="379" y="144" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1630566343273">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="379" y="144" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680@0.0.1280.680" timestamp="1630566343273" />
     <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1630174185936">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
