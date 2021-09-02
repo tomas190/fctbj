@@ -82,7 +82,7 @@ func clientbot(ctx context.Context) {
 	// 連接服務器 本機
 	ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	//ws, _, err := websocket.DefaultDialer.Dial("ws://game.539316.com/fctbj", nil)
-	// ws, _, err := websocket.DefaultDialer.Dial("ws://game.tampk.club/fctbj", nil)
+	//ws, _, err := websocket.DefaultDialer.Dial("ws://game.lymrmfyp.com/fctbj", nil)
 	if err != nil {
 		log.Fatal("dial:", err)
 	}
