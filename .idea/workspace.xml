@@ -9800,13 +9800,14 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../RedBlack-War" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -9828,14 +9829,18 @@
     <proxy>direct</proxy>
   </component>
   <component name="WindowStateProjectService">
-    <state x="379" y="144" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1630566343273">
+    <state x="379" y="144" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1630652033666">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="379" y="144" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680@0.0.1280.680" timestamp="1630566343273" />
-    <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1630174185936">
+    <state x="379" y="144" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680@0.0.1280.680" timestamp="1630652033666" />
+    <state x="385" y="196" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1630650462929">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1630174185936" />
+    <state x="385" y="196" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1280.680@0.0.1280.680" timestamp="1630650462929" />
+    <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1630649458895">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1630649458895" />
     <state x="321" y="73" width="773" height="600" key="find.popup" timestamp="1630554288498">
       <screen x="0" y="0" width="1280" height="680" />
     </state>

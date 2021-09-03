@@ -291,13 +291,6 @@ func (p *Player) GameSurSettle() {
 	countLose := sur.RandomCountAfterLose
 	surplusPool := sur.SurplusPool
 
-	//loseRate := 0
-	//percentageWin := 0
-	//percentageLose := 0
-	//countWin := 0
-	//countLose := 0
-	//var surplusPool float64 = 0
-
 	num := RandInRange(1, 101)
 	if num >= 0 { // 玩家赢钱
 		settle := p.GetGoldSettle()
@@ -395,8 +388,14 @@ func (p *Player) GetGoldSettle() float64 {
 		cfgMoney := CfgMoney[room.Config]
 		var goldNum int
 		for { // 循环获取随机金币,避免随机到金币大于桌面金币数量
-			goldNum = p.randGoldNum()
-			if len(room.CoinList[room.Config]) >= goldNum {
+			num := RandInRange(1, 101)
+			if num >= 50 {
+				goldNum = p.randGoldNum()
+				if len(room.CoinList[room.Config]) >= goldNum {
+					break
+				}
+			}else {
+				p.DownBetList = nil
 				break
 			}
 		}
@@ -700,6 +699,9 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
+		// 换房清空累计金币
+		p.ProgressBet = 0
+		p.DownBetCount = 0
 		// 保存区间节点位置
 		p.ConfigPlace[room.Config] = m.Coordinates
 		// 修改当前配置区间
