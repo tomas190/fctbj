@@ -100,6 +100,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 			IsDown = true
 			p.DownBetCount = 0
 			room.CoinList[room.Config] = append(room.CoinList[room.Config], FuDai)
+			log.Debug("福袋掉落:%v,%v", room.Config, room.CoinList[room.Config])
 		}
 		storageCoin = room.CoinList[room.Config]
 	}
@@ -394,7 +395,7 @@ func (p *Player) GetGoldSettle() float64 {
 				if len(room.CoinList[room.Config]) >= goldNum {
 					break
 				}
-			}else {
+			} else {
 				p.DownBetList = nil
 				break
 			}
