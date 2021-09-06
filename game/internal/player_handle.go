@@ -47,6 +47,8 @@ func (p *Player) ExitFromRoom(room *Room) {
 
 	p.IsExist = false
 	p.OffLineTime = time.Now().Hour()
+	p.ProgressBet = 0
+	p.DownBetCount = 0
 
 	c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
 	leaveHall := &msg.Logout_S2C{}
@@ -194,6 +196,7 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 		for _, v := range m.CoinList {
 			if v == FuDai {
 				luckyBag = true
+				log.Debug("福袋结算:%v", v)
 			}
 			// 判断获取相同的金币并删除
 			for k, c := range room.CoinList[room.Config] {
@@ -208,7 +211,9 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 		var winMoney float64
 		// 福袋结算
 		if luckyBag == true {
+			winNum--
 			winMoney += CfgMoney[room.Config] * float64(LuckyBag)
+			log.Debug("福袋结算列表:%v", room.CoinList[room.Config])
 		}
 		// 金币结算
 		winMoney += CfgMoney[room.Config] * float64(winNum)
