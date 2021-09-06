@@ -3,7 +3,6 @@ package internal
 import (
 	"fctbj/conf"
 	"fctbj/msg"
-	"fmt"
 	"github.com/name5566/leaf/log"
 	"strconv"
 	"time"
@@ -115,7 +114,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 
 	// todo
 	nowTime := time.Now().Unix()
-	p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
+	p.RoundId = p.RandRoundId()
 	loseReason := "发财推币机输钱"
 	c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, m.DownBet)
 
@@ -229,7 +228,7 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 
 		// todo
 		nowTime := time.Now().Unix()
-		p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
+		p.RoundId = p.RandRoundId()
 		winReason := "发财推币机赢钱"
 		c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
 
@@ -466,7 +465,7 @@ func (p *Player) GetRewardsInfo() {
 		nowTime := time.Now().Unix()
 		if winMoney > 0 {
 			winReason := "发财推币机" + gameName + "赢钱"
-			p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
+			p.RoundId = p.RandRoundId()
 			c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
 		}
 
@@ -628,7 +627,7 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		nowTime := time.Now().Unix()
 		if winMoney > 0 {
 			winReason := "发财推币机财神接金币赢钱"
-			p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
+			p.RoundId = p.RandRoundId()
 			c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
 		}
 

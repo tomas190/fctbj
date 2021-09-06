@@ -70,6 +70,11 @@ func (p *Player) SendErrMsg(errData string) {
 	p.SendMsg(data)
 }
 
+func (p *Player) RandRoundId() string {
+	num := RandInRange(1, 10000)
+	return fmt.Sprintf("%+v-%+v", time.Now().Unix()+int64(num), p.Id)
+}
+
 //InsertPlayerData 插入玩家数据
 func (p *Player) HandlePlayerData() {
 	nowTime := time.Now().Unix()
@@ -80,7 +85,7 @@ func (p *Player) HandlePlayerData() {
 	}
 
 	if p.TotalWinMoney > 0 {
-		p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
+		p.RoundId = p.RandRoundId()
 		winReason := "发财推币机赢钱"
 		c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, p.TotalWinMoney)
 	}
