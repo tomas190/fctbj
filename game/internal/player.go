@@ -35,7 +35,6 @@ type Player struct {
 
 	DownBetList []string // 掉落金币切片
 
-	ConfigPlace map[string][]*msg.Coordinate
 }
 
 func (p *Player) Init() {
@@ -52,8 +51,6 @@ func (p *Player) Init() {
 	p.IsExist = false
 
 	p.DownBetList = nil
-
-	p.ConfigPlace = make(map[string][]*msg.Coordinate)
 }
 
 //SendMsg 玩家向客户端发送消息
@@ -72,7 +69,7 @@ func (p *Player) SendErrMsg(errData string) {
 
 func (p *Player) RandRoundId() string {
 	num := RandInRange(1, 10000)
-	return fmt.Sprintf("%+v-%+v", time.Now().Unix()+int64(num), p.Id)
+	return fmt.Sprintf("%+v-%+v-%+v", time.Now().Unix(), num, p.Id)
 }
 
 //InsertPlayerData 插入玩家数据

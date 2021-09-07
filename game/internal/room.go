@@ -38,11 +38,12 @@ var (
 )
 
 type Room struct {
-	RoomId   string              // 房间号
-	Config   string              // 房间配置
-	Player   *Player             // 玩家信息
-	CoinNum  map[string]int32    // coin序号
-	CoinList map[string][]string // 金币列表
+	RoomId      string              // 房间号
+	Config      string              // 房间配置
+	Player      *Player             // 玩家信息
+	CoinNum     map[string]int32    // coin序号
+	CoinList    map[string][]string // 金币列表
+	ConfigPlace map[string][]*msg.Coordinate
 }
 
 func (r *Room) Init() {
@@ -51,6 +52,7 @@ func (r *Room) Init() {
 	r.CoinNum = make(map[string]int32)
 	r.CoinList = make(map[string][]string)
 	r.CoinInit()
+	r.ConfigPlace = make(map[string][]*msg.Coordinate)
 }
 
 func (r *Room) CoinInit() {

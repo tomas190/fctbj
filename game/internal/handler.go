@@ -91,12 +91,12 @@ func handleLogin(args []interface{}) {
 				enter := &msg.EnterRoom_S2C{}
 				enter.RoomData = room.RespRoomData()
 				// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
-				if p.ConfigPlace[room.Config] != nil {
+				if room.ConfigPlace[room.Config] != nil {
 					enter.IsChange = true
-					enter.Coordinates = p.ConfigPlace[room.Config]
+					enter.Coordinates = room.ConfigPlace[room.Config]
 				} else {
 					enter.IsChange = false
-					enter.Coordinates = p.ConfigPlace[room.Config]
+					enter.Coordinates = room.ConfigPlace[room.Config]
 				}
 				p.SendMsg(enter)
 				log.Debug("返回当前房间~")
@@ -190,7 +190,7 @@ func handleProgressBar(args []interface{}) {
 	log.Debug("handleProgressBar 获取进度条金币~ : %v", p.Id)
 
 	if ok {
-		p.ProgressBetResp(m.BetNum, m.Coin)
+		p.ProgressBetResp(m)
 	}
 }
 

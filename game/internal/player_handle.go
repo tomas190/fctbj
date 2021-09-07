@@ -87,13 +87,14 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 		log.Debug("当前房间配置:%v,玩家下注金额:%v", room.Config, m.DownBet)
 
 		// 保存区间节点位置
-		p.ConfigPlace[room.Config] = m.Coordinates
+		room.ConfigPlace[room.Config] = m.Coordinates
 
 		// 记录当前 Coin的序号 和 Coin列表
 		room.CoinNum[room.Config]++
 		coinName = Coin + strconv.Itoa(int(room.CoinNum[room.Config]))
 		room.CoinList[room.Config] = append(room.CoinList[room.Config], coinName)
 
+		log.Debug("金币长度:%v,金币列表:%v", len(room.CoinList[room.Config]), room.CoinList[room.Config])
 		// 判断是否掉落福袋
 		p.DownBetCount++
 		IsLucky := room.ExistLuckyBag()
@@ -101,7 +102,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 			IsDown = true
 			p.DownBetCount = 0
 			room.CoinList[room.Config] = append(room.CoinList[room.Config], FuDai)
-			log.Debug("福袋掉落:%v,%v", room.Config, room.CoinList[room.Config])
+			log.Debug("福袋掉落:%v,%v,长度:%v", room.Config, room.CoinList[room.Config], len(room.CoinList[room.Config]))
 		}
 		storageCoin = room.CoinList[room.Config]
 	}
@@ -187,7 +188,7 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 	if v != nil {
 		room := v.(*Room)
 		// 保存区间节点位置
-		p.ConfigPlace[room.Config] = m.Coordinates
+		room.ConfigPlace[room.Config] = m.Coordinates
 
 		// 获取相同的金币进行赢钱结算
 		var winNum int
@@ -544,19 +545,24 @@ func (p *Player) GetRewardsInfo() {
 	}
 }
 
-func (p *Player) ProgressBetResp(bet int32, coin string) {
+func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 
 	var betNum int32
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
+		// 保存区间节点位置
+		room.ConfigPlace[room.Config] = m.Coordinates
 
 		p.ProgressBet++
 		log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
 
 		for k, v := range room.CoinList[room.Config] {
-			if v == coin {
+			if v == m.Coin {
+				if v == FuDai {
+					log.Debug("进度条福袋掉落~")
+				}
 				room.CoinList[room.Config] = append(room.CoinList[room.Config][:k], room.CoinList[room.Config][k+1:]...)
 			}
 		}
@@ -567,17 +573,17 @@ func (p *Player) ProgressBetResp(bet int32, coin string) {
 		// 盈余池金额足够小游戏获奖时
 		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
 		if money*Rate <= surMoney {
-			if p.ProgressBet >= 3 && p.ProgressBet <= 7 {
+			if p.ProgressBet >= 3 && p.ProgressBet <= 20 {
 				betNum = 1
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
 				p.SendMsg(data)
-			} else if p.ProgressBet >= 8 && p.ProgressBet <= 15 {
+			} else if p.ProgressBet >= 21 && p.ProgressBet <= 50 {
 				betNum = 2
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
 				p.SendMsg(data)
-			} else if p.ProgressBet >= 18 {
+			} else if p.ProgressBet >= 50 {
 				betNum = 6
 				// 发送进度条
 				data := &msg.ProgressBar_S2C{}
@@ -587,12 +593,12 @@ func (p *Player) ProgressBetResp(bet int32, coin string) {
 				p.GetRewardsInfo()
 			}
 		} else { // 盈余池金额不足够小游戏获奖
-			if p.ProgressBet >= 3 && p.ProgressBet <= 5 {
+			if p.ProgressBet >= 3 && p.ProgressBet <= 20 {
 				betNum = 1
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
 				p.SendMsg(data)
-			} else if p.ProgressBet >= 6 {
+			} else if p.ProgressBet >= 21 {
 				betNum = 2
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
@@ -708,24 +714,24 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 		p.ProgressBet = 0
 		p.DownBetCount = 0
 		// 保存区间节点位置
-		p.ConfigPlace[room.Config] = m.Coordinates
+		room.ConfigPlace[room.Config] = m.Coordinates
 		// 修改当前配置区间
 		room.Config = m.ChangeCfg
 
 		// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
-		if p.ConfigPlace[m.ChangeCfg] != nil {
+		if room.ConfigPlace[m.ChangeCfg] != nil {
 			// 发送配置数据
 			data := &msg.ChangeRoomCfg_S2C{}
 			data.IsChange = true
 			data.CoinList = room.CoinList[room.Config]
-			data.Coordinates = p.ConfigPlace[room.Config]
+			data.Coordinates = room.ConfigPlace[room.Config]
 			p.SendMsg(data)
 		} else {
 			// 发送配置数据
 			data := &msg.ChangeRoomCfg_S2C{}
 			data.IsChange = false
 			data.CoinList = room.CoinList[room.Config]
-			data.Coordinates = p.ConfigPlace[room.Config]
+			data.Coordinates = room.ConfigPlace[room.Config]
 			p.SendMsg(data)
 		}
 	}
@@ -737,6 +743,6 @@ func (p *Player) SaveCoordinate(m *msg.SendCoordinate_C2S) {
 	if v != nil {
 		room := v.(*Room)
 		// 保存区间节点位置
-		p.ConfigPlace[room.Config] = m.Coordinates
+		room.ConfigPlace[room.Config] = m.Coordinates
 	}
 }

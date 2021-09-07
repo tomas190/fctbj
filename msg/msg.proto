@@ -108,6 +108,7 @@ message ActionResult_S2C {
 message ProgressBar_C2S {
     int32 betNum = 1;
     string coin = 2;
+    repeated coordinate coordinates = 3;
 }
 
 message ProgressBar_S2C {
