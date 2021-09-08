@@ -85,7 +85,6 @@ message EnterRoom_S2C {
 
 message PlayerAction_C2S {
     double downBet = 1; // 下注金额
-    repeated coordinate coordinates = 2;
 }
 
 message PlayerAction_S2C {
@@ -98,7 +97,6 @@ message PlayerAction_S2C {
 // 行动结算返回
 message ActionResult_C2S {
     repeated string coinList = 1;
-    repeated coordinate coordinates = 2;
 }
 
 message ActionResult_S2C {
@@ -108,7 +106,6 @@ message ActionResult_S2C {
 message ProgressBar_C2S {
     int32 betNum = 1;
     string coin = 2;
-    repeated coordinate coordinates = 3;
 }
 
 message ProgressBar_S2C {
