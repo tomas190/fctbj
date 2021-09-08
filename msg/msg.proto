@@ -101,6 +101,7 @@ message ActionResult_C2S {
 
 message ActionResult_S2C {
     double account = 1; // 玩家最新金额
+    repeated coordinate coordinates = 2;
 }
 
 message ProgressBar_C2S {
@@ -110,6 +111,7 @@ message ProgressBar_C2S {
 
 message ProgressBar_S2C {
     int32 proBar = 1;
+    repeated coordinate coordinates = 2;
 }
 
 message ThreePig {

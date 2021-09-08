@@ -277,6 +277,7 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 
 		data := &msg.ActionResult_S2C{}
 		data.Account = p.Account
+		data.Coordinates = room.ConfigPlace[room.Config]
 		p.SendMsg(data)
 	}
 }
@@ -423,28 +424,24 @@ func (p *Player) GetRewardsInfo() {
 		var gameName string
 		var rate float64
 
-		//num := RandInRange(0, 100)
-		//if num >= 0 && num <= 5 {
-		//	data.RewardsNum = GOLD
-		//} else if num >= 6 && num <= 12 {
-		//	data.RewardsNum = RICH
-		//	gameName = "金猪送财"
-		//	rate, data.GetMoney = GetRICH(cfgMoney)
-		//	winMoney = data.GetMoney
-		//} else if num >= 13 && num <= 30 {
-		//	data.RewardsNum = PUSH
-		//	gameName = "财神发钱"
-		//	rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
-		//} else if num >= 31 && num <= 100 {
-		//	data.RewardsNum = LUCKY
-		//	gameName = "财运满满"
-		//	rate, data.LuckyPig = GetLUCKY(cfgMoney)
-		//	winMoney = data.LuckyPig.PigSuccess
-		//}
-
-		data.RewardsNum = PUSH
-		gameName = "财神发钱"
-		rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
+		num := RandInRange(0, 100)
+		if num >= 0 && num <= 5 {
+			data.RewardsNum = GOLD
+		} else if num >= 6 && num <= 12 {
+			data.RewardsNum = RICH
+			gameName = "金猪送财"
+			rate, data.GetMoney = GetRICH(cfgMoney)
+			winMoney = data.GetMoney
+		} else if num >= 13 && num <= 30 {
+			data.RewardsNum = PUSH
+			gameName = "财神发钱"
+			rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
+		} else if num >= 31 && num <= 100 {
+			data.RewardsNum = LUCKY
+			gameName = "财运满满"
+			rate, data.LuckyPig = GetLUCKY(cfgMoney)
+			winMoney = data.LuckyPig.PigSuccess
+		}
 
 		// 结算
 		pac := packageTax[p.PackageId]
@@ -525,6 +522,9 @@ func (p *Player) GetRewardsInfo() {
 
 		// Push中奖,清除桌面金币和福袋,重新生成新的金币
 		if data.RewardsNum == PUSH {
+			// 清空累计下注次数
+			p.DownBetCount = 0
+
 			down := &msg.DownLuckyBag_S2C{}
 			down.LuckyBag1 = int32(fudai1)
 			down.LuckyBag2 = int32(fudai2)
@@ -569,44 +569,40 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 		// 盈余池金额足够小游戏获奖时
 		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
 		if money*Rate <= surMoney {
-			//if p.ProgressBet >= 3 && p.ProgressBet <= 20 {
-			//	betNum = 1
-			//	data := &msg.ProgressBar_S2C{}
-			//	data.ProBar = betNum
-			//	p.SendMsg(data)
-			//} else if p.ProgressBet >= 21 && p.ProgressBet <= 50 {
-			//	betNum = 2
-			//	data := &msg.ProgressBar_S2C{}
-			//	data.ProBar = betNum
-			//	p.SendMsg(data)
-			//} else if p.ProgressBet >= 50 {
-			//	betNum = 6
-			//	// 发送进度条
-			//	data := &msg.ProgressBar_S2C{}
-			//	data.ProBar = betNum
-			//	p.SendMsg(data)
-			//	// 小游戏执行
-			//	p.GetRewardsInfo()
-			//}
-			if p.ProgressBet >= 10 {
+			if p.ProgressBet >= 1 && p.ProgressBet <= 20 {
+				betNum = 1
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				data.Coordinates = room.ConfigPlace[room.Config]
+				p.SendMsg(data)
+			} else if p.ProgressBet >= 21 && p.ProgressBet <= 50 {
+				betNum = 2
+				data := &msg.ProgressBar_S2C{}
+				data.ProBar = betNum
+				data.Coordinates = room.ConfigPlace[room.Config]
+				p.SendMsg(data)
+			} else if p.ProgressBet >= 50 {
 				betNum = 6
 				// 发送进度条
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
+				data.Coordinates = room.ConfigPlace[room.Config]
 				p.SendMsg(data)
 				// 小游戏执行
 				p.GetRewardsInfo()
 			}
 		} else { // 盈余池金额不足够小游戏获奖
-			if p.ProgressBet >= 3 && p.ProgressBet <= 20 {
+			if p.ProgressBet >= 1 && p.ProgressBet <= 20 {
 				betNum = 1
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
+				data.Coordinates = room.ConfigPlace[room.Config]
 				p.SendMsg(data)
 			} else if p.ProgressBet >= 21 {
 				betNum = 2
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
+				data.Coordinates = room.ConfigPlace[room.Config]
 				p.SendMsg(data)
 			}
 		}
