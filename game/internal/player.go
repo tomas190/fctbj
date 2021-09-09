@@ -25,15 +25,14 @@ type Player struct {
 	WinResultMoney  float64
 	LoseResultMoney float64
 
-	DownBet        float64 // 累计下注
-	DownBetCount   int32   // 累计下注次数
-	TotalWinMoney  float64 // 累计赢钱
-	TotalLoseMoney float64 // 累计输钱
-	ProgressBet    int32   // 掉落金币累计
-	OffLineTime    int     // 离线时间
-	IsExist        bool    // 是否存在房间内
-
-	DownBetList []string // 掉落金币切片
+	DownBet        float64  // 累计下注
+	DownBetCount   int32    // 累计下注次数
+	TotalWinMoney  float64  // 累计赢钱
+	TotalLoseMoney float64  // 累计输钱
+	ProgressBet    int32    // 掉落金币累计
+	OffLineTime    int      // 离线时间
+	IsExist        bool     // 是否存在房间内
+	DownBetList    []string // 掉落金币切片
 
 }
 
@@ -49,7 +48,6 @@ func (p *Player) Init() {
 	p.ProgressBet = 0
 	p.OffLineTime = -1
 	p.IsExist = false
-
 	p.DownBetList = nil
 }
 

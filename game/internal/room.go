@@ -41,6 +41,7 @@ type Room struct {
 	RoomId      string              // 房间号
 	Config      string              // 房间配置
 	Player      *Player             // 玩家信息
+	IsPickGod   bool                // 返回接金币
 	CoinNum     map[string]int32    // coin序号
 	CoinList    map[string][]string // 金币列表
 	ConfigPlace map[string][]*msg.Coordinate
@@ -49,6 +50,7 @@ type Room struct {
 func (r *Room) Init() {
 	r.RoomId = fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
 	r.Config = "1"
+	r.IsPickGod = false
 	r.CoinNum = make(map[string]int32)
 	r.CoinList = make(map[string][]string)
 	r.CoinInit()

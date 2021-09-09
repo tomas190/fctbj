@@ -90,6 +90,7 @@ func handleLogin(args []interface{}) {
 				p.IsExist = true
 				enter := &msg.EnterRoom_S2C{}
 				enter.RoomData = room.RespRoomData()
+				enter.IsPickGod = room.IsPickGod
 				// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
 				if room.ConfigPlace[room.Config] != nil {
 					enter.IsChange = true

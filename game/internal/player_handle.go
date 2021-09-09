@@ -427,6 +427,7 @@ func (p *Player) GetRewardsInfo() {
 		num := RandInRange(0, 100)
 		if num >= 0 && num <= 5 {
 			data.RewardsNum = GOLD
+			room.IsPickGod = true
 		} else if num >= 6 && num <= 12 {
 			data.RewardsNum = RICH
 			gameName = "金猪送财"
@@ -614,6 +615,8 @@ func (p *Player) GodPickUpGold(betNum int32) {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
+		// 接金币小游戏结束
+		room.IsPickGod = false
 
 		// 获取财神接金币金额
 		rate, money := GetGOLD(betNum)
@@ -745,5 +748,6 @@ func (p *Player) SaveCoordinate(m *msg.SendCoordinate_C2S) {
 		room := v.(*Room)
 		// 保存区间节点位置
 		room.ConfigPlace[room.Config] = m.Coordinates
+		log.Debug("当前金币长度:%v,位置长度:%v", len(room.CoinList[room.Config]), len(room.ConfigPlace[room.Config]))
 	}
 }
