@@ -415,7 +415,7 @@ func (p *Player) GetRewardsInfo() {
 		room := v.(*Room)
 		p.ProgressBet = 0
 		// 房间配置金额
-		cfgMoney := CfgMoney[room.Config]
+		//cfgMoney := CfgMoney[room.Config]
 
 		data := &msg.GetRewards_S2C{}
 		var winMoney float64
