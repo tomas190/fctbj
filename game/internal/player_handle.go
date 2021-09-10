@@ -415,7 +415,7 @@ func (p *Player) GetRewardsInfo() {
 		room := v.(*Room)
 		p.ProgressBet = 0
 		// 房间配置金额
-		//cfgMoney := CfgMoney[room.Config]
+		cfgMoney := CfgMoney[room.Config]
 
 		data := &msg.GetRewards_S2C{}
 		var winMoney float64
@@ -444,8 +444,9 @@ func (p *Player) GetRewardsInfo() {
 		//	winMoney = data.LuckyPig.PigSuccess
 		//}
 
-		data.RewardsNum = GOLD
-		room.IsPickGod = true
+		data.RewardsNum = PUSH
+		gameName = "财神发钱"
+		rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
 
 		// 结算
 		pac := packageTax[p.PackageId]
