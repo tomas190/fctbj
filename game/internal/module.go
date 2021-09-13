@@ -23,6 +23,7 @@ func (m *Module) OnInit() {
 
 	packageTax = make(map[uint16]float64)
 
+
 	// todo
 	InitMongoDB()
 

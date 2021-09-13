@@ -426,31 +426,35 @@ func (p *Player) GetRewardsInfo() {
 		var gameName string
 		var rate float64
 
-		if len(room.CoinList[room.Config]) > 200 {
-			data.RewardsNum = PUSH
-			gameName = "财神发钱"
-			rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
-		} else {
-			num := RandInRange(0, 100)
-			if num >= 0 && num <= 5 {
-				data.RewardsNum = GOLD
-				room.IsPickGod = true
-			} else if num >= 6 && num <= 12 {
-				data.RewardsNum = RICH
-				gameName = "金猪送财"
-				rate, data.GetMoney = GetRICH(cfgMoney)
-				winMoney = data.GetMoney
-			} else if num >= 13 && num <= 30 {
-				data.RewardsNum = PUSH
-				gameName = "财神发钱"
-				rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
-			} else if num >= 31 && num <= 100 {
-				data.RewardsNum = LUCKY
-				gameName = "财运满满"
-				rate, data.LuckyPig = GetLUCKY(cfgMoney)
-				winMoney = data.LuckyPig.PigSuccess
-			}
-		}
+		//if len(room.CoinList[room.Config]) > 200 {
+		//	data.RewardsNum = PUSH
+		//	gameName = "财神发钱"
+		//	rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
+		//} else {
+		//	num := RandInRange(0, 100)
+		//	if num >= 0 && num <= 5 {
+		//		data.RewardsNum = GOLD
+		//		room.IsPickGod = true
+		//	} else if num >= 6 && num <= 12 {
+		//		data.RewardsNum = RICH
+		//		gameName = "金猪送财"
+		//		rate, data.GetMoney = GetRICH(cfgMoney)
+		//		winMoney = data.GetMoney
+		//	} else if num >= 13 && num <= 30 {
+		//		data.RewardsNum = PUSH
+		//		gameName = "财神发钱"
+		//		rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
+		//	} else if num >= 31 && num <= 100 {
+		//		data.RewardsNum = LUCKY
+		//		gameName = "财运满满"
+		//		rate, data.LuckyPig = GetLUCKY(cfgMoney)
+		//		winMoney = data.LuckyPig.PigSuccess
+		//	}
+		//}
+
+		data.RewardsNum = PUSH
+		gameName = "财神发钱"
+		rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
 
 		// 结算
 		pac := packageTax[p.PackageId]
