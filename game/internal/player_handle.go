@@ -76,7 +76,10 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
-
+		if room.IsLuckyGame == true {
+			log.Debug("玩家行动失败,房间正在小游戏!")
+			return
+		}
 		// 判断下注金币是否对应房间配置金额(防止刷钱)
 		if CfgMoney[room.Config] != m.DownBet {
 			p.SendErrMsg(RECODE_RoomCfgMoneyERROR)
@@ -423,6 +426,8 @@ func (p *Player) GetRewardsInfo() {
 	if v != nil {
 		room := v.(*Room)
 		p.ProgressBet = 0
+		room.IsLuckyGame = true
+
 		// 房间配置金额
 		cfgMoney := CfgMoney[room.Config]
 
@@ -562,6 +567,7 @@ func (p *Player) GetRewardsInfo() {
 			creat.CoinList = room.CoinList[room.Config]
 			p.SendMsg(creat)
 		}
+		room.IsLuckyGame = false
 	}
 }
 
