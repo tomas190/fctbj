@@ -293,7 +293,6 @@ func (r *Room) PushStorage() {
 	r.PushPlace = append(r.PushPlace, data)
 	data.Location = []string{"131.19310627575993", "-88.93775623188725", "21"}
 	r.PushPlace = append(r.PushPlace, data)
-	r.PushPlace = append(r.PushPlace, data)
 	data.Location = []string{"85.59245979017294", "-205.2000637893167", "21"}
 	r.PushPlace = append(r.PushPlace, data)
 	data.Location = []string{"185.6846305436884", "-131.47566920132226", "21"}

@@ -547,6 +547,18 @@ func (p *Player) GetRewardsInfo() {
 
 		// Push中奖,清除桌面金币和福袋,重新生成新的金币
 		if data.RewardsNum == PUSH {
+			go func() {
+				timeout := time.NewTimer(time.Second * 5)
+				for {
+					select {
+					case <-timeout.C:
+						room.IsLuckyGame = false
+						log.Debug("房间执行小游戏结束!")
+						return
+					}
+				}
+			}()
+
 			// 清空累计下注次数
 			p.DownBetCount = 0
 
@@ -567,7 +579,7 @@ func (p *Player) GetRewardsInfo() {
 			creat.CoinList = room.CoinList[room.Config]
 			p.SendMsg(creat)
 		}
-		room.IsLuckyGame = false
+
 	}
 }
 

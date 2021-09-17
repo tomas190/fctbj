@@ -91,6 +91,7 @@ func handleLogin(args []interface{}) {
 				enter := &msg.EnterRoom_S2C{}
 				enter.RoomData = room.RespRoomData()
 				enter.IsPickGod = room.IsPickGod
+				log.Debug("返回房间位置长度信息前:%v", len(room.ConfigPlace[room.Config]))
 				// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
 				if room.ConfigPlace[room.Config] != nil {
 					enter.IsChange = true
@@ -99,7 +100,9 @@ func handleLogin(args []interface{}) {
 					enter.IsChange = true
 					room.ConfigPlace[room.Config] = room.PushPlace
 					enter.Coordinates = room.ConfigPlace[room.Config]
+					log.Debug("房间位置信息为空,添加预设值:%v", len(room.ConfigPlace[room.Config]))
 				}
+				log.Debug("返回房间位置长度信息后:%v", len(room.ConfigPlace[room.Config]))
 				p.SendMsg(enter)
 				log.Debug("返回当前房间~")
 			}
