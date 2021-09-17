@@ -96,7 +96,8 @@ func handleLogin(args []interface{}) {
 					enter.IsChange = true
 					enter.Coordinates = room.ConfigPlace[room.Config]
 				} else {
-					enter.IsChange = false
+					enter.IsChange = true
+					room.ConfigPlace[room.Config] = room.PushPlace
 					enter.Coordinates = room.ConfigPlace[room.Config]
 				}
 				p.SendMsg(enter)
