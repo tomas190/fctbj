@@ -203,6 +203,12 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 			}
 		}
 
+		if winNum == 0 && luckyBag == false {
+			p.SendErrMsg(RECODE_NotHaveSameCoin)
+			log.Debug("金币列表未存在相同的金币:%v,%v", m.CoinList, room.CoinList[room.Config])
+			return
+		}
+
 		// 玩家赢钱结算
 		var winMoney float64
 		// 福袋结算
@@ -281,6 +287,7 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 		data.Account = p.Account
 		data.Coordinates = room.ConfigPlace[room.Config]
 		p.SendMsg(data)
+		log.Debug("当前金币数量:%v", room.CoinList[room.Config])
 	}
 }
 
@@ -546,6 +553,7 @@ func (p *Player) GetRewardsInfo() {
 			p.SendMsg(down)
 
 			room.CoinList[room.Config] = nil
+			room.ConfigPlace[room.Config] = nil
 			for i := 1; i <= 100; i++ {
 				room.CoinNum[room.Config] ++
 				room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+strconv.Itoa(int(room.CoinNum[room.Config])))

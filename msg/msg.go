@@ -35,3 +35,12 @@ func init() {
 	Processor.Register(&SendCoordinate_C2S{})
 	Processor.Register(&ErrorMsg_S2C{})
 }
+
+type s struct {
+	data interface{}
+}
+
+func test() {
+	a := &s{}
+	b := a.data.([]int)
+}
