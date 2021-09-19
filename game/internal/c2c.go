@@ -468,7 +468,8 @@ func (c4c *Conn4Center) onUserLoseScore(msgBody interface{}) {
 				v, _ := hall.RoomRecord.Load(rid)
 				if v != nil {
 					room := v.(*Room)
-					SendTgMessage("玩家输钱失败并登出")
+					message := fmt.Sprintf("玩家" + p.Id + "输钱失败并登出")
+					SendTgMessage(message)
 					p.ExitFromRoom(room)
 					hall.OrderIDRecord.Delete(order)
 				}
