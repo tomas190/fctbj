@@ -15,6 +15,7 @@ const (
 	RECODE_ActionCoinNotHave  = "1005" // 玩家行动金币为空
 	RECODE_PlayerExistRoom    = "1006" // 玩家已在房间内
 	RECODE_NotHaveSameCoin    = "1007" // 未存在相同金币
+	RECODE_InRoomGameStep     = "1008" // 在小游戏阶段
 )
 
 var CfgMoney = map[string]float64{
