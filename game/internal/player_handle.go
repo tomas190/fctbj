@@ -443,13 +443,13 @@ func (p *Player) GetRewardsInfo() {
 		// 房间配置金额
 		cfgMoney := CfgMoney[room.Config]
 
-		data := &msg.GetRewards_S2C{}
 		var winMoney float64
 		var fudai1 int
 		var fudai2 int
 		var gameName string
 		var rate float64
 
+		data := &msg.GetRewards_S2C{}
 		if len(room.CoinList[room.Config]) > 200 {
 			data.RewardsNum = PUSH
 			gameName = "财神发钱"
@@ -462,19 +462,17 @@ func (p *Player) GetRewardsInfo() {
 			} else if num >= 4 && num <= 6 {
 				data.RewardsNum = RICH
 				gameName = "金猪送财"
-				rate, data.GetMoney = GetRICH(cfgMoney)
-				winMoney = data.GetMoney
+				rate, winMoney = GetRICH(cfgMoney)
 			} else if num >= 7 && num <= 10 {
 				data.RewardsNum = PUSH
 				gameName = "财神发钱"
 				rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
 			} else if num >= 11 && num <= 100 {
 				data.RewardsNum = LUCKY
-				gameName = "财运满满"
-				rate, data.LuckyPig = GetLUCKY(cfgMoney)
-				winMoney = data.LuckyPig.PigSuccess
+				room.IsLuckyPig = true
 			}
 		}
+		p.SendMsg(data)
 
 		// 结算
 		pac := packageTax[p.PackageId]
@@ -486,11 +484,6 @@ func (p *Player) GetRewardsInfo() {
 		p.Account += resultMoney
 		p.WinResultMoney = winMoney
 		p.TotalWinMoney += winMoney
-
-		// 发送小游戏获奖
-		data.GetMoney = winMoney
-		data.Account = p.Account
-		p.SendMsg(data)
 
 		nowTime := time.Now().Unix()
 		if winMoney > 0 {
@@ -553,6 +546,13 @@ func (p *Player) GetRewardsInfo() {
 				sur.TotalWinMoney += Decimal(p.WinResultMoney)
 				InsertSurplusPool(sur)
 			}
+		}
+
+		if data.RewardsNum == RICH {
+			send := &msg.SendMoney_S2C{}
+			send.GetMoney = winMoney
+			send.Account = p.Account
+			p.SendMsg(send)
 		}
 
 		// Push中奖,清除桌面金币和福袋,重新生成新的金币
@@ -655,6 +655,102 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 	}
 }
 
+func (p *Player) WinLuckyPig() {
+	rid, _ := hall.UserRoom.Load(p.Id)
+	v, _ := hall.RoomRecord.Load(rid)
+	if v != nil {
+		room := v.(*Room)
+		room.IsLuckyPig = false
+
+		var getPigInfo *msg.ThreePig
+		// 获取财神接金币金额
+		cfgMoney := CfgMoney[room.Config]
+		rate, getPigInfo := GetLUCKY(cfgMoney)
+		money := getPigInfo.PigSuccess
+		winMoney := money * CfgMoney[room.Config]
+
+		// 结算
+		pac := packageTax[p.PackageId]
+		taxR := pac / 100
+		tax := winMoney * taxR
+		resultMoney := winMoney - tax
+
+		p.Account += resultMoney
+		p.WinResultMoney = winMoney
+		p.TotalWinMoney += winMoney
+
+		log.Debug("财运满满赢钱的金额:%v", winMoney)
+
+		nowTime := time.Now().Unix()
+		if winMoney > 0 {
+			winReason := "发财推币机财运满满赢钱"
+			p.RoundId = p.RandRoundId()
+			c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
+		}
+
+		// 跑马灯
+		if resultMoney > PaoMaDeng {
+			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
+		}
+
+		if p.WinResultMoney > 0 {
+			// 插入运营数据
+			pr := &PlayerDownBetRecode{}
+			pr.Id = p.Id
+			pr.GameId = conf.Server.GameID
+			pr.RoundId = p.RoundId
+			pr.RoomId = p.RoomId
+			pr.DownBetInfo = p.DownBet
+			pr.DownBetTime = nowTime
+			pr.StartTime = nowTime
+			pr.EndTime = nowTime
+			pr.GameReward = new(GameRewards)
+			pr.GameReward.Game = "财运满满"
+			pr.GameReward.Rate = rate
+			pr.GameReward.WinMoney = winMoney
+			pr.SettlementFunds = resultMoney
+			pr.SpareCash = p.Account
+			pr.TaxRate = taxR
+			InsertAccessData(pr)
+
+			// 插入游戏统计数据
+			sd := &StatementData{}
+			sd.Id = p.Id
+			sd.GameId = conf.Server.GameID
+			sd.GameName = "财神推金币"
+			sd.DownBetTime = nowTime
+			sd.StartTime = nowTime
+			sd.EndTime = nowTime
+			sd.PackageId = p.PackageId
+			sd.WinStatementTotal = p.WinResultMoney
+			sd.BetMoney = p.DownBet
+			InsertStatementDB(sd)
+
+			if p.PackageId != 11 {
+				// 插入盈余数据
+				sur := &SurplusPoolDB{}
+				sur.UpdateTime = time.Now()
+				sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
+				sur.Rid = p.RoomId
+				sur.PlayerNum = LoadPlayerCount()
+				surPool := FindSurplusPool()
+				if surPool != nil {
+					sur.HistoryWin = surPool.HistoryWin
+					sur.HistoryLose = surPool.HistoryLose
+				}
+				sur.HistoryWin += Decimal(p.WinResultMoney)
+				sur.TotalWinMoney += Decimal(p.WinResultMoney)
+				InsertSurplusPool(sur)
+			}
+		}
+
+		data := &msg.LuckyPig_S2C{}
+		data.LuckyPig = getPigInfo
+		data.Account = p.Account
+		p.SendMsg(data)
+	}
+}
+
 func (p *Player) GodPickUpGold(betNum int32) {
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
@@ -677,7 +773,7 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		p.WinResultMoney = winMoney
 		p.TotalWinMoney += winMoney
 
-		log.Debug("获取赢钱的金额:%v", winMoney)
+		log.Debug("财神接金币赢钱的金额:%v", winMoney)
 
 		nowTime := time.Now().Unix()
 		if winMoney > 0 {

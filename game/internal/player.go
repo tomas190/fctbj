@@ -5,6 +5,8 @@ import (
 	"fctbj/msg"
 	"fmt"
 	"github.com/name5566/leaf/gate"
+	"github.com/name5566/leaf/log"
+	"strconv"
 	"time"
 )
 
@@ -68,6 +70,66 @@ func (p *Player) SendErrMsg(errData string) {
 func (p *Player) RandRoundId() string {
 	num := RandInRange(1, 10000)
 	return fmt.Sprintf("%+v-%+v-%+v", time.Now().Unix(), num, p.Id)
+}
+
+func (p *Player) RespEnterRoom() {
+	rid, _ := hall.UserRoom.Load(p.Id)
+	v, _ := hall.RoomRecord.Load(rid)
+	if v != nil {
+		room := v.(*Room)
+		p.IsExist = true
+		enter := &msg.EnterRoom_S2C{}
+		enter.RoomData = room.RespRoomData()
+		enter.IsPickGod = room.IsPickGod
+		enter.IsLuckyPig = room.IsLuckyPig
+		// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
+		if room.ConfigPlace[room.Config] != nil {
+			var reset bool
+			if len(room.CoinList[room.Config]) != len(room.ConfigPlace[room.Config]) {
+				reset = true
+			}
+			for _, v := range room.ConfigPlace[room.Config] {
+				y, _ := strconv.ParseFloat(v.Location[1], 64)
+				if y > 98 || y < -365 {
+					reset = true
+				}
+			}
+			var isHave bool
+			for _, v := range room.CoinList[room.Config] {
+				if v == FuDai {
+					isHave = true
+				}
+			}
+			if reset == true {
+				room.CoinList[room.Config] = nil
+				room.ConfigPlace[room.Config] = nil
+				for i := 1; i <= 100; i++ {
+					room.CoinNum[room.Config] ++
+					room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+strconv.Itoa(int(room.CoinNum[room.Config])))
+				}
+				room.ConfigPlace[room.Config] = room.PushPlace
+
+				if isHave == true {
+					room.CoinList[room.Config] = append(room.CoinList[room.Config], FuDai)
+					coinPlace := make([]*msg.Coordinate, 0)
+					coinPlace = room.PushPlace
+					place := &msg.Coordinate{}
+					place.Location = []string{"82.02063531614465", "-235.30818435638344", "31"}
+					coinPlace = append(coinPlace, place)
+					room.ConfigPlace[room.Config] = coinPlace
+				}
+			}
+			enter.IsChange = true
+			enter.Coordinates = room.ConfigPlace[room.Config]
+		} else {
+			enter.IsChange = true
+			room.ConfigPlace[room.Config] = room.PushPlace
+			enter.Coordinates = room.ConfigPlace[room.Config]
+			log.Debug("房间位置信息为空,添加预设值:%v", len(room.ConfigPlace[room.Config]))
+		}
+		log.Debug("返回房间数据,当前金币长度:%v,位置长度:%v", len(room.CoinList[room.Config]), len(room.ConfigPlace[room.Config]))
+		p.SendMsg(enter)
+	}
 }
 
 //InsertPlayerData 插入玩家数据

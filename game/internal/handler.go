@@ -19,6 +19,7 @@ func init() {
 	handlerReg(&msg.PlayerAction_C2S{}, handlePlayerAction)
 	handlerReg(&msg.ActionResult_C2S{}, handleActionResult)
 	handlerReg(&msg.ProgressBar_C2S{}, handleProgressBar)
+	handlerReg(&msg.LuckyPig_C2S{}, handleLuckyPig)
 	handlerReg(&msg.PickUpGold_C2S{}, handlePickUpGold)
 
 	handlerReg(&msg.ChangeRoomCfg_C2S{}, handleChangeRoomCfg)
@@ -83,29 +84,8 @@ func handleLogin(args []interface{}) {
 				p.OffLineTime = -1
 			}
 
-			rid, _ := hall.UserRoom.Load(p.Id)
-			v, _ := hall.RoomRecord.Load(rid)
-			if v != nil {
-				room := v.(*Room)
-				p.IsExist = true
-				enter := &msg.EnterRoom_S2C{}
-				enter.RoomData = room.RespRoomData()
-				enter.IsPickGod = room.IsPickGod
-				log.Debug("返回房间位置长度信息前:%v", len(room.ConfigPlace[room.Config]))
-				// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
-				if room.ConfigPlace[room.Config] != nil {
-					enter.IsChange = true
-					enter.Coordinates = room.ConfigPlace[room.Config]
-				} else {
-					enter.IsChange = true
-					room.ConfigPlace[room.Config] = room.PushPlace
-					enter.Coordinates = room.ConfigPlace[room.Config]
-					log.Debug("房间位置信息为空,添加预设值:%v", len(room.ConfigPlace[room.Config]))
-				}
-				log.Debug("返回房间位置长度信息后:%v", len(room.ConfigPlace[room.Config]))
-				p.SendMsg(enter)
-				log.Debug("返回当前房间~")
-			}
+			// 判断玩家是否返回房间数据
+			p.RespEnterRoom()
 		}
 	} else if !hall.agentExist(a) { // 玩家首次登入
 		c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { //todo
@@ -196,6 +176,17 @@ func handleProgressBar(args []interface{}) {
 
 	if ok {
 		p.ProgressBetResp(m)
+	}
+}
+
+func handleLuckyPig(args []interface{}) {
+	a := args[1].(gate.Agent)
+
+	p, ok := a.UserData().(*Player)
+	log.Debug("handleLuckyPig 获取财运满满~ : %v", p.Id)
+
+	if ok {
+		p.WinLuckyPig()
 	}
 }
 

@@ -22,12 +22,15 @@ enum MessageID {
     MSG_DownLuckyBag_S2C = 15;
     MSG_ReCreatGold_S2C = 16;
     MSG_GetRewards_S2C = 17;
-    MSG_PickUpGold_C2S = 18;
-    MSG_PickUpGold_S2C = 19;
-    MSG_ChangeRoomCfg_C2S = 20;
-    MSG_ChangeRoomCfg_S2C = 21;
-    MSG_SendCoordinate_C2S = 22;
-    MSG_ErrorMsg_S2C = 23;
+    MSG_LuckyPig_C2S = 18;
+    MSG_LuckyPig_S2C = 19;
+    MSG_SendMoney_S2C = 20;
+    MSG_PickUpGold_C2S = 21;
+    MSG_PickUpGold_S2C = 22;
+    MSG_ChangeRoomCfg_C2S = 23;
+    MSG_ChangeRoomCfg_S2C = 24;
+    MSG_SendCoordinate_C2S = 25;
+    MSG_ErrorMsg_S2C = 26;
 }
 
 message Ping {
@@ -80,8 +83,9 @@ message JoinRoom_S2C {
 message EnterRoom_S2C {
     RoomData roomData = 1;
     bool isPickGod = 2;
-    bool isChange = 3;
-    repeated coordinate coordinates = 4;
+    bool isLuckyPig = 3;
+    bool isChange = 4;
+    repeated coordinate coordinates = 5;
 }
 
 message PlayerAction_C2S {
@@ -124,9 +128,6 @@ message ThreePig {
 // 获奖小游戏
 message GetRewards_S2C {
     int32 rewardsNum = 1;
-    double getMoney = 2;
-    ThreePig luckyPig = 3;
-    double account = 4; // 玩家最新金额
 }
 
 // 福袋掉落
@@ -140,6 +141,21 @@ message DownLuckyBag_S2C {
 // 重新生成金币
 message ReCreatGold_S2C {
     repeated string coinList = 1;
+}
+
+// 财运满满
+message LuckyPig_C2S {
+}
+
+message LuckyPig_S2C {
+    ThreePig luckyPig = 1;
+    double account = 2;
+}
+
+// 金猪送财
+message SendMoney_S2C {
+    double getMoney = 1;
+    double account = 2;
 }
 
 // 财神接金币
