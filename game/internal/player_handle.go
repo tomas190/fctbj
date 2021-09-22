@@ -614,19 +614,19 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 		// 盈余池金额足够小游戏获奖时
 		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
 		if money*Rate <= surMoney {
-			if p.ProgressBet >= 1 && p.ProgressBet <= 2 {
+			if p.ProgressBet >= 1 && p.ProgressBet <= 50 {
 				betNum = 1
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
 				data.Coordinates = room.ConfigPlace[room.Config]
 				p.SendMsg(data)
-			} else if p.ProgressBet >= 3 && p.ProgressBet <= 4 {
+			} else if p.ProgressBet >= 51 && p.ProgressBet <= 99 {
 				betNum = 2
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
 				data.Coordinates = room.ConfigPlace[room.Config]
 				p.SendMsg(data)
-			} else if p.ProgressBet >= 10 {
+			} else if p.ProgressBet >= 100 {
 				betNum = 6
 				// 发送进度条
 				data := &msg.ProgressBar_S2C{}
@@ -636,29 +636,6 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 				// 小游戏执行
 				p.GetRewardsInfo()
 			}
-			//if money*Rate <= surMoney {
-			//if p.ProgressBet >= 1 && p.ProgressBet <= 50 {
-			//	betNum = 1
-			//	data := &msg.ProgressBar_S2C{}
-			//	data.ProBar = betNum
-			//	data.Coordinates = room.ConfigPlace[room.Config]
-			//	p.SendMsg(data)
-			//} else if p.ProgressBet >= 51 && p.ProgressBet <= 99 {
-			//	betNum = 2
-			//	data := &msg.ProgressBar_S2C{}
-			//	data.ProBar = betNum
-			//	data.Coordinates = room.ConfigPlace[room.Config]
-			//	p.SendMsg(data)
-			//} else if p.ProgressBet >= 100 {
-			//	betNum = 6
-			//	// 发送进度条
-			//	data := &msg.ProgressBar_S2C{}
-			//	data.ProBar = betNum
-			//	data.Coordinates = room.ConfigPlace[room.Config]
-			//	p.SendMsg(data)
-			//	// 小游戏执行
-			//	p.GetRewardsInfo()
-			//}
 		} else { // 盈余池金额不足够小游戏获奖
 			if p.ProgressBet >= 1 && p.ProgressBet <= 20 {
 				betNum = 1
