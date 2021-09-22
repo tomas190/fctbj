@@ -79,9 +79,6 @@ func (p *Player) RespEnterRoom() {
 		room := v.(*Room)
 		p.IsExist = true
 		enter := &msg.EnterRoom_S2C{}
-		enter.RoomData = room.RespRoomData()
-		enter.IsPickGod = room.IsPickGod
-		enter.IsLuckyPig = room.IsLuckyPig
 		// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
 		if room.ConfigPlace[room.Config] != nil {
 			var reset bool
@@ -128,6 +125,10 @@ func (p *Player) RespEnterRoom() {
 			log.Debug("房间位置信息为空,添加预设值:%v", len(room.ConfigPlace[room.Config]))
 		}
 		log.Debug("返回房间数据,当前金币长度:%v,位置长度:%v", len(room.CoinList[room.Config]), len(room.ConfigPlace[room.Config]))
+
+		enter.RoomData = room.RespRoomData()
+		enter.IsPickGod = room.IsPickGod
+		enter.IsLuckyPig = room.IsLuckyPig
 		p.SendMsg(enter)
 	}
 }
