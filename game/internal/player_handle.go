@@ -95,7 +95,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 		coinName = Coin + strconv.Itoa(int(room.CoinNum[room.Config]))
 		room.CoinList[room.Config] = append(room.CoinList[room.Config], coinName)
 
-		log.Debug("金币长度:%v,金币列表:%v", len(room.CoinList[room.Config]), room.CoinList[room.Config])
+		//log.Debug("金币长度:%v,金币列表:%v", len(room.CoinList[room.Config]), room.CoinList[room.Config])
 		// 判断是否掉落福袋
 		p.DownBetCount++
 		IsLucky := room.ExistLuckyBag()
@@ -300,8 +300,7 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 }
 
 func (p *Player) GameSurSettle() {
-	//todo
-	sur := GetFindSurPool()
+	sur := GetFindSurPool() //todo
 	loseRate := sur.PlayerLoseRateAfterSurplusPool * 100
 	percentageWin := sur.RandomPercentageAfterWin * 100
 	percentageLose := sur.RandomPercentageAfterLose * 100
@@ -414,7 +413,7 @@ func (p *Player) GetGoldSettle() float64 {
 		var goldNum int
 		for { // 循环获取随机金币,避免随机到金币大于桌面金币数量
 			num := RandInRange(1, 101)
-			if num >= 55 {
+			if num >= 50 {
 				goldNum = p.randGoldNum()
 				if len(room.CoinList[room.Config]) >= goldNum {
 					break
@@ -425,7 +424,7 @@ func (p *Player) GetGoldSettle() float64 {
 			}
 		}
 		p.DownBetList = room.CoinList[room.Config][:goldNum]
-		//log.Debug("随机金币的数量:%v,切片值:%v", goldNum, p.DownBetList)
+		log.Debug("随机金币的数量:%v,切片值:%v", goldNum, p.DownBetList)
 		settle := cfgMoney * float64(goldNum)
 		return settle
 	}
@@ -479,7 +478,7 @@ func (p *Player) GetRewardsInfo() {
 		taxR := pac / 100
 		tax := winMoney * taxR
 		resultMoney := winMoney - tax
-		log.Debug("获取赢钱的金额:%v", winMoney)
+		log.Debug("获取小游戏赢钱的金额:%v", winMoney)
 
 		p.Account += resultMoney
 		p.WinResultMoney = winMoney
@@ -611,7 +610,7 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 
 		// 房间配置金额
 		money := CfgMoney[room.Config]
-		surMoney := GetSurPlusMoney()
+		surMoney := GetSurPlusMoney() //todo
 		// 盈余池金额足够小游戏获奖时
 		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
 		if money*Rate <= surMoney {
