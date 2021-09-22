@@ -550,7 +550,7 @@ func (p *Player) GetRewardsInfo() {
 
 		if data.RewardsNum == RICH {
 			send := &msg.SendMoney_S2C{}
-			send.GetMoney = winMoney
+			send.GetMoney = resultMoney
 			send.Account = p.Account
 			p.SendMsg(send)
 		}
