@@ -458,41 +458,19 @@ func (p *Player) GetRewardsInfo() {
 			if num >= 0 && num <= 3 {
 				data.RewardsNum = GOLD
 				room.IsPickGod = true
-			} else if num >= 4 && num <= 48 {
+			} else if num >= 4 && num <= 6 {
 				data.RewardsNum = RICH
 				gameName = "金猪送财"
 				rate, winMoney = GetRICH(cfgMoney)
-			} else if num >= 49 && num <= 50 {
+			} else if num >= 7 && num <= 10 {
 				data.RewardsNum = PUSH
 				gameName = "财神发钱"
 				rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
-			} else if num >= 51 && num <= 100 {
+			} else if num >= 11 && num <= 100 {
 				data.RewardsNum = LUCKY
 				room.IsLuckyPig = true
 			}
 		}
-		//if len(room.CoinList[room.Config]) > 200 {
-		//	data.RewardsNum = PUSH
-		//	gameName = "财神发钱"
-		//	rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
-		//} else {
-		//	num := RandInRange(0, 100)
-		//	if num >= 0 && num <= 3 {
-		//		data.RewardsNum = GOLD
-		//		room.IsPickGod = true
-		//	} else if num >= 4 && num <= 6 {
-		//		data.RewardsNum = RICH
-		//		gameName = "金猪送财"
-		//		rate, winMoney = GetRICH(cfgMoney)
-		//	} else if num >= 7 && num <= 10 {
-		//		data.RewardsNum = PUSH
-		//		gameName = "财神发钱"
-		//		rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
-		//	} else if num >= 11 && num <= 100 {
-		//		data.RewardsNum = LUCKY
-		//		room.IsLuckyPig = true
-		//	}
-		//}
 		p.SendMsg(data)
 
 		// 结算
