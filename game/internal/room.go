@@ -38,16 +38,17 @@ var (
 )
 
 type Room struct {
-	RoomId      string              // 房间号
-	Config      string              // 房间配置
-	Player      *Player             // 玩家信息
-	IsPickGod   bool                // 返回接金币
-	IsLuckyPig  bool                // 返回幸运小猪
-	IsLuckyGame bool                // 是否小游戏
-	CoinNum     map[string]int32    // coin序号
-	CoinList    map[string][]string // 金币列表
-	ConfigPlace map[string][]*msg.Coordinate
-	PushPlace   []*msg.Coordinate // push预设值
+	RoomId      string  // 房间号
+	Config      string  // 房间配置
+	Player      *Player // 玩家信息
+	IsPickGod   bool    // 返回接金币
+	IsLuckyPig  bool    // 返回幸运小猪
+	IsLuckyGame bool    // 是否小游戏
+	IsActPig    bool
+	CoinNum     map[string]int32             // coin序号
+	CoinList    map[string][]string          // 金币列表
+	ConfigPlace map[string][]*msg.Coordinate // 位置列表
+	PushPlace   []*msg.Coordinate            // push预设值
 }
 
 func (r *Room) Init() {
@@ -56,6 +57,7 @@ func (r *Room) Init() {
 	r.IsPickGod = false
 	r.IsLuckyPig = false
 	r.IsLuckyGame = false
+	r.IsActPig = false
 	r.CoinNum = make(map[string]int32)
 	r.CoinList = make(map[string][]string)
 	r.CoinInit()

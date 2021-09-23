@@ -659,14 +659,17 @@ func (p *Player) WinLuckyPig() {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
-		room.IsLuckyPig = false
+		if room.IsActPig == true { // 防止多次点击请求
+			return
+		}
 
+		room.IsLuckyPig = false
+		room.IsActPig = true
 		var getPigInfo *msg.ThreePig
 		// 获取财神接金币金额
 		cfgMoney := CfgMoney[room.Config]
 		rate, getPigInfo := GetLUCKY(cfgMoney)
-		money := getPigInfo.PigSuccess
-		winMoney := money * CfgMoney[room.Config]
+		winMoney := getPigInfo.PigSuccess
 
 		// 结算
 		pac := packageTax[p.PackageId]
@@ -678,7 +681,6 @@ func (p *Player) WinLuckyPig() {
 		p.WinResultMoney = winMoney
 		p.TotalWinMoney += winMoney
 
-		log.Debug("财运满满赢钱的倍率:%v", rate)
 		log.Debug("财运满满赢钱的金额:%v", winMoney)
 
 		nowTime := time.Now().Unix()
@@ -748,6 +750,17 @@ func (p *Player) WinLuckyPig() {
 		data.LuckyPig = getPigInfo
 		data.Account = p.Account
 		p.SendMsg(data)
+
+		go func() {
+			timeout := time.NewTimer(time.Second * 5)
+			for {
+				select {
+				case <-timeout.C:
+					room.IsActPig = false
+					return
+				}
+			}
+		}()
 	}
 }
 
