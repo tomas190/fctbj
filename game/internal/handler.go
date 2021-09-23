@@ -59,33 +59,34 @@ func handleLogin(args []interface{}) {
 				log.Error("用户链接替换错误", err)
 			}
 
-			c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) {}) // todo
+			c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { // todo
+				user, _ := hall.UserRecord.Load(p.Id)
+				if user != nil {
+					u := user.(*Player)
+					log.Debug("读取玩家历史数据:%v", u)
+					login := &msg.Login_S2C{}
+					rid, _ := hall.UserRoom.Load(p.Id)
+					v, _ := hall.RoomRecord.Load(rid)
+					if v != nil {
+						login.IsBack = true
+					}
+					login.PlayerInfo = new(msg.PlayerInfo)
+					login.PlayerInfo.Id = u.Id
+					login.PlayerInfo.NickName = u.NickName
+					login.PlayerInfo.HeadImg = u.HeadImg
+					login.PlayerInfo.Account = u.Account
+					a.WriteMsg(login)
 
-			user, _ := hall.UserRecord.Load(p.Id)
-			if user != nil {
-				u := user.(*Player)
-				log.Debug("读取玩家历史数据:%v", u)
-				login := &msg.Login_S2C{}
-				rid, _ := hall.UserRoom.Load(p.Id)
-				v, _ := hall.RoomRecord.Load(rid)
-				if v != nil {
-					login.IsBack = true
+					p.ConnAgent = a
+					p.ConnAgent.SetUserData(u)
+
+					p.OffLineTime = -1
+					p.Password = m.GetPassWord()
+					p.Token = m.GetToken()
 				}
-				login.PlayerInfo = new(msg.PlayerInfo)
-				login.PlayerInfo.Id = u.Id
-				login.PlayerInfo.NickName = u.NickName
-				login.PlayerInfo.HeadImg = u.HeadImg
-				login.PlayerInfo.Account = u.Account
-				a.WriteMsg(login)
-
-				p.ConnAgent = a
-				p.ConnAgent.SetUserData(u)
-
-				p.OffLineTime = -1
-			}
-
-			// 判断玩家是否返回房间数据
-			p.RespEnterRoom()
+				// 判断玩家是否返回房间数据
+				p.RespEnterRoom()
+			})
 		}
 	} else if !hall.agentExist(a) { // 玩家首次登入
 		c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { //todo
