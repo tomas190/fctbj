@@ -552,6 +552,8 @@ func (p *Player) GetRewardsInfo() {
 			send.GetMoney = resultMoney
 			send.Account = p.Account
 			p.SendMsg(send)
+
+			room.IsLuckyGame = false
 		}
 
 		// Push中奖,清除桌面金币和福袋,重新生成新的金币
@@ -575,17 +577,9 @@ func (p *Player) GetRewardsInfo() {
 			creat := &msg.ReCreatGold_S2C{}
 			creat.CoinList = room.CoinList[room.Config]
 			p.SendMsg(creat)
+
+			room.IsLuckyGame = false
 		}
-		go func() {
-			timeout := time.NewTimer(time.Second * 5)
-			for {
-				select {
-				case <-timeout.C:
-					room.IsLuckyGame = false
-					return
-				}
-			}
-		}()
 	}
 }
 
@@ -660,6 +654,10 @@ func (p *Player) WinLuckyPig() {
 	if v != nil {
 		room := v.(*Room)
 		if room.IsActPig == true { // 防止多次点击请求
+			return
+		}
+		if room.IsLuckyGame == false {
+			log.Debug("当前不为小游戏行动阶段!")
 			return
 		}
 
@@ -761,6 +759,8 @@ func (p *Player) WinLuckyPig() {
 				}
 			}
 		}()
+
+		room.IsLuckyGame = false
 	}
 }
 
@@ -769,6 +769,11 @@ func (p *Player) GodPickUpGold(betNum int32) {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
+		if room.IsLuckyGame == false {
+			log.Debug("当前不为小游戏行动阶段!")
+			return
+		}
+
 		// 接金币小游戏结束
 		room.IsPickGod = false
 
@@ -856,6 +861,8 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		data.Rate = rate
 		data.Account = p.Account
 		p.SendMsg(data)
+
+		room.IsLuckyGame = false
 	}
 }
 
