@@ -2,16 +2,24 @@ package internal
 
 import (
 	"fctbj/msg"
-	"math/rand"
-	"time"
 )
 
 func GetRICH(money float64) (float64, float64) {
-	slice := []float64{200, 200, 200, 200, 200, 200, 250, 250, 300, 500}
-	rand.Seed(time.Now().UnixNano())
-	n := rand.Intn(len(slice))
-	rich := slice[n] * money
-	return slice[n], rich
+	num := RandInRange(1, 101)
+	var rate float64
+	if num >= 1 && num <= 70 {
+		rate = 200
+	} else if num >= 71 && num <= 85 {
+		rate = 250
+	} else if num >= 86 && num <= 95 {
+		rate = 300
+	} else if num >= 96 && num <= 98 {
+		rate = 400
+	} else if num >= 99 && num <= 100 {
+		rate = 500
+	}
+	rich := rate * money
+	return rate, rich
 }
 
 func (r *Room) GetPUSH(money float64) (float64, float64, int, int) {
@@ -47,28 +55,46 @@ func (r *Room) GetPUSH(money float64) (float64, float64, int, int) {
 }
 
 func GetLUCKY(money float64) (float64, *msg.ThreePig) {
+	num := RandInRange(1, 101)
+	var rate float64
+	if num >= 1 && num <= 50 {
+		rate = 30
+	} else if num >= 51 && num <= 80 {
+		rate = 40
+	} else if num >= 81 && num <= 100 {
+		rate = 50
+	}
 	data := &msg.ThreePig{}
-	slice := []float64{30, 30, 30, 30, 30, 40, 40, 40, 50, 50}
-	rand.Seed(time.Now().UnixNano())
-	n := rand.Intn(len(slice))
-	if slice[n] == 30 {
+	if rate == 30 {
 		data.PigSuccess = 30 * money
 		data.PigLoser_1 = 40 * money
 		data.PigLoser_2 = 50 * money
-	} else if slice[n] == 40 {
+	} else if rate == 40 {
 		data.PigSuccess = 40 * money
 		data.PigLoser_1 = 30 * money
 		data.PigLoser_2 = 50 * money
-	} else if slice[n] == 50 {
+	} else if rate == 50 {
 		data.PigSuccess = 50 * money
 		data.PigLoser_1 = 30 * money
 		data.PigLoser_2 = 40 * money
 	}
-	return slice[n], data
+	return rate, data
 }
 
 func GetGOLD(betNum int32) (int32, float64) {
-	num := RandInRange(2, 7)
-	push := float64(num) * float64(betNum)
-	return int32(num), push
+	num := RandInRange(1, 101)
+	var rate float64
+	if num >= 1 && num <= 40 {
+		rate = 2
+	} else if num >= 41 && num <= 70 {
+		rate = 3
+	} else if num >= 71 && num <= 85 {
+		rate = 4
+	} else if num >= 86 && num <= 95 {
+		rate = 5
+	} else if num >= 96 && num <= 100 {
+		rate = 6
+	}
+	money := rate * float64(betNum)
+	return int32(rate), money
 }

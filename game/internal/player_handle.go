@@ -454,8 +454,8 @@ func (p *Player) GetRewardsInfo() {
 			gameName = "财神发钱"
 			rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
 		} else {
-			num := RandInRange(0, 100)
-			if num >= 0 && num <= 3 {
+			num := RandInRange(1, 101)
+			if num >= 1 && num <= 3 {
 				data.RewardsNum = GOLD
 				room.IsPickGod = true
 			} else if num >= 4 && num <= 6 {
@@ -608,19 +608,19 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 		// 盈余池金额足够小游戏获奖时
 		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
 		if money*Rate <= surMoney {
-			if p.ProgressBet >= 1 && p.ProgressBet <= 10 {
+			if p.ProgressBet >= 1 && p.ProgressBet <= 20 {
 				betNum = 1
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
 				data.Coordinates = room.ConfigPlace[room.Config]
 				p.SendMsg(data)
-			} else if p.ProgressBet >= 11 && p.ProgressBet <= 29 {
+			} else if p.ProgressBet >= 21 && p.ProgressBet <= 50 {
 				betNum = 2
 				data := &msg.ProgressBar_S2C{}
 				data.ProBar = betNum
 				data.Coordinates = room.ConfigPlace[room.Config]
 				p.SendMsg(data)
-			} else if p.ProgressBet >= 30 {
+			} else if p.ProgressBet >= 51 {
 				betNum = 6
 				// 发送进度条
 				data := &msg.ProgressBar_S2C{}
@@ -886,21 +886,72 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 		room.Config = m.ChangeCfg
 
 		// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
-		if room.ConfigPlace[m.ChangeCfg] != nil {
-			// 发送配置数据
-			data := &msg.ChangeRoomCfg_S2C{}
-			data.IsChange = true
-			data.CoinList = room.CoinList[room.Config]
-			data.Coordinates = room.ConfigPlace[room.Config]
-			p.SendMsg(data)
+		change := &msg.ChangeRoomCfg_S2C{}
+		if len(room.CoinList[room.Config]) == len(room.ConfigPlace[room.Config]) {
+			var reset bool
+			for _, v := range room.ConfigPlace[room.Config] {
+				y, _ := strconv.ParseFloat(v.Location[1], 64)
+				if y > 98 || y < -365 {
+					reset = true
+				}
+			}
+			if reset == true {
+				var isHave bool
+				for _, v := range room.CoinList[room.Config] {
+					if v == FuDai {
+						isHave = true
+					}
+				}
+
+				room.CoinList[room.Config] = nil
+				room.ConfigPlace[room.Config] = nil
+				for i := 1; i <= 100; i++ {
+					room.CoinNum[room.Config] ++
+					room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+strconv.Itoa(int(room.CoinNum[room.Config])))
+				}
+				room.ConfigPlace[room.Config] = room.PushPlace
+
+				if isHave == true {
+					room.CoinList[room.Config] = append(room.CoinList[room.Config], FuDai)
+					coinPlace := make([]*msg.Coordinate, 0)
+					coinPlace = room.PushPlace
+					place := &msg.Coordinate{}
+					place.Location = []string{"82.02063531614465", "-100.30818435638344", "31"}
+					coinPlace = append(coinPlace, place)
+					room.ConfigPlace[room.Config] = coinPlace
+				}
+				change.IsChange = true
+			}
 		} else {
-			// 发送配置数据
-			data := &msg.ChangeRoomCfg_S2C{}
-			data.IsChange = false
-			data.CoinList = room.CoinList[room.Config]
-			data.Coordinates = room.ConfigPlace[room.Config]
-			p.SendMsg(data)
+			var isHave bool
+			for _, v := range room.CoinList[room.Config] {
+				if v == FuDai {
+					isHave = true
+				}
+			}
+			room.CoinList[room.Config] = nil
+			room.ConfigPlace[room.Config] = nil
+			for i := 1; i <= 100; i++ {
+				room.CoinNum[room.Config] ++
+				room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+strconv.Itoa(int(room.CoinNum[room.Config])))
+			}
+			room.ConfigPlace[room.Config] = room.PushPlace
+
+			if isHave == true {
+				room.CoinList[room.Config] = append(room.CoinList[room.Config], FuDai)
+				coinPlace := make([]*msg.Coordinate, 0)
+				coinPlace = room.PushPlace
+				place := &msg.Coordinate{}
+				place.Location = []string{"82.02063531614465", "-235.30818435638344", "31"}
+				coinPlace = append(coinPlace, place)
+				room.ConfigPlace[room.Config] = coinPlace
+			}
+			change.IsChange = true
 		}
+		change.IsChange = true
+		change.CoinList = room.CoinList[room.Config]
+		change.Coordinates = room.ConfigPlace[room.Config]
+		p.SendMsg(change)
 	}
 }
 

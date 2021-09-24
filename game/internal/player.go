@@ -78,26 +78,24 @@ func (p *Player) RespEnterRoom() {
 	if v != nil {
 		room := v.(*Room)
 		p.IsExist = true
-		enter := &msg.EnterRoom_S2C{}
 		// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
-		if room.ConfigPlace[room.Config] != nil {
+		enter := &msg.EnterRoom_S2C{}
+		if len(room.CoinList[room.Config]) == len(room.ConfigPlace[room.Config]) {
 			var reset bool
-			if len(room.CoinList[room.Config]) != len(room.ConfigPlace[room.Config]) {
-				reset = true
-			}
 			for _, v := range room.ConfigPlace[room.Config] {
 				y, _ := strconv.ParseFloat(v.Location[1], 64)
 				if y > 98 || y < -365 {
 					reset = true
 				}
 			}
-			var isHave bool
-			for _, v := range room.CoinList[room.Config] {
-				if v == FuDai {
-					isHave = true
-				}
-			}
 			if reset == true {
+				var isHave bool
+				for _, v := range room.CoinList[room.Config] {
+					if v == FuDai {
+						isHave = true
+					}
+				}
+
 				room.CoinList[room.Config] = nil
 				room.ConfigPlace[room.Config] = nil
 				for i := 1; i <= 100; i++ {
@@ -111,22 +109,41 @@ func (p *Player) RespEnterRoom() {
 					coinPlace := make([]*msg.Coordinate, 0)
 					coinPlace = room.PushPlace
 					place := &msg.Coordinate{}
-					place.Location = []string{"82.02063531614465", "-235.30818435638344", "31"}
+					place.Location = []string{"82.02063531614465", "-100.30818435638344", "31"}
 					coinPlace = append(coinPlace, place)
 					room.ConfigPlace[room.Config] = coinPlace
 				}
+				enter.IsChange = true
+			}
+		} else {
+			var isHave bool
+			for _, v := range room.CoinList[room.Config] {
+				if v == FuDai {
+					isHave = true
+				}
+			}
+			room.CoinList[room.Config] = nil
+			room.ConfigPlace[room.Config] = nil
+			for i := 1; i <= 100; i++ {
+				room.CoinNum[room.Config] ++
+				room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+strconv.Itoa(int(room.CoinNum[room.Config])))
+			}
+			room.ConfigPlace[room.Config] = room.PushPlace
+
+			if isHave == true {
+				room.CoinList[room.Config] = append(room.CoinList[room.Config], FuDai)
+				coinPlace := make([]*msg.Coordinate, 0)
+				coinPlace = room.PushPlace
+				place := &msg.Coordinate{}
+				place.Location = []string{"82.02063531614465", "-235.30818435638344", "31"}
+				coinPlace = append(coinPlace, place)
+				room.ConfigPlace[room.Config] = coinPlace
 			}
 			enter.IsChange = true
-			enter.Coordinates = room.ConfigPlace[room.Config]
-		} else {
-			enter.IsChange = true
-			room.ConfigPlace[room.Config] = room.PushPlace
-			enter.Coordinates = room.ConfigPlace[room.Config]
-			log.Debug("房间位置信息为空,添加预设值:%v", len(room.ConfigPlace[room.Config]))
 		}
 		log.Debug("返回房间数据,当前金币长度:%v,位置长度:%v", len(room.CoinList[room.Config]), len(room.ConfigPlace[room.Config]))
-
 		enter.RoomData = room.RespRoomData()
+		enter.Coordinates = room.ConfigPlace[room.Config]
 		enter.IsPickGod = room.IsPickGod
 		enter.IsLuckyPig = room.IsLuckyPig
 		p.SendMsg(enter)
