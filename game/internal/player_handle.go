@@ -455,18 +455,18 @@ func (p *Player) GetRewardsInfo() {
 			rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
 		} else {
 			num := RandInRange(1, 101)
-			if num >= 1 && num <= 3 {
+			if num >= 1 && num <= 90 {
 				data.RewardsNum = GOLD
 				room.IsPickGod = true
-			} else if num >= 4 && num <= 6 {
+			} else if num >= 91 && num <= 92 {
 				data.RewardsNum = RICH
 				gameName = "金猪送财"
 				rate, winMoney = GetRICH(cfgMoney)
-			} else if num >= 7 && num <= 10 {
+			} else if num >= 93 && num <= 94 {
 				data.RewardsNum = PUSH
 				gameName = "财神发钱"
 				rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
-			} else if num >= 11 && num <= 100 {
+			} else if num >= 95 && num <= 100 {
 				data.RewardsNum = LUCKY
 				room.IsLuckyPig = true
 			}
@@ -916,7 +916,7 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 					coinPlace := make([]*msg.Coordinate, 0)
 					coinPlace = room.PushPlace
 					place := &msg.Coordinate{}
-					place.Location = []string{"82.02063531614465", "-100.30818435638344", "31"}
+					place.Location = []string{"82.02063531614465", "-235.30818435638344", "31"}
 					coinPlace = append(coinPlace, place)
 					room.ConfigPlace[room.Config] = coinPlace
 				}
