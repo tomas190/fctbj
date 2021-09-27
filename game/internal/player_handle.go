@@ -553,7 +553,16 @@ func (p *Player) GetRewardsInfo() {
 			send.Account = p.Account
 			p.SendMsg(send)
 
-			room.IsLuckyGame = false
+			go func() {
+				timeout := time.NewTimer(time.Second * 5)
+				for {
+					select {
+					case <-timeout.C:
+						room.IsLuckyGame = false
+						return
+					}
+				}
+			}()
 		}
 
 		// Push中奖,清除桌面金币和福袋,重新生成新的金币
@@ -574,11 +583,21 @@ func (p *Player) GetRewardsInfo() {
 				room.CoinNum[room.Config] ++
 				room.CoinList[room.Config] = append(room.CoinList[room.Config], Coin+strconv.Itoa(int(room.CoinNum[room.Config])))
 			}
+			log.Debug("Push游戏生成金币长度:%v", len(room.CoinList[room.Config]))
 			creat := &msg.ReCreatGold_S2C{}
 			creat.CoinList = room.CoinList[room.Config]
 			p.SendMsg(creat)
 
-			room.IsLuckyGame = false
+			go func() {
+				timeout := time.NewTimer(time.Second * 5)
+				for {
+					select {
+					case <-timeout.C:
+						room.IsLuckyGame = false
+						return
+					}
+				}
+			}()
 		}
 	}
 }
