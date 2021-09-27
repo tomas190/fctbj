@@ -916,7 +916,7 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 					coinPlace := make([]*msg.Coordinate, 0)
 					coinPlace = room.PushPlace
 					place := &msg.Coordinate{}
-					place.Location = []string{"82.02063531614465", "-100.30818435638344", "31"}
+					place.Location = []string{"18.807628842146926", "-107.9611168873588", "21"}
 					coinPlace = append(coinPlace, place)
 					room.ConfigPlace[room.Config] = coinPlace
 				}
@@ -942,7 +942,7 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 				coinPlace := make([]*msg.Coordinate, 0)
 				coinPlace = room.PushPlace
 				place := &msg.Coordinate{}
-				place.Location = []string{"82.02063531614465", "-100.30818435638344", "31"}
+				place.Location = []string{"18.807628842146926", "-107.9611168873588", "21"}
 				coinPlace = append(coinPlace, place)
 				room.ConfigPlace[room.Config] = coinPlace
 			}
