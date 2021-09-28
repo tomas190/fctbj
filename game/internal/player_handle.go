@@ -184,7 +184,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 	if m.CoinList == nil {
 		p.SendErrMsg(RECODE_ActionCoinNotHave)
-		log.Debug("玩家行动金币为空!")
+		log.Debug("玩家结算金币为空!")
 		return
 	}
 
@@ -300,7 +300,6 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 		data.Account = p.Account
 		data.Coordinates = room.ConfigPlace[room.Config]
 		p.SendMsg(data)
-		log.Debug("当前金币数量:%v", room.CoinList[room.Config])
 	}
 }
 
@@ -467,11 +466,11 @@ func (p *Player) GetRewardsInfo() {
 				data.RewardsNum = RICH
 				gameName = "金猪送财"
 				rate, winMoney = GetRICH(cfgMoney)
-			} else if num >= 7 && num <= 98 {
+			} else if num >= 7 && num <= 10 {
 				data.RewardsNum = PUSH
 				gameName = "财神发钱"
 				rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
-			} else if num >= 99 && num <= 100 {
+			} else if num >= 11 && num <= 100 {
 				data.RewardsNum = LUCKY
 				room.IsLuckyPig = true
 			}
@@ -625,7 +624,6 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 				room.CoinList[room.Config] = append(room.CoinList[room.Config][:k], room.CoinList[room.Config][k+1:]...)
 			}
 		}
-
 		// 房间配置金额
 		money := CfgMoney[room.Config]
 		surMoney := GetSurPlusMoney() //todo
@@ -908,7 +906,6 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 		room.ConfigPlace[room.Config] = m.Coordinates
 		// 修改当前配置区间
 		room.Config = m.ChangeCfg
-
 		// 判断该金币区间是否存在金币位置存储，如果存在则返回，不存在则返回空
 		change := &msg.ChangeRoomCfg_S2C{}
 		if len(room.CoinList[room.Config]) == len(room.ConfigPlace[room.Config]) {
@@ -986,6 +983,6 @@ func (p *Player) SaveCoordinate(m *msg.SendCoordinate_C2S) {
 		room := v.(*Room)
 		// 保存区间节点位置
 		room.ConfigPlace[room.Config] = m.Coordinates
-		log.Debug("当前金币长度:%v,位置长度:%v", len(room.CoinList[room.Config]), len(room.ConfigPlace[room.Config]))
+		log.Debug("===>当前金币长度:%v,位置长度:%v", len(room.CoinList[room.Config]), len(room.ConfigPlace[room.Config]))
 	}
 }
