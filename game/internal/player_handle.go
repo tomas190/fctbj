@@ -609,12 +609,16 @@ func (p *Player) GetRewardsInfo() {
 }
 
 func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
-
-	var betNum int32
 	rid, _ := hall.UserRoom.Load(p.Id)
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
+		if m.Coin == "" {
+			p.SendErrMsg(RECODE_ProBarCoinNotHave)
+			log.Debug("获取进度条金币为空:%v", m)
+			return
+		}
+
 		p.ProgressBet++
 		log.Debug("p.ProgressBet 进度条数量为:%v", p.ProgressBet)
 
@@ -633,6 +637,7 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 		surMoney := GetSurPlusMoney() //todo
 		// 盈余池金额足够小游戏获奖时
 		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
+		var betNum int32
 		if money*Rate <= surMoney {
 			if p.ProgressBet >= 1 && p.ProgressBet <= 50 {
 				betNum = 1
