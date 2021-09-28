@@ -83,7 +83,7 @@ func (p *Player) RespEnterRoom() {
 		if len(room.CoinList[room.Config]) == len(room.ConfigPlace[room.Config]) {
 			var reset bool
 			for _, v := range room.ConfigPlace[room.Config] {
-				y, _ := strconv.ParseFloat(v.Location[1], 64)
+				y, _ := strconv.ParseFloat(v.Location[2], 64)
 				if y > 98 || y < -365 {
 					reset = true
 				}

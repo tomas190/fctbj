@@ -220,6 +220,8 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 			return
 		}
 
+		log.Debug("===>结算当前金币数量长度为:%v", len(room.CoinList[room.Config]))
+
 		// 玩家赢钱结算
 		var winMoney float64
 		// 福袋结算
@@ -614,7 +616,7 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 	if v != nil {
 		room := v.(*Room)
 		p.ProgressBet++
-		log.Debug("p.ProgressBet 长度为:%v", p.ProgressBet)
+		log.Debug("p.ProgressBet 进度条数量为:%v", p.ProgressBet)
 
 		for k, v := range room.CoinList[room.Config] {
 			if v == m.Coin {
@@ -624,6 +626,8 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 				room.CoinList[room.Config] = append(room.CoinList[room.Config][:k], room.CoinList[room.Config][k+1:]...)
 			}
 		}
+		log.Debug("===>进度条金币列表长度:%v", len(room.CoinList[room.Config]))
+
 		// 房间配置金额
 		money := CfgMoney[room.Config]
 		surMoney := GetSurPlusMoney() //todo
@@ -911,7 +915,7 @@ func (p *Player) ChangeRoomCfg(m *msg.ChangeRoomCfg_C2S) {
 		if len(room.CoinList[room.Config]) == len(room.ConfigPlace[room.Config]) {
 			var reset bool
 			for _, v := range room.ConfigPlace[room.Config] {
-				y, _ := strconv.ParseFloat(v.Location[1], 64)
+				y, _ := strconv.ParseFloat(v.Location[2], 64)
 				if y > 98 || y < -365 {
 					reset = true
 				}
