@@ -192,11 +192,11 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
-		if room.IsLuckyGame == true {
-			p.SendErrMsg(RECODE_InRoomGameStep)
-			log.Debug("玩家结算失败,房间正在小游戏!")
-			return
-		}
+		//if room.IsLuckyGame == true {
+		//	p.SendErrMsg(RECODE_InRoomGameStep)
+		//	log.Debug("玩家结算失败,房间正在小游戏!")
+		//	return
+		//}
 		// 获取相同的金币进行赢钱结算
 		var winNum int
 		var luckyBag bool
