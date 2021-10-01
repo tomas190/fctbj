@@ -27,6 +27,7 @@ func (p *Player) PlayerJoinRoom(cfgId string) {
 	hall.UserRoom.Store(p.Id, r.RoomId)
 
 	p.RoomId = r.RoomId
+	p.IsExist = true
 
 	// 插入玩家信息 todo
 	p.FindPlayerInfo()
@@ -71,6 +72,10 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	// 检索玩家是否为登出状态
 	if p.IsLogin == false {
 		log.Debug("玩家为登出状态,行动失败!")
+		return
+	}
+	if p.IsExist == false {
+		log.Debug("当前玩家当前已退出状态,行动失败!")
 		return
 	}
 
