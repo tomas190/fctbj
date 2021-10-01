@@ -331,6 +331,12 @@ func (c4c *Conn4Center) onUserLogin(msgBody interface{}) {
 				}
 				strId = strconv.Itoa(int(intID))
 
+				user, _ := hall.UserRecord.Load(strId)
+				if user != nil {
+					u := user.(*Player)
+					u.IsLogin = true
+				}
+
 				pckId, err2 := packageId.(json.Number).Int64()
 				if err2 != nil {
 					log.Fatal("onUserLogin pckId:%v", err2.Error())
@@ -398,6 +404,13 @@ func (c4c *Conn4Center) onUserLogout(msgBody interface{}) {
 					log.Fatal("onUserLogout:%v", err.Error())
 				}
 				strId = strconv.Itoa(int(intID))
+
+				user, _ := hall.UserRecord.Load(strId)
+				if user != nil {
+					u := user.(*Player)
+					u.IsLogin = false
+				}
+
 				//找到等待登录玩家
 				userData, ok = c4c.waitUser[strId]
 				if ok {

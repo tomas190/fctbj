@@ -68,6 +68,11 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 		log.Debug("玩家金额不足,不能进行下注:%v,%v", p.Account, m.DownBet)
 		return
 	}
+	// 检索玩家是否为登出状态
+	if p.IsLogin == false {
+		log.Debug("玩家为登出状态,行动失败!")
+		return
+	}
 
 	var IsDown bool
 	var coinName string

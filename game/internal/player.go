@@ -35,7 +35,7 @@ type Player struct {
 	OffLineTime    int      // 离线时间
 	IsExist        bool     // 是否存在房间内
 	DownBetList    []string // 掉落金币切片
-
+	IsLogin        bool     // 玩家是否登入
 }
 
 func (p *Player) Init() {
@@ -51,6 +51,7 @@ func (p *Player) Init() {
 	p.OffLineTime = -1
 	p.IsExist = false
 	p.DownBetList = nil
+	p.IsLogin = true
 }
 
 //SendMsg 玩家向客户端发送消息
