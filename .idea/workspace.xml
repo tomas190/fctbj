@@ -2,61 +2,55 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2c7aa91e-b2c0-48d0-b1b2-71befe609a48" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/fctbj.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/base/skeleton.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/conf/conf.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/conf/json.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/conf/server.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/external.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/Databases.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/accessData.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/algorithm.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/c2c.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/c2c_config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/chanrpc.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/configData.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/gameHall.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/handler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/module.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/player.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/room.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/internal/tgMessage.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gate/external.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gate/internal/module.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gate/router.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/msg/gen_msg_go.cmd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/msg/msg.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/msg/msg.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/msg/msg.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/websocket" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/websocket.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/server.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/base/skeleton.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/conf/conf.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/conf/json.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/conf/server.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/external.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/Databases.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/accessData.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/algorithm/cards.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/algorithm/cards_defint.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/algorithm/cards_defint_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/algorithm/cards_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/algorithm/flush_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/algorithm/pk.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/algorithm/sort.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/algorithm/sort_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/algorithm/tostring.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/c2c.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/c2c_config.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/chanrpc.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/configData.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/gameHall.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/handler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/module.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/player.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/player_handle.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/pot.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/robot.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/robot_config.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/room.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/room_handle.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/surplus_pool.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/game/internal/tgMessage.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/gate/external.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/gate/internal/module.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/gate/router.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/go.mod" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/go.sum" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/main.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/msg/gen_msg_go.cmd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/msg/msg.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/msg/msg.pb.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker/msg/msg.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/internal/player_handle.go" beforeDir="false" afterPath="$PROJECT_DIR$/game/internal/player_handle.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/conf/json.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/conf/json.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/constant/center.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/constant/center.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/accessData.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/accessData.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/bot.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/bot.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/c4c.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/c4c.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/c4c_msg.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/c4c_msg.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/c4c_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/c4c_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/chanrpc.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/chanrpc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/converter.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/converter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/dbc.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/dbc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/dbc_data.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/dbc_data.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/dealer.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/dealer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/dealer_profit.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/dealer_profit.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/handler_room.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/handler_room.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/module.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/module.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/player.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/player.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/tgMessage.go" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_bcbm/src/server/game/internal/tgMessage.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,14 +122,14 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="385" y="196" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1280.680@0.0.1280.680" timestamp="1630650462929" />
-    <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1633095841679">
+    <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1633359598496">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1633095841679" />
-    <state x="321" y="73" width="773" height="600" key="find.popup" timestamp="1632369400168">
+    <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1633359598496" />
+    <state x="321" y="73" width="773" height="600" key="find.popup" timestamp="1633432564501">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="321" y="73" width="773" height="600" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1632369400168" />
+    <state x="321" y="73" width="773" height="600" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1633432564501" />
     <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1632381485885">
       <screen x="0" y="0" width="1280" height="680" />
     </state>

@@ -285,7 +285,7 @@ func getSurplusOne(w http.ResponseWriter, r *http.Request) {
 
 	js, err := json.Marshal(NewResp(SuccCode, "", getSur))
 	if err != nil {
-		fmt.Fprintf(w, "%+v", ApiResp{Code: ErrCode, Msg: "", Data: nil})
+		fmt.Fprintf(w, "%+v", ApiResp{Code: ErrCode, Msg: "查询失败", Data: nil})
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
