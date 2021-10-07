@@ -177,10 +177,10 @@ func InsertSurplusPool(sur *SurplusPoolDB) {
 	SurPool.PlayerLoseRateAfterSurplusPool = 0.7
 	SurPool.DataCorrection = 0
 	SurPool.PlayerWinRate = 0.6
-	SurPool.RandomCountAfterWin = 0
+	SurPool.RandomCountAfterWin = 3
 	SurPool.RandomCountAfterLose = 0
-	SurPool.RandomPercentageAfterWin = 0.6
-	SurPool.RandomPercentageAfterLose = 0.6
+	SurPool.RandomPercentageAfterWin = 0.75
+	SurPool.RandomPercentageAfterLose = 0
 	FindSurPool(SurPool)
 }
 
@@ -298,10 +298,10 @@ func GetFindSurPool() *SurPool {
 		sur.PlayerLoseRateAfterSurplusPool = 0.7
 		sur.DataCorrection = 0
 		sur.PlayerWinRate = 0.6
-		sur.RandomCountAfterWin = 0
+		sur.RandomCountAfterWin = 3
 		sur.RandomCountAfterLose = 0
-		sur.RandomPercentageAfterWin = 0.6
-		sur.RandomPercentageAfterLose = 0.6
+		sur.RandomPercentageAfterWin = 0.75
+		sur.RandomPercentageAfterLose = 0
 		InsertSurPool(sur)
 		return sur
 	}
