@@ -176,7 +176,7 @@ func InsertSurplusPool(sur *SurplusPoolDB) {
 	SurPool.CoefficientToTotalPlayer = sur.PlayerNum * 0
 	SurPool.PlayerLoseRateAfterSurplusPool = 0.7
 	SurPool.DataCorrection = 0
-	SurPool.PlayerWinRate = 0.6
+	SurPool.PlayerWinRate = 0
 	SurPool.RandomCountAfterWin = 3
 	SurPool.RandomCountAfterLose = 0
 	SurPool.RandomPercentageAfterWin = 0.75
@@ -297,7 +297,7 @@ func GetFindSurPool() *SurPool {
 		sur.CoefficientToTotalPlayer = sur.TotalPlayer * 0
 		sur.PlayerLoseRateAfterSurplusPool = 0.7
 		sur.DataCorrection = 0
-		sur.PlayerWinRate = 0.6
+		sur.PlayerWinRate = 0
 		sur.RandomCountAfterWin = 3
 		sur.RandomCountAfterLose = 0
 		sur.RandomPercentageAfterWin = 0.75
@@ -306,6 +306,23 @@ func GetFindSurPool() *SurPool {
 		return sur
 	}
 	return sur
+}
+
+func ReLoadSurPool() {
+	sur := &SurPool{}
+	sur.GameId = conf.Server.GameID
+	sur.TotalPlayer = LoadPlayerCount()
+	sur.FinalPercentage = 0.5
+	sur.PercentageToTotalWin = 1
+	sur.CoefficientToTotalPlayer = sur.TotalPlayer * 0
+	sur.PlayerLoseRateAfterSurplusPool = 0.7
+	sur.DataCorrection = 0
+	sur.PlayerWinRate = 0
+	sur.RandomCountAfterWin = 3
+	sur.RandomCountAfterLose = 0
+	sur.RandomPercentageAfterWin = 0.75
+	sur.RandomPercentageAfterLose = 0
+	UpdateSurPool(sur)
 }
 
 func GetSurPlusMoney() float64 {
