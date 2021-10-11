@@ -53,8 +53,9 @@
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/msg/msg.proto" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../infoNew.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/internal/Databases.go" beforeDir="false" afterPath="$PROJECT_DIR$/game/internal/Databases.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/internal/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/game/internal/handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/internal/module.go" beforeDir="false" afterPath="$PROJECT_DIR$/game/internal/module.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/websocket.go" beforeDir="false" afterPath="$PROJECT_DIR$/websocket.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +90,7 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../caidaxiao" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />

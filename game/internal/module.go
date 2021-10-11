@@ -26,8 +26,6 @@ func (m *Module) OnInit() {
 	// todo
 	InitMongoDB()
 
-	ReLoadSurPool()
-
 	// 中心服初始化,主动请求Token
 	c2c.Init()
 	c2c.CreatConnect()

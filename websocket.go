@@ -23,7 +23,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	t := time.NewTicker(time.Millisecond)
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 1000; i++ {
 		<-t.C
 		fmt.Println(i)
 		go clientbot(ctx)
@@ -132,7 +132,7 @@ func clientbot(ctx context.Context) {
 	}(slotCtx)
 
 	FirstLogin(ws)
-	//JoinRoom(ws)
+	JoinRoom(ws)
 	time.Sleep(1) //確保玩家登入再傳心跳
 
 	// 計時器定時發任務
