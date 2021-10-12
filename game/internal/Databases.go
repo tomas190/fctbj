@@ -315,12 +315,12 @@ func ReLoadSurPool() {
 	sur.FinalPercentage = 0.5
 	sur.PercentageToTotalWin = 1
 	sur.CoefficientToTotalPlayer = sur.TotalPlayer * 0
-	sur.PlayerLoseRateAfterSurplusPool = 0.7
+	sur.PlayerLoseRateAfterSurplusPool = 0.963
 	sur.DataCorrection = 0
 	sur.PlayerWinRate = 0
-	sur.RandomCountAfterWin = 3
+	sur.RandomCountAfterWin = 1
 	sur.RandomCountAfterLose = 0
-	sur.RandomPercentageAfterWin = 0.75
+	sur.RandomPercentageAfterWin = 0.7
 	sur.RandomPercentageAfterLose = 0
 	UpdateSurPool(sur)
 }
