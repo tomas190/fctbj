@@ -318,9 +318,9 @@ func ReLoadSurPool() {
 	sur.PlayerLoseRateAfterSurplusPool = 0.963
 	sur.DataCorrection = 0
 	sur.PlayerWinRate = 0
-	sur.RandomCountAfterWin = 1
+	sur.RandomCountAfterWin = 3
 	sur.RandomCountAfterLose = 0
-	sur.RandomPercentageAfterWin = 0.7
+	sur.RandomPercentageAfterWin = 0.75
 	sur.RandomPercentageAfterLose = 0
 	UpdateSurPool(sur)
 }
