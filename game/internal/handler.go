@@ -83,6 +83,8 @@ func handleLogin(args []interface{}) {
 					p.OffLineTime = -1
 					p.Password = m.GetPassWord()
 					p.Token = m.GetToken()
+
+					hall.OnlineUser.Store(u.Id, u)
 				}
 				// 判断玩家是否返回房间数据
 				p.RespEnterRoom()
