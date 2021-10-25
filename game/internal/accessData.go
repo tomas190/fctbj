@@ -456,7 +456,7 @@ func getOnlineTotal(w http.ResponseWriter, r *http.Request) {
 	total.GameData = []*OnlinePlayer{}
 	if packageId == "" {
 		packageIds := make([]uint16, 0)
-		hall.UserRecord.Range(func(key, value interface{}) bool {
+		hall.OnlineUser.Range(func(key, value interface{}) bool {
 			user := value.(*Player)
 			packageIds = append(packageIds, user.PackageId)
 			return true
@@ -466,7 +466,7 @@ func getOnlineTotal(w http.ResponseWriter, r *http.Request) {
 		for _, v := range packageIds {
 			data := &OnlinePlayer{}
 			data.PackageId = v
-			hall.UserRecord.Range(func(key, value interface{}) bool {
+			hall.OnlineUser.Range(func(key, value interface{}) bool {
 				user := value.(*Player)
 				if v == user.PackageId {
 					id, _ := strconv.Atoi(user.Id)
@@ -480,7 +480,7 @@ func getOnlineTotal(w http.ResponseWriter, r *http.Request) {
 		packId, _ := strconv.Atoi(packageId)
 		data := &OnlinePlayer{}
 		data.PackageId = uint16(packId)
-		hall.UserRecord.Range(func(key, value interface{}) bool {
+		hall.OnlineUser.Range(func(key, value interface{}) bool {
 			user := value.(*Player)
 			if user.PackageId == uint16(packId) {
 				id, _ := strconv.Atoi(user.Id)
