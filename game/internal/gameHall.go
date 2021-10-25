@@ -13,6 +13,7 @@ type GameHall struct {
 	RoomRecord    sync.Map // 房间记录
 	UserRoom      sync.Map // 用户房间
 	OrderIDRecord sync.Map // orderID对应user
+	OnlineUser    sync.Map // 在线人数
 }
 
 func NewHall() *GameHall {
@@ -21,6 +22,7 @@ func NewHall() *GameHall {
 		RoomRecord:    sync.Map{},
 		UserRoom:      sync.Map{},
 		OrderIDRecord: sync.Map{},
+		OnlineUser:    sync.Map{},
 	}
 }
 

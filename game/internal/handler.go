@@ -110,6 +110,7 @@ func handleLogin(args []interface{}) {
 			u.Token = m.GetToken()
 
 			hall.UserRecord.Store(u.Id, u)
+			hall.OnlineUser.Store(u.Id, u)
 		})
 	}
 }

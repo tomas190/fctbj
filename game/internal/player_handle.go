@@ -49,6 +49,7 @@ func (p *Player) ExitFromRoom(room *Room) {
 	p.OffLineTime = time.Now().Hour()
 	p.ProgressBet = 0
 	p.DownBetCount = 0
+	hall.OnlineUser.Delete(p.Id)
 
 	c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
 	leaveHall := &msg.Logout_S2C{}
