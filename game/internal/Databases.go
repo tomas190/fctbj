@@ -174,7 +174,7 @@ func InsertSurplusPool(sur *SurplusPoolDB) {
 	SurPool.FinalPercentage = 0.5
 	SurPool.PercentageToTotalWin = 1
 	SurPool.CoefficientToTotalPlayer = sur.PlayerNum * 0
-	SurPool.PlayerLoseRateAfterSurplusPool = 0.7
+	SurPool.PlayerLoseRateAfterSurplusPool = 0.963
 	SurPool.DataCorrection = 0
 	SurPool.PlayerWinRate = 0
 	SurPool.RandomCountAfterWin = 3
@@ -295,7 +295,7 @@ func GetFindSurPool() *SurPool {
 		sur.FinalPercentage = 0.5
 		sur.PercentageToTotalWin = 1
 		sur.CoefficientToTotalPlayer = sur.TotalPlayer * 0
-		sur.PlayerLoseRateAfterSurplusPool = 0.7
+		sur.PlayerLoseRateAfterSurplusPool = 0.963
 		sur.DataCorrection = 0
 		sur.PlayerWinRate = 0
 		sur.RandomCountAfterWin = 3

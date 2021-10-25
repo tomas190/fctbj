@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2c7aa91e-b2c0-48d0-b1b2-71befe609a48" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../RedBlack-War_2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../allGame" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/.gitignore" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/misc.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/modules.xml" afterDir="false" />
@@ -51,7 +53,11 @@
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/msg/msg.go" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/msg/msg.pb.go" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/msg/msg.proto" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../dezhoupoker_2" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../infoNew.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/internal/Databases.go" beforeDir="false" afterPath="$PROJECT_DIR$/game/internal/Databases.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/internal/module.go" beforeDir="false" afterPath="$PROJECT_DIR$/game/internal/module.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +92,7 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../RedBlack-War" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
