@@ -23,10 +23,8 @@ func (m *Module) OnInit() {
 
 	packageTax = make(map[uint16]float64)
 
-	InitMongoDB()
-
 	// todo
-	//ReLoadSurPool()
+	InitMongoDB()
 
 	// 中心服初始化,主动请求Token
 	c2c.Init()
