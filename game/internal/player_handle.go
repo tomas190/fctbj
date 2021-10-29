@@ -266,7 +266,6 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 
 		data := &msg.ActionResult_S2C{}
 		data.Account = p.Account
-		data.Coordinates = room.ConfigPlace[room.Config]
 		p.SendMsg(data)
 
 		go func() {
