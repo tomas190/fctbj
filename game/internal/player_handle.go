@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fctbj/conf"
 	"fctbj/msg"
 	"github.com/name5566/leaf/log"
 	"strconv"
@@ -30,7 +29,7 @@ func (p *Player) PlayerJoinRoom(cfgId string) {
 	p.IsExist = true
 
 	// 插入玩家信息 todo
-	p.FindPlayerInfo()
+	//p.FindPlayerInfo()
 
 	//返回前端房间信息
 	data := &msg.JoinRoom_S2C{}
@@ -51,7 +50,7 @@ func (p *Player) ExitFromRoom(room *Room) {
 	p.DownBetCount = 0
 	hall.OnlineUser.Delete(p.Id)
 
-	c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
+	//c2c.UserLogoutCenter(p.Id, p.Password, p.Token) //todo
 	leaveHall := &msg.Logout_S2C{}
 	p.SendMsg(leaveHall)
 	p.ConnAgent.Close()
@@ -126,10 +125,10 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	p.TotalLoseMoney += m.DownBet
 
 	// todo
-	nowTime := time.Now().Unix()
-	p.RoundId = p.RandRoundId()
-	loseReason := "发财推币机输钱"
-	c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, m.DownBet)
+	//nowTime := time.Now().Unix()
+	//p.RoundId = p.RandRoundId()
+	//loseReason := "发财推币机输钱"
+	//c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, m.DownBet)
 
 	// 游戏赢率结算
 	p.GameSurSettle()
@@ -143,51 +142,51 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	data.StorageList = storageCoin
 	p.SendMsg(data)
 
-	pac := packageTax[p.PackageId]
-	taxR := pac / 100
-
-	// 插入运营数据
-	pr := &PlayerDownBetRecode{}
-	pr.Id = p.Id
-	pr.GameId = conf.Server.GameID
-	pr.RoundId = p.RoundId
-	pr.RoomId = p.RoomId
-	pr.DownBetInfo = p.DownBet
-	pr.DownBetTime = nowTime
-	pr.StartTime = nowTime
-	pr.EndTime = nowTime
-	pr.SettlementFunds = p.LoseResultMoney
-	pr.SpareCash = p.Account
-	pr.TaxRate = taxR
-	InsertAccessData(pr)
-
-	// 插入游戏统计数据
-	sd := &StatementData{}
-	sd.Id = p.Id
-	sd.GameId = conf.Server.GameID
-	sd.GameName = "财神推金币"
-	sd.DownBetTime = nowTime
-	sd.StartTime = nowTime
-	sd.EndTime = nowTime
-	sd.PackageId = p.PackageId
-	sd.LoseStatementTotal = p.LoseResultMoney
-	sd.BetMoney = p.DownBet
-	InsertStatementDB(sd)
-
-	// 插入盈余数据
-	sur := &SurplusPoolDB{}
-	sur.UpdateTime = time.Now()
-	sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-	sur.Rid = p.RoomId
-	sur.PlayerNum = LoadPlayerCount()
-	surPool := FindSurplusPool()
-	if surPool != nil {
-		sur.HistoryWin = surPool.HistoryWin
-		sur.HistoryLose = surPool.HistoryLose
-	}
-	sur.HistoryLose += Decimal(p.LoseResultMoney)
-	sur.TotalLoseMoney += Decimal(p.LoseResultMoney)
-	InsertSurplusPool(sur)
+	//pac := packageTax[p.PackageId]
+	//taxR := pac / 100
+	//
+	//// 插入运营数据
+	//pr := &PlayerDownBetRecode{}
+	//pr.Id = p.Id
+	//pr.GameId = conf.Server.GameID
+	//pr.RoundId = p.RoundId
+	//pr.RoomId = p.RoomId
+	//pr.DownBetInfo = p.DownBet
+	//pr.DownBetTime = nowTime
+	//pr.StartTime = nowTime
+	//pr.EndTime = nowTime
+	//pr.SettlementFunds = p.LoseResultMoney
+	//pr.SpareCash = p.Account
+	//pr.TaxRate = taxR
+	//InsertAccessData(pr)
+	//
+	//// 插入游戏统计数据
+	//sd := &StatementData{}
+	//sd.Id = p.Id
+	//sd.GameId = conf.Server.GameID
+	//sd.GameName = "财神推金币"
+	//sd.DownBetTime = nowTime
+	//sd.StartTime = nowTime
+	//sd.EndTime = nowTime
+	//sd.PackageId = p.PackageId
+	//sd.LoseStatementTotal = p.LoseResultMoney
+	//sd.BetMoney = p.DownBet
+	//InsertStatementDB(sd)
+	//
+	//// 插入盈余数据
+	//sur := &SurplusPoolDB{}
+	//sur.UpdateTime = time.Now()
+	//sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
+	//sur.Rid = p.RoomId
+	//sur.PlayerNum = LoadPlayerCount()
+	//surPool := FindSurplusPool()
+	//if surPool != nil {
+	//	sur.HistoryWin = surPool.HistoryWin
+	//	sur.HistoryLose = surPool.HistoryLose
+	//}
+	//sur.HistoryLose += Decimal(p.LoseResultMoney)
+	//sur.TotalLoseMoney += Decimal(p.LoseResultMoney)
+	//InsertSurplusPool(sur)
 }
 
 func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
@@ -252,74 +251,81 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 		log.Debug("获取赢钱的金额:%v", winMoney)
 
 		// todo
-		nowTime := time.Now().Unix()
-		p.RoundId = p.RandRoundId()
-		winReason := "发财推币机赢钱"
-		c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
-
-		// 跑马灯
-		if resultMoney > PaoMaDeng {
-			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
-		}
+		//nowTime := time.Now().Unix()
+		//p.RoundId = p.RandRoundId()
+		//winReason := "发财推币机赢钱"
+		//c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
+		//
+		//// 跑马灯
+		//if resultMoney > PaoMaDeng {
+		//	c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
+		//}
 
 		data := &msg.ActionResult_S2C{}
 		data.Account = p.Account
 		data.Coordinates = room.ConfigPlace[room.Config]
 		p.SendMsg(data)
 
-		// 插入运营数据
-		pr := &PlayerDownBetRecode{}
-		pr.Id = p.Id
-		pr.GameId = conf.Server.GameID
-		pr.RoundId = p.RoundId
-		pr.RoomId = p.RoomId
-		pr.DownBetInfo = p.DownBet
-		pr.DownBetTime = nowTime
-		pr.StartTime = nowTime
-		pr.EndTime = nowTime
-		pr.SettlementFunds = resultMoney
-		pr.SpareCash = p.Account
-		pr.TaxRate = taxR
-		InsertAccessData(pr)
-
-		// 插入游戏统计数据
-		sd := &StatementData{}
-		sd.Id = p.Id
-		sd.GameId = conf.Server.GameID
-		sd.GameName = "财神推金币"
-		sd.DownBetTime = nowTime
-		sd.StartTime = nowTime
-		sd.EndTime = nowTime
-		sd.PackageId = p.PackageId
-		sd.WinStatementTotal = p.WinResultMoney
-		sd.BetMoney = p.DownBet
-		InsertStatementDB(sd)
-
-		// 插入盈余数据
-		sur := &SurplusPoolDB{}
-		sur.UpdateTime = time.Now()
-		sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-		sur.Rid = p.RoomId
-		sur.PlayerNum = LoadPlayerCount()
-		surPool := FindSurplusPool()
-		if surPool != nil {
-			sur.HistoryWin = surPool.HistoryWin
-			sur.HistoryLose = surPool.HistoryLose
-		}
-		sur.HistoryWin += Decimal(p.WinResultMoney)
-		sur.TotalWinMoney += Decimal(p.WinResultMoney)
-		InsertSurplusPool(sur)
+		//// 插入运营数据
+		//pr := &PlayerDownBetRecode{}
+		//pr.Id = p.Id
+		//pr.GameId = conf.Server.GameID
+		//pr.RoundId = p.RoundId
+		//pr.RoomId = p.RoomId
+		//pr.DownBetInfo = p.DownBet
+		//pr.DownBetTime = nowTime
+		//pr.StartTime = nowTime
+		//pr.EndTime = nowTime
+		//pr.SettlementFunds = resultMoney
+		//pr.SpareCash = p.Account
+		//pr.TaxRate = taxR
+		//InsertAccessData(pr)
+		//
+		//// 插入游戏统计数据
+		//sd := &StatementData{}
+		//sd.Id = p.Id
+		//sd.GameId = conf.Server.GameID
+		//sd.GameName = "财神推金币"
+		//sd.DownBetTime = nowTime
+		//sd.StartTime = nowTime
+		//sd.EndTime = nowTime
+		//sd.PackageId = p.PackageId
+		//sd.WinStatementTotal = p.WinResultMoney
+		//sd.BetMoney = p.DownBet
+		//InsertStatementDB(sd)
+		//
+		//// 插入盈余数据
+		//sur := &SurplusPoolDB{}
+		//sur.UpdateTime = time.Now()
+		//sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
+		//sur.Rid = p.RoomId
+		//sur.PlayerNum = LoadPlayerCount()
+		//surPool := FindSurplusPool()
+		//if surPool != nil {
+		//	sur.HistoryWin = surPool.HistoryWin
+		//	sur.HistoryLose = surPool.HistoryLose
+		//}
+		//sur.HistoryWin += Decimal(p.WinResultMoney)
+		//sur.TotalWinMoney += Decimal(p.WinResultMoney)
+		//InsertSurplusPool(sur)
 	}
 }
 
 func (p *Player) GameSurSettle() {
-	sur := GetFindSurPool() //todo
-	loseRate := sur.PlayerLoseRateAfterSurplusPool * 100
-	percentageWin := sur.RandomPercentageAfterWin * 100
-	percentageLose := sur.RandomPercentageAfterLose * 100
-	countWin := sur.RandomCountAfterWin
-	countLose := sur.RandomCountAfterLose
-	surplusPool := sur.SurplusPool
+	//sur := GetFindSurPool() //todo
+	//loseRate := sur.PlayerLoseRateAfterSurplusPool * 100
+	//percentageWin := sur.RandomPercentageAfterWin * 100
+	//percentageLose := sur.RandomPercentageAfterLose * 100
+	//countWin := sur.RandomCountAfterWin
+	//countLose := sur.RandomCountAfterLose
+	//surplusPool := sur.SurplusPool
+
+	loseRate := 60
+	percentageWin := 70
+	percentageLose := 0
+	countWin := 3
+	countLose := 0
+	var surplusPool float64 = 1000
 
 	num := RandInRange(1, 101)
 	if num >= 50 { // 玩家赢钱
@@ -484,23 +490,24 @@ func (p *Player) GetRewardsInfo() {
 		taxR := pac / 100
 		tax := winMoney * taxR
 		resultMoney := winMoney - tax
-		log.Debug("获取小游戏赢钱的金额:%v", winMoney)
+		log.Debug("获取小游戏赢钱的金额:%v,%v,%v", gameName, winMoney, rate)
 
 		p.Account += resultMoney
 		p.WinResultMoney = winMoney
 		p.TotalWinMoney += winMoney
 
-		nowTime := time.Now().Unix()
-		if winMoney > 0 {
-			winReason := "发财推币机" + gameName + "赢钱"
-			p.RoundId = p.RandRoundId()
-			c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
-		}
+		// todo
+		//nowTime := time.Now().Unix()
+		//if winMoney > 0 {
+		//	winReason := "发财推币机" + gameName + "赢钱"
+		//	p.RoundId = p.RandRoundId()
+		//	c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
+		//}
 
-		// 跑马灯
-		if resultMoney > PaoMaDeng {
-			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
-		}
+		//// 跑马灯
+		//if resultMoney > PaoMaDeng {
+		//	c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
+		//}
 
 		if data.RewardsNum == RICH {
 			send := &msg.SendMoney_S2C{}
@@ -555,54 +562,54 @@ func (p *Player) GetRewardsInfo() {
 			}()
 		}
 
-		if p.WinResultMoney > 0 {
-			// 插入运营数据
-			pr := &PlayerDownBetRecode{}
-			pr.Id = p.Id
-			pr.GameId = conf.Server.GameID
-			pr.RoundId = p.RoundId
-			pr.RoomId = p.RoomId
-			pr.DownBetInfo = p.DownBet
-			pr.DownBetTime = nowTime
-			pr.StartTime = nowTime
-			pr.EndTime = nowTime
-			pr.GameReward = new(GameRewards)
-			pr.GameReward.Game = gameName
-			pr.GameReward.Rate = rate
-			pr.GameReward.WinMoney = winMoney
-			pr.SettlementFunds = resultMoney
-			pr.SpareCash = p.Account
-			pr.TaxRate = taxR
-			InsertAccessData(pr)
-
-			// 插入游戏统计数据
-			sd := &StatementData{}
-			sd.Id = p.Id
-			sd.GameId = conf.Server.GameID
-			sd.GameName = "财神推金币"
-			sd.DownBetTime = nowTime
-			sd.StartTime = nowTime
-			sd.EndTime = nowTime
-			sd.PackageId = p.PackageId
-			sd.WinStatementTotal = p.WinResultMoney
-			sd.BetMoney = p.DownBet
-			InsertStatementDB(sd)
-
-			// 插入盈余数据
-			sur := &SurplusPoolDB{}
-			sur.UpdateTime = time.Now()
-			sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-			sur.Rid = p.RoomId
-			sur.PlayerNum = LoadPlayerCount()
-			surPool := FindSurplusPool()
-			if surPool != nil {
-				sur.HistoryWin = surPool.HistoryWin
-				sur.HistoryLose = surPool.HistoryLose
-			}
-			sur.HistoryWin += Decimal(p.WinResultMoney)
-			sur.TotalWinMoney += Decimal(p.WinResultMoney)
-			InsertSurplusPool(sur)
-		}
+		//if p.WinResultMoney > 0 {
+		//	// 插入运营数据
+		//	pr := &PlayerDownBetRecode{}
+		//	pr.Id = p.Id
+		//	pr.GameId = conf.Server.GameID
+		//	pr.RoundId = p.RoundId
+		//	pr.RoomId = p.RoomId
+		//	pr.DownBetInfo = p.DownBet
+		//	pr.DownBetTime = nowTime
+		//	pr.StartTime = nowTime
+		//	pr.EndTime = nowTime
+		//	pr.GameReward = new(GameRewards)
+		//	pr.GameReward.Game = gameName
+		//	pr.GameReward.Rate = rate
+		//	pr.GameReward.WinMoney = winMoney
+		//	pr.SettlementFunds = resultMoney
+		//	pr.SpareCash = p.Account
+		//	pr.TaxRate = taxR
+		//	InsertAccessData(pr)
+		//
+		//	// 插入游戏统计数据
+		//	sd := &StatementData{}
+		//	sd.Id = p.Id
+		//	sd.GameId = conf.Server.GameID
+		//	sd.GameName = "财神推金币"
+		//	sd.DownBetTime = nowTime
+		//	sd.StartTime = nowTime
+		//	sd.EndTime = nowTime
+		//	sd.PackageId = p.PackageId
+		//	sd.WinStatementTotal = p.WinResultMoney
+		//	sd.BetMoney = p.DownBet
+		//	InsertStatementDB(sd)
+		//
+		//	// 插入盈余数据
+		//	sur := &SurplusPoolDB{}
+		//	sur.UpdateTime = time.Now()
+		//	sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
+		//	sur.Rid = p.RoomId
+		//	sur.PlayerNum = LoadPlayerCount()
+		//	surPool := FindSurplusPool()
+		//	if surPool != nil {
+		//		sur.HistoryWin = surPool.HistoryWin
+		//		sur.HistoryLose = surPool.HistoryLose
+		//	}
+		//	sur.HistoryWin += Decimal(p.WinResultMoney)
+		//	sur.TotalWinMoney += Decimal(p.WinResultMoney)
+		//	InsertSurplusPool(sur)
+		//}
 	}
 }
 
@@ -632,9 +639,10 @@ func (p *Player) ProgressBetResp(m *msg.ProgressBar_C2S) {
 
 		// 房间配置金额
 		money := CfgMoney[room.Config]
-		surMoney := GetSurPlusMoney() //todo
+		//surMoney := GetSurPlusMoney() //todo
+		var surMoney float64 = 1000 //todo
 		// 盈余池金额足够小游戏获奖时
-		log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
+		//log.Debug("获奖的估计金额:%v,盈余池金额:%v", money*Rate, surMoney)
 		var betNum int32
 		if money*Rate <= surMoney {
 			if p.ProgressBet >= 1 && p.ProgressBet <= 50 {
@@ -708,19 +716,20 @@ func (p *Player) WinLuckyPig() {
 		p.WinResultMoney = winMoney
 		p.TotalWinMoney += winMoney
 
-		log.Debug("财运满满赢钱的金额:%v", winMoney)
+		log.Debug("财运满满赢钱的金额:%v,%v", winMoney, rate)
 
-		nowTime := time.Now().Unix()
-		if winMoney > 0 {
-			winReason := "发财推币机财运满满赢钱"
-			p.RoundId = p.RandRoundId()
-			c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
-		}
-
-		// 跑马灯
-		if resultMoney > PaoMaDeng {
-			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
-		}
+		// todo
+		//nowTime := time.Now().Unix()
+		//if winMoney > 0 {
+		//	winReason := "发财推币机财运满满赢钱"
+		//	p.RoundId = p.RandRoundId()
+		//	c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
+		//}
+		//
+		//// 跑马灯
+		//if resultMoney > PaoMaDeng {
+		//	c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
+		//}
 
 		data := &msg.LuckyPig_S2C{}
 		data.LuckyPig = getPigInfo
@@ -740,54 +749,54 @@ func (p *Player) WinLuckyPig() {
 
 		room.IsLuckyGame = false
 
-		if p.WinResultMoney > 0 { // todo
-			// 插入运营数据
-			pr := &PlayerDownBetRecode{}
-			pr.Id = p.Id
-			pr.GameId = conf.Server.GameID
-			pr.RoundId = p.RoundId
-			pr.RoomId = p.RoomId
-			pr.DownBetInfo = p.DownBet
-			pr.DownBetTime = nowTime
-			pr.StartTime = nowTime
-			pr.EndTime = nowTime
-			pr.GameReward = new(GameRewards)
-			pr.GameReward.Game = "财运满满"
-			pr.GameReward.Rate = rate
-			pr.GameReward.WinMoney = winMoney
-			pr.SettlementFunds = resultMoney
-			pr.SpareCash = p.Account
-			pr.TaxRate = taxR
-			InsertAccessData(pr)
-
-			// 插入游戏统计数据
-			sd := &StatementData{}
-			sd.Id = p.Id
-			sd.GameId = conf.Server.GameID
-			sd.GameName = "财神推金币"
-			sd.DownBetTime = nowTime
-			sd.StartTime = nowTime
-			sd.EndTime = nowTime
-			sd.PackageId = p.PackageId
-			sd.WinStatementTotal = p.WinResultMoney
-			sd.BetMoney = p.DownBet
-			InsertStatementDB(sd)
-
-			// 插入盈余数据
-			sur := &SurplusPoolDB{}
-			sur.UpdateTime = time.Now()
-			sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-			sur.Rid = p.RoomId
-			sur.PlayerNum = LoadPlayerCount()
-			surPool := FindSurplusPool()
-			if surPool != nil {
-				sur.HistoryWin = surPool.HistoryWin
-				sur.HistoryLose = surPool.HistoryLose
-			}
-			sur.HistoryWin += Decimal(p.WinResultMoney)
-			sur.TotalWinMoney += Decimal(p.WinResultMoney)
-			InsertSurplusPool(sur)
-		}
+		//if p.WinResultMoney > 0 { // todo
+		//	// 插入运营数据
+		//	pr := &PlayerDownBetRecode{}
+		//	pr.Id = p.Id
+		//	pr.GameId = conf.Server.GameID
+		//	pr.RoundId = p.RoundId
+		//	pr.RoomId = p.RoomId
+		//	pr.DownBetInfo = p.DownBet
+		//	pr.DownBetTime = nowTime
+		//	pr.StartTime = nowTime
+		//	pr.EndTime = nowTime
+		//	pr.GameReward = new(GameRewards)
+		//	pr.GameReward.Game = "财运满满"
+		//	pr.GameReward.Rate = rate
+		//	pr.GameReward.WinMoney = winMoney
+		//	pr.SettlementFunds = resultMoney
+		//	pr.SpareCash = p.Account
+		//	pr.TaxRate = taxR
+		//	InsertAccessData(pr)
+		//
+		//	// 插入游戏统计数据
+		//	sd := &StatementData{}
+		//	sd.Id = p.Id
+		//	sd.GameId = conf.Server.GameID
+		//	sd.GameName = "财神推金币"
+		//	sd.DownBetTime = nowTime
+		//	sd.StartTime = nowTime
+		//	sd.EndTime = nowTime
+		//	sd.PackageId = p.PackageId
+		//	sd.WinStatementTotal = p.WinResultMoney
+		//	sd.BetMoney = p.DownBet
+		//	InsertStatementDB(sd)
+		//
+		//	// 插入盈余数据
+		//	sur := &SurplusPoolDB{}
+		//	sur.UpdateTime = time.Now()
+		//	sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
+		//	sur.Rid = p.RoomId
+		//	sur.PlayerNum = LoadPlayerCount()
+		//	surPool := FindSurplusPool()
+		//	if surPool != nil {
+		//		sur.HistoryWin = surPool.HistoryWin
+		//		sur.HistoryLose = surPool.HistoryLose
+		//	}
+		//	sur.HistoryWin += Decimal(p.WinResultMoney)
+		//	sur.TotalWinMoney += Decimal(p.WinResultMoney)
+		//	InsertSurplusPool(sur)
+		//}
 		log.Debug("财运满满执行完毕!")
 	}
 }
@@ -821,17 +830,18 @@ func (p *Player) GodPickUpGold(betNum int32) {
 
 		log.Debug("财神接金币赢钱的金额:%v", winMoney)
 
-		nowTime := time.Now().Unix()
-		if winMoney > 0 {
-			winReason := "发财推币机财神接金币赢钱"
-			p.RoundId = p.RandRoundId()
-			c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
-		}
-
-		// 跑马灯
-		if resultMoney > PaoMaDeng {
-			c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
-		}
+		//todo
+		//nowTime := time.Now().Unix()
+		//if winMoney > 0 {
+		//	winReason := "发财推币机财神接金币赢钱"
+		//	p.RoundId = p.RandRoundId()
+		//	c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
+		//}
+		//
+		//// 跑马灯
+		//if resultMoney > PaoMaDeng {
+		//	c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
+		//}
 
 		data := &msg.PickUpGold_S2C{}
 		data.Money = resultMoney
@@ -841,54 +851,54 @@ func (p *Player) GodPickUpGold(betNum int32) {
 
 		room.IsLuckyGame = false
 
-		if p.WinResultMoney > 0 {
-			// 插入运营数据
-			pr := &PlayerDownBetRecode{}
-			pr.Id = p.Id
-			pr.GameId = conf.Server.GameID
-			pr.RoundId = p.RoundId
-			pr.RoomId = p.RoomId
-			pr.DownBetInfo = p.DownBet
-			pr.DownBetTime = nowTime
-			pr.StartTime = nowTime
-			pr.EndTime = nowTime
-			pr.GameReward = new(GameRewards)
-			pr.GameReward.Game = "财神接金币"
-			pr.GameReward.Rate = float64(rate)
-			pr.GameReward.WinMoney = winMoney
-			pr.SettlementFunds = resultMoney
-			pr.SpareCash = p.Account
-			pr.TaxRate = taxR
-			InsertAccessData(pr)
-
-			// 插入游戏统计数据
-			sd := &StatementData{}
-			sd.Id = p.Id
-			sd.GameId = conf.Server.GameID
-			sd.GameName = "财神推金币"
-			sd.DownBetTime = nowTime
-			sd.StartTime = nowTime
-			sd.EndTime = nowTime
-			sd.PackageId = p.PackageId
-			sd.WinStatementTotal = p.WinResultMoney
-			sd.BetMoney = p.DownBet
-			InsertStatementDB(sd)
-
-			// 插入盈余数据
-			sur := &SurplusPoolDB{}
-			sur.UpdateTime = time.Now()
-			sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-			sur.Rid = p.RoomId
-			sur.PlayerNum = LoadPlayerCount()
-			surPool := FindSurplusPool()
-			if surPool != nil {
-				sur.HistoryWin = surPool.HistoryWin
-				sur.HistoryLose = surPool.HistoryLose
-			}
-			sur.HistoryWin += Decimal(p.WinResultMoney)
-			sur.TotalWinMoney += Decimal(p.WinResultMoney)
-			InsertSurplusPool(sur)
-		}
+		//if p.WinResultMoney > 0 {
+		//	// 插入运营数据
+		//	pr := &PlayerDownBetRecode{}
+		//	pr.Id = p.Id
+		//	pr.GameId = conf.Server.GameID
+		//	pr.RoundId = p.RoundId
+		//	pr.RoomId = p.RoomId
+		//	pr.DownBetInfo = p.DownBet
+		//	pr.DownBetTime = nowTime
+		//	pr.StartTime = nowTime
+		//	pr.EndTime = nowTime
+		//	pr.GameReward = new(GameRewards)
+		//	pr.GameReward.Game = "财神接金币"
+		//	pr.GameReward.Rate = float64(rate)
+		//	pr.GameReward.WinMoney = winMoney
+		//	pr.SettlementFunds = resultMoney
+		//	pr.SpareCash = p.Account
+		//	pr.TaxRate = taxR
+		//	InsertAccessData(pr)
+		//
+		//	// 插入游戏统计数据
+		//	sd := &StatementData{}
+		//	sd.Id = p.Id
+		//	sd.GameId = conf.Server.GameID
+		//	sd.GameName = "财神推金币"
+		//	sd.DownBetTime = nowTime
+		//	sd.StartTime = nowTime
+		//	sd.EndTime = nowTime
+		//	sd.PackageId = p.PackageId
+		//	sd.WinStatementTotal = p.WinResultMoney
+		//	sd.BetMoney = p.DownBet
+		//	InsertStatementDB(sd)
+		//
+		//	// 插入盈余数据
+		//	sur := &SurplusPoolDB{}
+		//	sur.UpdateTime = time.Now()
+		//	sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
+		//	sur.Rid = p.RoomId
+		//	sur.PlayerNum = LoadPlayerCount()
+		//	surPool := FindSurplusPool()
+		//	if surPool != nil {
+		//		sur.HistoryWin = surPool.HistoryWin
+		//		sur.HistoryLose = surPool.HistoryLose
+		//	}
+		//	sur.HistoryWin += Decimal(p.WinResultMoney)
+		//	sur.TotalWinMoney += Decimal(p.WinResultMoney)
+		//	InsertSurplusPool(sur)
+		//}
 	}
 }
 

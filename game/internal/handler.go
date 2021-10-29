@@ -59,61 +59,116 @@ func handleLogin(args []interface{}) {
 				log.Error("用户链接替换错误", err)
 			}
 
-			c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { // todo
-				user, _ := hall.UserRecord.Load(p.Id)
-				if user != nil {
-					u := user.(*Player)
-					log.Debug("读取玩家历史数据:%v", u)
-					login := &msg.Login_S2C{}
-					rid, _ := hall.UserRoom.Load(p.Id)
-					v, _ := hall.RoomRecord.Load(rid)
-					if v != nil {
-						login.IsBack = true
-					}
-					login.PlayerInfo = new(msg.PlayerInfo)
-					login.PlayerInfo.Id = u.Id
-					login.PlayerInfo.NickName = u.NickName
-					login.PlayerInfo.HeadImg = u.HeadImg
-					login.PlayerInfo.Account = u.Account
-					a.WriteMsg(login)
-
-					p.ConnAgent = a
-					p.ConnAgent.SetUserData(u)
-
-					p.OffLineTime = -1
-					p.Password = m.GetPassWord()
-					p.Token = m.GetToken()
-
-					hall.OnlineUser.Store(u.Id, u)
+			//c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { // todo
+			//	user, _ := hall.UserRecord.Load(p.Id)
+			//	if user != nil {
+			//		u := user.(*Player)
+			//		log.Debug("读取玩家历史数据:%v", u)
+			//		login := &msg.Login_S2C{}
+			//		rid, _ := hall.UserRoom.Load(p.Id)
+			//		v, _ := hall.RoomRecord.Load(rid)
+			//		if v != nil {
+			//			login.IsBack = true
+			//		}
+			//		login.PlayerInfo = new(msg.PlayerInfo)
+			//		login.PlayerInfo.Id = u.Id
+			//		login.PlayerInfo.NickName = u.NickName
+			//		login.PlayerInfo.HeadImg = u.HeadImg
+			//		login.PlayerInfo.Account = u.Account
+			//		a.WriteMsg(login)
+			//
+			//		p.ConnAgent = a
+			//		p.ConnAgent.SetUserData(u)
+			//
+			//		p.OffLineTime = -1
+			//		p.Password = m.GetPassWord()
+			//		p.Token = m.GetToken()
+			//
+			//		hall.OnlineUser.Store(u.Id, u)
+			//	}
+			//	// 判断玩家是否返回房间数据
+			//	p.RespEnterRoom()
+			//})
+			user, _ := hall.UserRecord.Load(p.Id)
+			if user != nil {
+				u := user.(*Player)
+				log.Debug("读取玩家历史数据:%v", u)
+				login := &msg.Login_S2C{}
+				rid, _ := hall.UserRoom.Load(p.Id)
+				v, _ := hall.RoomRecord.Load(rid)
+				if v != nil {
+					login.IsBack = true
 				}
-				// 判断玩家是否返回房间数据
-				p.RespEnterRoom()
-			})
+				login.PlayerInfo = new(msg.PlayerInfo)
+				login.PlayerInfo.Id = u.Id
+				login.PlayerInfo.NickName = u.NickName
+				login.PlayerInfo.HeadImg = u.HeadImg
+				login.PlayerInfo.Account = u.Account
+				a.WriteMsg(login)
+
+				p.ConnAgent = a
+				p.ConnAgent.SetUserData(u)
+
+				p.OffLineTime = -1
+				p.Password = m.GetPassWord()
+				p.Token = m.GetToken()
+
+				hall.OnlineUser.Store(u.Id, u)
+			}
+			// 判断玩家是否返回房间数据
+			p.RespEnterRoom()
 		}
 	} else if !hall.agentExist(a) { // 玩家首次登入
-		c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { //todo
-			log.Debug("玩家首次登陆:%v", u.Id)
-			login := &msg.Login_S2C{}
-			login.IsBack = false
-			login.PlayerInfo = new(msg.PlayerInfo)
-			login.PlayerInfo.Id = u.Id
-			login.PlayerInfo.NickName = u.NickName
-			login.PlayerInfo.HeadImg = u.HeadImg
-			login.PlayerInfo.Account = u.Account
-			a.WriteMsg(login)
+		//c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { //todo
+		//	log.Debug("玩家首次登陆:%v", u.Id)
+		//	login := &msg.Login_S2C{}
+		//	login.IsBack = false
+		//	login.PlayerInfo = new(msg.PlayerInfo)
+		//	login.PlayerInfo.Id = u.Id
+		//	login.PlayerInfo.NickName = u.NickName
+		//	login.PlayerInfo.HeadImg = u.HeadImg
+		//	login.PlayerInfo.Account = u.Account
+		//	a.WriteMsg(login)
+		//
+		//	u.Init()
+		//	// 重新绑定信息
+		//	u.ConnAgent = a
+		//	a.SetUserData(u)
+		//
+		//	u.OffLineTime = -1
+		//	u.Password = m.GetPassWord()
+		//	u.Token = m.GetToken()
+		//
+		//	hall.UserRecord.Store(u.Id, u)
+		//	hall.OnlineUser.Store(u.Id, u)
+		//})
+		u := &Player{}
+		u.Id = m.Id
+		u.Account = 10000
+		u.NickName = m.Id
+		u.Token = m.Token
 
-			u.Init()
-			// 重新绑定信息
-			u.ConnAgent = a
-			a.SetUserData(u)
+		login := &msg.Login_S2C{}
+		login.IsBack = false
+		login.PlayerInfo = new(msg.PlayerInfo)
+		login.PlayerInfo.Id = u.Id
+		login.PlayerInfo.NickName = u.NickName
+		login.PlayerInfo.HeadImg = u.HeadImg
+		login.PlayerInfo.Account = u.Account
+		a.WriteMsg(login)
+		log.Debug("玩家首次登陆:%v", u.Id)
 
-			u.OffLineTime = -1
-			u.Password = m.GetPassWord()
-			u.Token = m.GetToken()
+		u.Init()
+		// 重新绑定信息
+		u.ConnAgent = a
+		a.SetUserData(u)
 
-			hall.UserRecord.Store(u.Id, u)
-			hall.OnlineUser.Store(u.Id, u)
-		})
+		u.OffLineTime = -1
+		u.Password = m.GetPassWord()
+		u.Token = m.GetToken()
+
+		hall.UserRecord.Store(u.Id, u)
+		hall.OnlineUser.Store(u.Id, u)
 	}
 }
 
