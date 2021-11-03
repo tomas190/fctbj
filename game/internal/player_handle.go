@@ -534,6 +534,7 @@ func (p *Player) GetRewardsInfo() {
 			down.LuckyBag2 = int32(fudai2)
 			down.CoinList = room.CoinList[room.Config]
 			down.Money = resultMoney
+			down.Account = p.Account
 			p.SendMsg(down)
 
 			room.CoinList[room.Config] = nil

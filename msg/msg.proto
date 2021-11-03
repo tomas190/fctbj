@@ -135,6 +135,7 @@ message DownLuckyBag_S2C {
     int32 luckyBag2 = 2;
     repeated string coinList = 3;
     double money = 4;
+    double account = 5;
 }
 
 // 重新生成金币

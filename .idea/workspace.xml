@@ -3,7 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="2c7aa91e-b2c0-48d0-b1b2-71befe609a48" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/../RedBlack-War_2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Test/.idea/Test.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../allGame" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../caidaxiao/.idea/server.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/.gitignore" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/misc.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/.idea/modules.xml" afterDir="false" />
@@ -55,9 +57,11 @@
       <change afterPath="$PROJECT_DIR$/../dezhoupoker/msg/msg.proto" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../dezhoupoker_2" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../infoNew.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../newFile/.idea/newFile.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../newFile/caidaxiao/.idea/server.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../newFile/fctbj/.idea/fctbj.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../德州盈余测试.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/internal/player_handle.go" beforeDir="false" afterPath="$PROJECT_DIR$/game/internal/player_handle.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,18 +129,18 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="379" y="144" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680@0.0.1280.680" timestamp="1630652033666" />
-    <state x="385" y="196" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1630650462929">
+    <state x="385" y="196" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1635836169646">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="385" y="196" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1280.680@0.0.1280.680" timestamp="1630650462929" />
+    <state x="385" y="196" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1280.680@0.0.1280.680" timestamp="1635836169645" />
     <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1635353713359">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1635353713359" />
-    <state x="321" y="73" width="773" height="600" key="find.popup" timestamp="1635514339845">
+    <state x="321" y="73" width="773" height="600" key="find.popup" timestamp="1635938253669">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="321" y="73" width="773" height="600" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1635514339845" />
+    <state x="321" y="73" width="773" height="600" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1635938253669" />
     <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1635260005508">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
