@@ -38,4 +38,3 @@ func init() {
 	Processor.Register(&SendCoordinate_C2S{})
 	Processor.Register(&ErrorMsg_S2C{})
 }
-
