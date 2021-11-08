@@ -478,15 +478,15 @@ func (p *Player) GetRewardsInfo() {
 			if num >= 1 && num <= 3 {
 				data.RewardsNum = GOLD
 				room.IsPickGod = true
-			} else if num >= 4 && num <= 6 {
+			} else if num >= 4 && num <= 96 {
 				data.RewardsNum = RICH
 				gameName = "金猪送财"
 				rate, winMoney = GetRICH(cfgMoney)
-			} else if num >= 7 && num <= 10 {
+			} else if num >= 97 && num <= 98 {
 				data.RewardsNum = PUSH
 				gameName = "财神发钱"
 				rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
-			} else if num >= 11 && num <= 100 {
+			} else if num >= 99 && num <= 100 {
 				data.RewardsNum = LUCKY
 				room.IsLuckyPig = true
 			}
