@@ -478,11 +478,11 @@ func (p *Player) GetRewardsInfo() {
 			if num >= 1 && num <= 3 {
 				data.RewardsNum = GOLD
 				room.IsPickGod = true
-			} else if num >= 4 && num <= 96 {
+			} else if num >= 4 && num <= 6 {
 				data.RewardsNum = RICH
 				gameName = "金猪送财"
 				rate, winMoney = GetRICH(cfgMoney)
-			} else if num >= 97 && num <= 98 {
+			} else if num >= 7 && num <= 98 {
 				data.RewardsNum = PUSH
 				gameName = "财神发钱"
 				rate, winMoney, fudai1, fudai2 = room.GetPUSH(cfgMoney)
