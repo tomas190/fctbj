@@ -157,13 +157,13 @@ func (p *Player) HandlePlayerData() {
 	if p.TotalLoseMoney > 0 {
 		p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
 		loseReason := "发财推币机输钱"
-		c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, p.TotalLoseMoney)
+		c2c.UserSyncLoseScore(p, GetTimeUnixNano(), p.RoundId, loseReason, p.TotalLoseMoney)
 	}
 
 	if p.TotalWinMoney > 0 {
 		p.RoundId = p.RandRoundId()
 		winReason := "发财推币机赢钱"
-		c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, p.TotalWinMoney)
+		c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, p.TotalWinMoney)
 	}
 
 	pac := packageTax[p.PackageId]

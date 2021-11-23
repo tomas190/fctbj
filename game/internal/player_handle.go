@@ -129,7 +129,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	nowTime := time.Now().Unix()
 	p.RoundId = p.RandRoundId()
 	loseReason := "发财推币机输钱"
-	c2c.UserSyncLoseScore(p, nowTime, p.RoundId, loseReason, m.DownBet)
+	c2c.UserSyncLoseScore(p, GetTimeUnixNano(), p.RoundId, loseReason, m.DownBet)
 
 	// 游戏赢率结算
 	p.GameSurSettle()
@@ -259,7 +259,7 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 		nowTime := time.Now().Unix()
 		p.RoundId = p.RandRoundId()
 		winReason := "发财推币机赢钱"
-		c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
+		c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, winMoney)
 
 		// 跑马灯
 		if resultMoney > PaoMaDeng {
@@ -509,7 +509,7 @@ func (p *Player) GetRewardsInfo() {
 		if winMoney > 0 {
 			winReason := "发财推币机" + gameName + "赢钱"
 			p.RoundId = p.RandRoundId()
-			c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
+			c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, winMoney)
 		}
 
 		// 跑马灯
@@ -735,7 +735,7 @@ func (p *Player) WinLuckyPig() {
 		if winMoney > 0 {
 			winReason := "发财推币机财运满满赢钱"
 			p.RoundId = p.RandRoundId()
-			c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
+			c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, winMoney)
 		}
 
 		// 跑马灯
@@ -851,7 +851,7 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		if winMoney > 0 {
 			winReason := "发财推币机财神接金币赢钱"
 			p.RoundId = p.RandRoundId()
-			c2c.UserSyncWinScore(p, nowTime, p.RoundId, winReason, winMoney)
+			c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, winMoney)
 		}
 
 		// 跑马灯

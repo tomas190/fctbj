@@ -50,3 +50,7 @@ func RandInRange(min int, max int) int {
 func SetPackageTaxM(packageT uint16, tax float64) {
 	packageTax[packageT] = tax
 }
+
+func GetTimeUnixNano() int64 {
+	return time.Now().UnixNano() / 1e6
+}
