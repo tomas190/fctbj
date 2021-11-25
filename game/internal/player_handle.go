@@ -296,7 +296,6 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 			sd.EndTime = nowTime
 			sd.PackageId = p.PackageId
 			sd.WinStatementTotal = p.WinResultMoney
-			sd.BetMoney = p.DownBet
 			InsertStatementDB(sd)
 
 			if p.PackageId != 11 && p.PackageId != 8 {
@@ -602,7 +601,6 @@ func (p *Player) GetRewardsInfo() {
 				sd.EndTime = nowTime
 				sd.PackageId = p.PackageId
 				sd.WinStatementTotal = p.WinResultMoney
-				sd.BetMoney = p.DownBet
 				InsertStatementDB(sd)
 
 				if p.PackageId != 11 && p.PackageId != 8 {
@@ -792,7 +790,6 @@ func (p *Player) WinLuckyPig() {
 				sd.EndTime = nowTime
 				sd.PackageId = p.PackageId
 				sd.WinStatementTotal = p.WinResultMoney
-				sd.BetMoney = p.DownBet
 				InsertStatementDB(sd)
 
 				if p.PackageId != 11 && p.PackageId != 8 {
@@ -898,7 +895,6 @@ func (p *Player) GodPickUpGold(betNum int32) {
 				sd.EndTime = nowTime
 				sd.PackageId = p.PackageId
 				sd.WinStatementTotal = p.WinResultMoney
-				sd.BetMoney = p.DownBet
 				InsertStatementDB(sd)
 
 				if p.PackageId != 11 && p.PackageId != 8 {

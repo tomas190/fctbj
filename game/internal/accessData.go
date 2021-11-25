@@ -426,9 +426,9 @@ func getStatementTotal(w http.ResponseWriter, r *http.Request) {
 
 	recodes, _ := GetStatementList(selector)
 	data := &StatementResp{}
+	data.GameId = conf.Server.GameID
+	data.GameName = "财神推金币"
 	for _, v := range recodes {
-		data.GameId = v.GameId
-		data.GameName = v.GameName
 		data.WinStatementTotal += v.WinStatementTotal
 		data.LoseStatementTotal += v.LoseStatementTotal
 		data.BetMoney += v.BetMoney
