@@ -52,5 +52,5 @@ func SetPackageTaxM(packageT uint16, tax float64) {
 }
 
 func GetTimeUnixNano() int64 {
-	return time.Now().UnixNano() / 1e6
+	return time.Now().Unix()
 }
