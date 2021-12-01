@@ -406,6 +406,7 @@ func getStatementTotal(w http.ResponseWriter, r *http.Request) {
 	if req.Id != "" {
 		selector["id"] = req.Id
 	}
+
 	packId, _ := strconv.Atoi(req.PackageId)
 	if req.PackageId != "" {
 		selector["package_id"] = uint16(packId)
@@ -424,26 +425,36 @@ func getStatementTotal(w http.ResponseWriter, r *http.Request) {
 		selector["end_time"] = bson.M{"$lte": eTime}
 	}
 
-	recodes, _ := GetStatementList(selector)
-	data := &StatementResp{}
-	data.GameId = conf.Server.GameID
-	data.GameName = "财神推金币"
-	for _, v := range recodes {
-		data.WinStatementTotal += v.WinStatementTotal
-		data.LoseStatementTotal += v.LoseStatementTotal
-		data.BetMoney += v.BetMoney
-		id, _ := strconv.Atoi(v.Id)
-		data.Count = append(data.Count, id)
-	}
-	data.Count = uniqueArr(data.Count)
+	if req.Id != "" || req.PackageId != "" {
+		recodes, _ := GetStatementList(selector)
+		data := &StatementResp{}
+		data.GameId = conf.Server.GameID
+		data.GameName = "财神推金币"
+		for _, v := range recodes {
+			data.WinStatementTotal += v.WinStatementTotal
+			data.LoseStatementTotal += v.LoseStatementTotal
+			data.BetMoney += v.BetMoney
+			id, _ := strconv.Atoi(v.Id)
+			data.Count = append(data.Count, id)
+		}
+		data.Count = uniqueArr(data.Count)
 
-	js, err := json.Marshal(NewResp(SuccCode, "", data))
-	if err != nil {
-		fmt.Fprintf(w, "%+v", ApiResp{Code: ErrCode, Msg: "", Data: nil})
-		return
+		js, err := json.Marshal(NewResp(SuccCode, "", data))
+		if err != nil {
+			fmt.Fprintf(w, "%+v", ApiResp{Code: ErrCode, Msg: "", Data: nil})
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(js)
+	} else {
+		js, err := json.Marshal(NewResp(ErrCode, "玩家id或品牌id为null", struct{}{}))
+		if err != nil {
+			fmt.Fprintf(w, "%+v", ApiResp{Code: ErrCode, Msg: "", Data: nil})
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(js)
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
 }
 
 func getOnlineTotal(w http.ResponseWriter, r *http.Request) {
