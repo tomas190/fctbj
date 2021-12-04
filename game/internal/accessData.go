@@ -432,7 +432,7 @@ func getStatementTotal(w http.ResponseWriter, r *http.Request) {
 		data.GameName = "财神推金币"
 		for _, v := range recodes {
 			data.WinStatementTotal += v.WinStatementTotal
-			data.LoseStatementTotal += v.LoseStatementTotal
+			data.LoseStatementTotal -= v.LoseStatementTotal
 			data.BetMoney += v.BetMoney
 			id, _ := strconv.Atoi(v.Id)
 			data.Count = append(data.Count, id)
