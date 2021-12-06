@@ -22,6 +22,7 @@ type Player struct {
 	Token     string
 	RoomId    string
 	RoundId   string
+	RoundNum  int32
 	PackageId uint16
 
 	WinResultMoney  float64
@@ -41,6 +42,7 @@ type Player struct {
 func (p *Player) Init() {
 	p.RoomId = ""
 	p.RoundId = ""
+	p.RoundNum = 0
 	p.WinResultMoney = 0
 	p.LoseResultMoney = 0
 	p.DownBet = 0
@@ -69,8 +71,8 @@ func (p *Player) SendErrMsg(errData string) {
 }
 
 func (p *Player) RandRoundId() string {
-	num := RandInRange(1, 10000)
-	return fmt.Sprintf("%+v-%+v-%+v", time.Now().Unix(), num, p.Id)
+	p.RoundNum++
+	return fmt.Sprintf("%+v-%+v-%+v", time.Now().Unix(), p.RoundNum, p.Id)
 }
 
 func (p *Player) RespEnterRoom() {
