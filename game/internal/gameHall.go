@@ -54,27 +54,6 @@ func (hall *GameHall) agentExist(a gate.Agent) bool {
 	return exist
 }
 
-// 记录玩家数据
-func (hall *GameHall) RecordPlayerData() {
-	ticker := time.NewTicker(180 * time.Second)
-	defer ticker.Stop()
-
-	for { // 循环每3秒处理玩家数据
-		select {
-		case <-ticker.C:
-			hall.UserRecord.Range(func(key, value interface{}) bool {
-				v := value.(*Player)
-				// 判断玩家期间是否行动过
-				if v.DownBet > 0 {
-					// 插入玩家数据
-					v.HandlePlayerData()
-				}
-				return true
-			})
-		}
-	}
-}
-
 // 处理房间数据
 func (hall *GameHall) HandleRoomData() {
 	ticker := time.NewTicker(time.Hour)

@@ -48,6 +48,8 @@ func InitMongoDB() {
 
 	// 建立index索引
 	createUniqueIndex(surPlusDB, []string{"updatetime"})
+	createUniqueIndex(accessDB, []string{"id"})
+	createUniqueIndex(StatementDB, []string{"id"})
 }
 
 func createUniqueIndex(cName string, keys []string) {

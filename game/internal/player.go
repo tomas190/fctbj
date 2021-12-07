@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fctbj/conf"
 	"fctbj/msg"
 	"fmt"
 	"github.com/name5566/leaf/gate"
@@ -153,79 +152,3 @@ func (p *Player) RespEnterRoom() {
 	}
 }
 
-//InsertPlayerData 插入玩家数据
-func (p *Player) HandlePlayerData() {
-	nowTime := time.Now().Unix()
-	if p.TotalLoseMoney > 0 {
-		p.RoundId = fmt.Sprintf("%+v-%+v", time.Now().Unix(), p.Id)
-		loseReason := "发财推币机输钱"
-		c2c.UserSyncLoseScore(p, GetTimeUnixNano(), p.RoundId, loseReason, p.TotalLoseMoney)
-	}
-
-	if p.TotalWinMoney > 0 {
-		p.RoundId = p.RandRoundId()
-		winReason := "发财推币机赢钱"
-		c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, p.TotalWinMoney)
-	}
-
-	pac := packageTax[p.PackageId]
-	taxR := pac / 100
-	tax := p.TotalWinMoney * taxR
-	resultMoney := (p.TotalWinMoney - tax) - p.TotalLoseMoney
-
-	// 跑马灯
-	if resultMoney > PaoMaDeng {
-		c2c.NoticeWinMoreThan(p.Id, p.NickName, resultMoney)
-	}
-
-	// 插入运营数据
-	data := &PlayerDownBetRecode{}
-	data.Id = p.Id
-	data.GameId = conf.Server.GameID
-	data.RoundId = p.RoundId
-	data.RoomId = p.RoomId
-	data.DownBetInfo = p.DownBet
-	data.DownBetTime = nowTime - 180
-	data.StartTime = nowTime - 180
-	data.EndTime = nowTime
-	data.SettlementFunds = resultMoney
-	data.SpareCash = p.Account
-	data.TaxRate = taxR
-	InsertAccessData(data)
-
-	// 插入游戏统计数据
-	sd := &StatementData{}
-	sd.Id = p.Id
-	sd.GameId = conf.Server.GameID
-	sd.GameName = "财神推金币"
-	sd.DownBetTime = nowTime - 180
-	sd.StartTime = nowTime - 180
-	sd.EndTime = nowTime
-	sd.PackageId = p.PackageId
-	sd.WinStatementTotal = p.TotalWinMoney
-	sd.LoseStatementTotal = p.TotalLoseMoney
-	sd.BetMoney = p.DownBet
-	InsertStatementDB(sd)
-
-	// 插入盈余数据
-	sur := &SurplusPoolDB{}
-	sur.UpdateTime = time.Now()
-	sur.TimeNow = time.Now().Format("2006-01-02 15:04:05")
-	sur.Rid = p.RoomId
-	sur.PlayerNum = LoadPlayerCount()
-	surPool := FindSurplusPool()
-	if surPool != nil {
-		sur.HistoryWin = surPool.HistoryWin
-		sur.HistoryLose = surPool.HistoryLose
-	}
-	sur.HistoryWin += Decimal(p.TotalWinMoney)
-	sur.TotalWinMoney += Decimal(p.TotalWinMoney)
-	sur.HistoryLose += Decimal(p.TotalLoseMoney)
-	sur.TotalLoseMoney += Decimal(p.TotalLoseMoney)
-	InsertSurplusPool(sur)
-
-	// 清除玩家累计数据
-	p.DownBet = 0
-	p.TotalWinMoney = 0
-	p.TotalLoseMoney = 0
-}
