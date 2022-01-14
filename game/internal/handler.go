@@ -92,7 +92,7 @@ func handleLogin(args []interface{}) {
 		}
 	} else if !hall.agentExist(a) { // 玩家首次登入
 		c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { //todo
-			log.Debug("玩家首次登陆:%v", u.Id)
+			log.Debug("玩家首次登陆:%v", u)
 			login := &msg.Login_S2C{}
 			login.IsBack = false
 			login.PlayerInfo = new(msg.PlayerInfo)

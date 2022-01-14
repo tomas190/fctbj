@@ -313,7 +313,7 @@ func (c4c *Conn4Center) onUserLogin(msgBody interface{}) {
 	}
 
 	if data["status"] == "SUCCESS" && code == 200 {
-		log.Debug("<-------- UserLogin SUCCESS~ -------->")
+		log.Debug("<-------- UserLogin SUCCESS~ -------->:%v", data)
 
 		userInfo, ok := data["msg"].(map[string]interface{})
 		var strId string
@@ -388,7 +388,7 @@ func (c4c *Conn4Center) onUserLogout(msgBody interface{}) {
 	}
 
 	if data["status"] == "SUCCESS" && code == 200 {
-		log.Debug("<-------- UserLogout SUCCESS~ -------->")
+		log.Debug("<-------- UserLogout SUCCESS~ -------->:%v", data)
 
 		userInfo, ok := data["msg"].(map[string]interface{})
 		var strId string
