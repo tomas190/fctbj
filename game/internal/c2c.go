@@ -1,14 +1,12 @@
 package internal
 
 import (
-	"bytes"
 	"encoding/json"
 	"fctbj/conf"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"reflect"
-	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -661,7 +659,7 @@ func (c4c *Conn4Center) SendMsg2Center(data interface{}) {
 	}
 	log.Debug("Msg to Send Center:%v", string(codeData))
 
-	err2 := c4c.conn.WriteMessage(websocket.TextMessage, []byte(codeData))
+	err2 := c4c.conn.WriteMessage(websocket.TextMessage, codeData)
 	if err2 != nil {
 		log.Fatal("SendMsg2Center:%v", err2.Error())
 	}
@@ -851,82 +849,4 @@ func (c4c *Conn4Center) NoticeWinMoreThan(playerId, playerName string, winGold f
 		Topic:   "系统提示",
 	}
 	c4c.SendMsg2Center(base)
-}
-
-func (cc *mylog) log(v ...interface{}) {
-	senddata := logmsg{
-		Type:     "LOG",
-		From:     "RedBlack-War",
-		GameName: "红黑大战",
-		Id:       conf.Server.GameID,
-		Host:     "",
-		Time:     time.Now().Unix(),
-	}
-
-	_, file, line, ok := runtime.Caller(2)
-	if ok {
-		senddata.File = file
-		senddata.Line = line
-	}
-	Msg := fmt.Sprintln(v...)
-	senddata.Msg = Msg
-	cc.sendMsg(senddata)
-}
-
-func (cc *mylog) debug(v ...interface{}) {
-	senddata := logmsg{
-		Type:     "DEG",
-		From:     "RedBlack-War",
-		GameName: "红黑大战",
-		Id:       conf.Server.GameID,
-		Host:     "",
-		Time:     time.Now().Unix(),
-	}
-
-	_, file, line, ok := runtime.Caller(2)
-	if ok {
-		senddata.File = file
-		senddata.Line = line
-	}
-	Msg := fmt.Sprintln(v...)
-	senddata.Msg = Msg
-	cc.sendMsg(senddata)
-}
-
-func (cc *mylog) error(v ...interface{}) {
-	senddata := logmsg{
-		Type:     "ERR",
-		From:     "RedBlack-War",
-		GameName: "RedBlack-War",
-		Id:       conf.Server.GameID,
-		Host:     "",
-		Time:     time.Now().Unix(),
-	}
-
-	_, file, line, ok := runtime.Caller(2)
-	if ok {
-		senddata.File = file
-		senddata.Line = line
-	}
-	Msg := fmt.Sprintln(v...)
-	senddata.Msg = Msg
-	cc.sendMsg(senddata)
-}
-
-func (cc *mylog) sendMsg(senddata logmsg) {
-	bodyJson, err1 := json.Marshal(senddata)
-	if err1 != nil {
-		log.Error(err1.Error())
-	}
-	req, err2 := http.NewRequest(http.MethodPost, conf.Server.LogAddr, bytes.NewBuffer(bodyJson))
-	if err2 != nil {
-		log.Error(err1.Error())
-	}
-	if req != nil {
-		req.Header.Add("content-type", "application/json")
-		err3 := req.Body.Close()
-		if err3 != nil {
-			log.Error(err1.Error())
-		}
-	}
 }
