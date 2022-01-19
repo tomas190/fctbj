@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fctbj/conf"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
@@ -57,51 +55,8 @@ func (c4c *Conn4Center) Init() {
 	c4c.LoginStat = false
 
 	c4c.waitUser = make(map[string]*UserCallback)
-	//go changeToken()
 }
 
-//onDestroy 销毁用户
-func (c4c *Conn4Center) onDestroy() {
-	log.Debug("Conn4Center onDestroy ~")
-	//c4c.UserLogoutCenter("991738698","123456") //测试用户 和 密码
-}
-
-//ReqCenterToken 向中心服务器请求token
-func (c4c *Conn4Center) ReqCenterToken() {
-	// 拼接center Url
-	url4Center := fmt.Sprintf("%s?dev_key=%s&dev_name=%s", conf.Server.TokenServer, c4c.DevKey, conf.Server.DevName)
-
-	//log.Debug("<--- TokenServer Url --->: %v ", conf.Server.TokenServer)
-	log.Debug("<--- Center access Url --->: %v ", url4Center)
-
-	resp, err1 := http.Get(url4Center)
-	if err1 != nil {
-		panic(err1.Error())
-	}
-	log.Debug("<--- resp --->: %v ", resp)
-
-	defer resp.Body.Close()
-
-	if err1 == nil && resp.StatusCode == 200 {
-		body, err2 := ioutil.ReadAll(resp.Body)
-		if err2 != nil {
-			panic(err2.Error())
-		}
-		//log.Debug("<----- resp.StatusCode ----->: %v", resp.StatusCode)
-		log.Debug("<--- body --->: %v ,<--- err2 --->: %v", string(body), err2)
-
-		var t CGCenterRsp
-		err3 := json.Unmarshal(body, &t)
-		log.Debug("<--- err3 --->: %v <--- Results --->: %v", err3, t)
-
-		if t.Status == "SUCCESS" && t.Code == 200 {
-			c4c.token = conf.Server.DevName
-			c4c.CreatConnect()
-		} else {
-			log.Fatal("<--- Request Token Fail~ --->")
-		}
-	}
-}
 
 //CreatConnect 和Center建立链接
 func (c4c *Conn4Center) CreatConnect() {
@@ -256,38 +211,30 @@ func (c4c *Conn4Center) onServerLogin(msgBody interface{}) {
 
 		SendTgMessage("启动成功")
 
-		msginfo := data["msg"].(map[string]interface{})
-		//fmt.Println("globals:", msginfo["globals"], reflect.TypeOf(msginfo["globals"]))
+		msgInfo := data["msg"].(map[string]interface{})
 
-		globals := msginfo["globals"].([]interface{})
-		//fmt.Println("allList", globals)
+		globals := msgInfo["globals"].([]interface{})
 		for _, v := range globals {
-			//fmt.Println(k, v)
 			info := v.(map[string]interface{})
-			//fmt.Println("package_id", info["package_id"])
 
 			var nPackage uint16
 			var nTax float64
 
 			jsonPackageId, err := info["package_id"].(json.Number).Int64()
 			if err != nil {
-				log.Debug("jsonPackageId:%v", err.Error())
+				log.Debug("onServerLogin: jsonPackageId:%v", err.Error())
 			} else {
-				//fmt.Println("nPackage", uint16(jsonPackageId))
 				nPackage = uint16(jsonPackageId)
 			}
 			jsonTax, err := info["platform_tax_percent"].(json.Number).Float64()
 
 			if err != nil {
-				log.Debug("jsonTax:%v", err.Error())
+				log.Debug("onServerLogin: jsonTax:%v", err.Error())
 			} else {
-				//fmt.Println("tax", uint8(jsonTax))
 				nTax = jsonTax
 			}
 
 			SetPackageTaxM(nPackage, nTax)
-
-			//log.Debug("packageId:%v,tax:%v", nPackage, nTax)
 		}
 	}
 
@@ -297,7 +244,7 @@ func (c4c *Conn4Center) onServerLogin(msgBody interface{}) {
 func (c4c *Conn4Center) onUserLogin(msgBody interface{}) {
 	data, ok := msgBody.(map[string]interface{})
 	if !ok {
-		log.Debug("onUserLogout Error")
+		log.Debug("onUserLogout Error: %v", data)
 	}
 
 	code, err := data["code"].(json.Number).Int64()
@@ -372,7 +319,7 @@ func (c4c *Conn4Center) onUserLogin(msgBody interface{}) {
 func (c4c *Conn4Center) onUserLogout(msgBody interface{}) {
 	data, ok := msgBody.(map[string]interface{})
 	if !ok {
-		log.Debug("onUserLogout Error")
+		log.Debug("onUserLogout Error: %v", data)
 	}
 
 	code, err := data["code"].(json.Number).Int64()

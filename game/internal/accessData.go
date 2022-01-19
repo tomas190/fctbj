@@ -147,7 +147,6 @@ func getAccessData(w http.ResponseWriter, r *http.Request) {
 	req.EndTime = r.FormValue("end_time")
 	req.Page = r.FormValue("page")
 	req.Limit = r.FormValue("limit")
-	log.Debug("获取分页数据:%v", req.Page)
 
 	selector := bson.M{}
 
@@ -186,9 +185,6 @@ func getAccessData(w http.ResponseWriter, r *http.Request) {
 	page, _ := strconv.Atoi(req.Page)
 
 	limits, _ := strconv.Atoi(req.Limit)
-	//if limits != 0 {
-	//	selector["limit"] = limits
-	//}
 
 	recodes, count, err := GetDownRecodeList(page, limits, selector, "-down_bet_time")
 	if err != nil {
@@ -221,7 +217,6 @@ func getAccessData(w http.ResponseWriter, r *http.Request) {
 	result.Total = count
 	result.List = gameData
 
-	//fmt.Fprintf(w, "%+v", ApiResp{Code: SuccCode, Msg: "", Data: result})
 	js, err := json.Marshal(NewResp(SuccCode, "", result))
 	if err != nil {
 		fmt.Fprintf(w, "%+v", ApiResp{Code: ErrCode, Msg: "", Data: nil})
@@ -267,7 +262,6 @@ func reqPlayerLeave(w http.ResponseWriter, r *http.Request) {
 func getSurplusOne(w http.ResponseWriter, r *http.Request) {
 	var req GameDataReq
 	req.GameId = r.FormValue("game_id")
-	log.Debug("game_id :%v", req.GameId)
 
 	selector := bson.M{}
 	if req.GameId != "" {
@@ -459,7 +453,6 @@ func getStatementTotal(w http.ResponseWriter, r *http.Request) {
 
 func getOnlineTotal(w http.ResponseWriter, r *http.Request) {
 	packageId := r.FormValue("package_id")
-	log.Debug("获取getOnlineTotal接口 packageId:%v", packageId)
 
 	total := &OnlineTotal{}
 	total.GameId = conf.Server.GameID

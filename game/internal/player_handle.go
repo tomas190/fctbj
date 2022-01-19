@@ -39,12 +39,6 @@ func (p *Player) PlayerJoinRoom(cfgId string) {
 }
 
 func (p *Player) ExitFromRoom(room *Room) {
-	// 判断玩家期间是否行动过
-	//if p.DownBet > 0 {
-	//	// 插入玩家数据
-	//	p.HandlePlayerData()
-	//}
-
 	p.IsExist = false
 	p.OffLineTime = time.Now().Hour()
 	p.ProgressBet = 0
@@ -126,10 +120,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	p.TotalLoseMoney += m.DownBet
 
 	// todo
-	nowTime := time.Now().Unix()
-	p.RoundId = p.RandRoundId()
-	loseReason := "发财推币机输钱"
-	c2c.UserSyncLoseScore(p, GetTimeUnixNano(), p.RoundId, loseReason, m.DownBet)
+	p.SendC2CLoseScore(m.DownBet) // 发送中心服输钱
 
 	// 游戏赢率结算
 	p.GameSurSettle()
@@ -143,11 +134,10 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	data.StorageList = storageCoin
 	p.SendMsg(data)
 
-	pac := packageTax[p.PackageId]
-	taxR := pac / 100
+	taxR := p.GetPackageTax() // 获取税收
 
 	// 插入数据库数据
-	InsertDbData(p, nowTime, taxR, nil, p.LoseResultMoney)
+	InsertDbData(p, GetTimeUnixNano(), taxR, nil, p.LoseResultMoney)
 }
 
 func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
@@ -161,11 +151,6 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 	v, _ := hall.RoomRecord.Load(rid)
 	if v != nil {
 		room := v.(*Room)
-		//if room.IsLuckyGame == true {
-		//	p.SendErrMsg(RECODE_InRoomGameStep)
-		//	log.Debug("玩家结算失败,房间正在小游戏!")
-		//	return
-		//}
 		// 获取相同的金币进行赢钱结算
 		var winNum int
 		var luckyBag bool
@@ -201,8 +186,7 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 		}
 		// 金币结算
 		winMoney += CfgMoney[room.Config] * float64(winNum)
-		pac := packageTax[p.PackageId]
-		taxR := pac / 100
+		taxR := p.GetPackageTax() // 获取税收
 		tax := winMoney * taxR
 		resultMoney := winMoney - tax
 
@@ -212,10 +196,8 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 		log.Debug("获取赢钱的金额:%v", winMoney)
 
 		// todo
-		nowTime := time.Now().Unix()
-		p.RoundId = p.RandRoundId()
 		winReason := "发财推币机赢钱"
-		c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, winMoney)
+		p.SendC2CWinScore(winReason, winMoney) // 发送中心服赢钱
 
 		// 跑马灯
 		if resultMoney > PaoMaDeng {
@@ -227,7 +209,7 @@ func (p *Player) PlayerResult(m *msg.ActionResult_C2S) {
 		p.SendMsg(data)
 
 		// 插入数据库数据
-		InsertDbData(p, nowTime, taxR, nil, resultMoney)
+		InsertDbData(p, GetTimeUnixNano(), taxR, nil, resultMoney)
 	}
 }
 
@@ -406,8 +388,7 @@ func (p *Player) GetRewardsInfo() {
 		p.SendMsg(data)
 
 		// 结算
-		pac := packageTax[p.PackageId]
-		taxR := pac / 100
+		taxR := p.GetPackageTax() // 获取税收
 		tax := winMoney * taxR
 		resultMoney := winMoney - tax
 		log.Debug("获取小游戏赢钱的金额:%v,%v,%v", gameName, winMoney, rate)
@@ -417,11 +398,9 @@ func (p *Player) GetRewardsInfo() {
 		p.TotalWinMoney += winMoney
 
 		// todo
-		nowTime := time.Now().Unix()
 		if winMoney > 0 {
 			winReason := "发财推币机" + gameName + "赢钱"
-			p.RoundId = p.RandRoundId()
-			c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, winMoney)
+			p.SendC2CWinScore(winReason, winMoney) // 发送中心服赢钱
 		}
 
 		// 跑马灯
@@ -488,7 +467,7 @@ func (p *Player) GetRewardsInfo() {
 		rewards.Rate = rate
 		rewards.WinMoney = winMoney
 		// 插入数据库数据
-		InsertDbData(p, nowTime, taxR, rewards, resultMoney)
+		InsertDbData(p, GetTimeUnixNano(), taxR, rewards, resultMoney)
 	}
 }
 
@@ -579,14 +558,14 @@ func (p *Player) WinLuckyPig() {
 		room.IsLuckyPig = false
 		room.IsActPig = true
 		var getPigInfo *msg.ThreePig
+
 		// 获取财神接金币金额
 		cfgMoney := CfgMoney[room.Config]
 		rate, getPigInfo := GetLUCKY(cfgMoney)
 		winMoney := getPigInfo.PigSuccess
 
 		// 结算
-		pac := packageTax[p.PackageId]
-		taxR := pac / 100
+		taxR := p.GetPackageTax() // 获取税收
 		tax := winMoney * taxR
 		resultMoney := winMoney - tax
 
@@ -597,11 +576,9 @@ func (p *Player) WinLuckyPig() {
 		log.Debug("财运满满赢钱的金额:%v,%v", winMoney, rate)
 
 		// todo
-		nowTime := time.Now().Unix()
 		if winMoney > 0 {
 			winReason := "发财推币机财运满满赢钱"
-			p.RoundId = p.RandRoundId()
-			c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, winMoney)
+			p.SendC2CWinScore(winReason, winMoney) // 发送中心服赢钱
 		}
 
 		// 跑马灯
@@ -631,8 +608,9 @@ func (p *Player) WinLuckyPig() {
 		rewards.Game = "财运满满"
 		rewards.Rate = rate
 		rewards.WinMoney = winMoney
+
 		// 插入数据库数据
-		InsertDbData(p, nowTime, taxR, rewards, resultMoney)
+		InsertDbData(p, GetTimeUnixNano(), taxR, rewards, resultMoney)
 	}
 }
 
@@ -654,8 +632,7 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		winMoney := money * CfgMoney[room.Config]
 
 		// 结算
-		pac := packageTax[p.PackageId]
-		taxR := pac / 100
+		taxR := p.GetPackageTax() // 获取税收
 		tax := winMoney * taxR
 		resultMoney := winMoney - tax
 
@@ -666,11 +643,9 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		log.Debug("财神接金币赢钱的金额:%v", winMoney)
 
 		// todo
-		nowTime := time.Now().Unix()
 		if winMoney > 0 {
 			winReason := "发财推币机财神接金币赢钱"
-			p.RoundId = p.RandRoundId()
-			c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, winMoney)
+			p.SendC2CWinScore(winReason, winMoney) // 发送中心服赢钱
 		}
 
 		// 跑马灯
@@ -691,7 +666,7 @@ func (p *Player) GodPickUpGold(betNum int32) {
 		rewards.Rate = float64(rate)
 		rewards.WinMoney = winMoney
 		// 插入数据库数据
-		InsertDbData(p, nowTime, taxR, rewards, resultMoney)
+		InsertDbData(p, GetTimeUnixNano(), taxR, rewards, resultMoney)
 	}
 }
 

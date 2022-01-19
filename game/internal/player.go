@@ -152,3 +152,22 @@ func (p *Player) RespEnterRoom() {
 	}
 }
 
+// 获取玩家税收
+func (p *Player) GetPackageTax() float64 {
+	pac := packageTax[p.PackageId]
+	taxR := pac / 100
+	return taxR
+}
+
+// 玩家发送中心服赢钱
+func (p *Player) SendC2CWinScore(winReason string, money float64) {
+	p.RoundId = p.RandRoundId()
+	c2c.UserSyncWinScore(p, GetTimeUnixNano(), p.RoundId, winReason, money)
+}
+
+// 玩家发送中心服输钱
+func (p *Player) SendC2CLoseScore(money float64) {
+	p.RoundId = p.RandRoundId()
+	loseReason := "发财推币机输钱"
+	c2c.UserSyncLoseScore(p, GetTimeUnixNano(), p.RoundId, loseReason, money)
+}

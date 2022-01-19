@@ -209,18 +209,6 @@ func InsertSurplusPool(sur *SurplusPoolDB) {
 	FindSurPool(SurPool)
 }
 
-func UpdateSurplusPool(sur *SurplusPoolDB) {
-	s, c := connect(dbName, surPlusDB)
-	defer s.Close()
-
-	err := c.Update(bson.M{}, sur)
-	if err != nil {
-		log.Error("<----- 更新 UpdateSurplusPool数据失败 ~ ----->:%v", err)
-		return
-	}
-	log.Debug("<----- 更新UpdateSurplusPool数据成功 ~ ----->")
-}
-
 type SurPool struct {
 	GameId                         string  `json:"game_id" bson:"game_id"`
 	PlayerTotalLose                float64 `json:"player_total_lose" bson:"player_total_lose"`
@@ -333,23 +321,6 @@ func GetFindSurPool() *SurPool {
 	return sur
 }
 
-func ReLoadSurPool() {
-	sur := &SurPool{}
-	sur.GameId = conf.Server.GameID
-	sur.TotalPlayer = LoadPlayerCount()
-	sur.FinalPercentage = 0.5
-	sur.PercentageToTotalWin = 1
-	sur.CoefficientToTotalPlayer = sur.TotalPlayer * 0
-	sur.PlayerLoseRateAfterSurplusPool = 0.963
-	sur.DataCorrection = 0
-	sur.PlayerWinRate = 0
-	sur.RandomCountAfterWin = 3
-	sur.RandomCountAfterLose = 0
-	sur.RandomPercentageAfterWin = 0.75
-	sur.RandomPercentageAfterLose = 0
-	UpdateSurPool(sur)
-}
-
 func GetSurPlusMoney() float64 {
 	s, c := connect(dbName, surPool)
 	defer s.Close()
@@ -392,7 +363,6 @@ func InsertAccessData(data *PlayerDownBetRecode) {
 	s, c := connect(dbName, accessDB)
 	defer s.Close()
 
-	log.Debug("AccessData 数据: %v", data)
 	err := c.Insert(data)
 	if err != nil {
 		log.Error("<----- 运营接入数据插入失败 ~ ----->:%v", err)
@@ -412,7 +382,6 @@ func GetDownRecodeList(page, limit int, selector bson.M, sortBy string) ([]Playe
 	if err != nil {
 		return nil, 0, err
 	}
-	log.Debug("获取 %v 条数据,limit:%v", n, limit)
 	skip := (page - 1) * limit
 	err = c.Find(selector).Sort(sortBy).Skip(skip).Limit(limit).All(&wts)
 	if err != nil {
