@@ -59,7 +59,7 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 		return
 	}
 	// 判断玩家金额是否足够
-	if p.Account < m.DownBet {
+	if p.Account-m.DownBet < 0 {
 		p.SendErrMsg(RECODE_UserMoneyNotEnough)
 		log.Debug("玩家金额不足,不能进行下注:%v,%v", p.Account, m.DownBet)
 		return
@@ -92,8 +92,15 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 			log.Debug("房间配置金额错误:%v,%v", CfgMoney[room.Config], m.DownBet)
 			return
 		}
+		//log.Debug("当前房间配置:%v,玩家下注金额:%v", room.Config, m.DownBet)
 
-		log.Debug("当前房间配置:%v,玩家下注金额:%v", room.Config, m.DownBet)
+		// todo
+		p.SendC2CLoseScore(m.DownBet) // 发送中心服输钱
+
+		// 扣钱失败不执行下面操作
+		if !p.LoseC2CChannel() {
+			return
+		}
 
 		// 记录当前 Coin的序号 和 Coin列表
 		room.CoinNum[room.Config]++
@@ -118,9 +125,6 @@ func (p *Player) PlayerAction(m *msg.PlayerAction_C2S) {
 	p.LoseResultMoney = m.DownBet
 	p.DownBet += m.DownBet
 	p.TotalLoseMoney += m.DownBet
-
-	// todo
-	p.SendC2CLoseScore(m.DownBet) // 发送中心服输钱
 
 	// 游戏赢率结算
 	p.GameSurSettle()

@@ -36,6 +36,8 @@ type Player struct {
 	IsExist        bool     // 是否存在房间内
 	DownBetList    []string // 掉落金币切片
 	IsLogin        bool     // 玩家是否登入
+
+	LoseChan chan bool // 是否扣钱成功
 }
 
 func (p *Player) Init() {
@@ -53,6 +55,7 @@ func (p *Player) Init() {
 	p.IsExist = false
 	p.DownBetList = nil
 	p.IsLogin = true
+	p.LoseChan = make(chan bool)
 }
 
 //SendMsg 玩家向客户端发送消息
@@ -170,4 +173,21 @@ func (p *Player) SendC2CLoseScore(money float64) {
 	p.RoundId = p.RandRoundId()
 	loseReason := "发财推币机输钱"
 	c2c.UserSyncLoseScore(p, GetTimeUnixNano(), p.RoundId, loseReason, money)
+}
+
+// 循环监听中心服扣钱操作
+func (p *Player) LoseC2CChannel() bool {
+	timeout := time.NewTimer(time.Second * 2)
+	for {
+		select {
+		case Act := <-p.LoseChan:
+			if Act {
+				return true
+			}
+			return false
+		case <-timeout.C:
+			log.Debug("超时处理扣钱操作")
+			return false
+		}
+	}
 }

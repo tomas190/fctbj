@@ -57,7 +57,6 @@ func (c4c *Conn4Center) Init() {
 	c4c.waitUser = make(map[string]*UserCallback)
 }
 
-
 //CreatConnect 和Center建立链接
 func (c4c *Conn4Center) CreatConnect() {
 	c4c.centerUrl = conf.Server.CenterUrl
@@ -431,6 +430,7 @@ func (c4c *Conn4Center) onUserLoseScore(msgBody interface{}) {
 					SendTgMessage(message)
 					p.ExitFromRoom(room)
 					hall.OrderIDRecord.Delete(order)
+					p.LoseChan <- false
 				}
 			}
 			return
@@ -438,7 +438,12 @@ func (c4c *Conn4Center) onUserLoseScore(msgBody interface{}) {
 		if data["status"] == "SUCCESS" && code == 200 {
 			log.Debug("<-------- UserLoseScore SUCCESS~ -------->")
 
-			hall.OrderIDRecord.Delete(order)
+			v, ok := hall.OrderIDRecord.Load(order)
+			if ok {
+				p := v.(*Player)
+				hall.OrderIDRecord.Delete(order)
+				p.LoseChan <- true
+			}
 
 			//将Lose数据插入数据
 			InsertLoseMoney(msgBody)
