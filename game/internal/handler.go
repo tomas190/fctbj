@@ -59,10 +59,13 @@ func handleLogin(args []interface{}) {
 				log.Error("用户链接替换错误", err)
 			}
 
-			c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(u *Player) { // todo
+			c2c.UserLoginCenter(m.GetId(), m.GetPassWord(), m.GetToken(), func(au *Player) { // todo
 				user, _ := hall.UserRecord.Load(p.Id)
 				if user != nil {
 					u := user.(*Player)
+					u.NickName = au.NickName
+					u.HeadImg = au.HeadImg
+					u.Account = au.Account
 					log.Debug("读取玩家历史数据:%v", u)
 					login := &msg.Login_S2C{}
 					rid, _ := hall.UserRoom.Load(p.Id)
