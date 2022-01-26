@@ -226,7 +226,7 @@ func (p *Player) GameSurSettle() {
 	countLose := sur.RandomCountAfterLose
 	surplusPool := sur.SurplusPool
 
-	if p.PackageId == 11 || p.PackageId == 8 {
+	if p.PackageId == 8 || p.PackageId == 11 || p.PackageId == 12 {
 		percentageWin = 38
 		percentageLose = 0
 		countWin = 3
@@ -804,7 +804,7 @@ func InsertDbData(p *Player, nowTime int64, taxR float64, rewards *GameRewards, 
 	sd.BetMoney = p.DownBet
 	InsertStatementDB(sd)
 
-	if p.PackageId != 11 && p.PackageId != 8 {
+	if p.PackageId == 8 || p.PackageId == 11 || p.PackageId == 12 {
 		// 插入盈余数据
 		sur := &SurplusPoolDB{}
 		sur.UpdateTime = time.Now()
